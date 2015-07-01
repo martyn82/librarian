@@ -32,10 +32,12 @@
 
 # Build data
 /build/
+/report/
 
 # Composer PHAR
 /composer.phar
 
+# IDE files
 .settings/
 .buildpath
 .project
