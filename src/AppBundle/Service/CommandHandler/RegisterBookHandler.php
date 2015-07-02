@@ -2,7 +2,7 @@
 
 namespace AppBundle\Service\CommandHandler;
 
-use AppBundle\Data\Repository\Books;
+use AppBundle\Repository\Books;
 use AppBundle\Service\Command\RegisterBook;
 
 class RegisterBookHandler implements CommandHandler

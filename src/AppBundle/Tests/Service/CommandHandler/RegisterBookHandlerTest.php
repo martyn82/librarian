@@ -2,16 +2,19 @@
 
 namespace AppBundle\Tests\Service\CommandHandler;
 
-use AppBundle\Data\Repository\Books;
+use AppBundle\Repository\Books;
+use AppBundle\Model\Book;
+use AppBundle\Model\Guid;
 use AppBundle\Service\Command\RegisterBook;
 use AppBundle\Service\CommandHandler\RegisterBookHandler;
-use AppBundle\Model\Book;
 
 class RegisterBookHandlerTest extends \PHPUnit_Framework_TestCase
 {
     public function testRegisterBookHandlerWillCallAddOnBooksRepository()
     {
-        $book = new Book();
+        $id = Guid::createNew();
+
+        $book = new Book($id);
         $command = new RegisterBook($book);
 
         $repository = $this->getMockBuilder(Books::class)
