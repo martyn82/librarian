@@ -2,8 +2,8 @@
 
 namespace AppBundle\Tests\EventStore;
 
+use AppBundle\EventStore\Event;
 use AppBundle\EventStore\Events;
-use AppBundle\Message\Event;
 
 class EventsTest extends \PHPUnit_Framework_TestCase
 {

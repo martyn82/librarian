@@ -2,9 +2,6 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Service\Command\Command;
-use JMS\DiExtraBundle\Annotation as DI;
-
 class CommandBus
 {
     /**

@@ -1,9 +1,10 @@
 <?php
 
-namespace AppBundle\Repository;
+namespace AppBundle\Domain\Repository;
 
+use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\EventStore;
-use AppBundle\Model\Book;
+use AppBundle\Service\Repository;
 
 class Books implements Repository
 {

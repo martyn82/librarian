@@ -1,17 +1,19 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/book/service_container.html
 services:
   librarian.eventstore:
     class: AppBundle\EventStore\EventStore
+    calls:
+      - [setLogger, ["@logger"]]
 
   librarian.repository.books:
-    class: AppBundle\Repository\Books
+    class: AppBundle\Domain\Repository\Books
     arguments: ["@librarian.eventstore"]
 
   librarian.commandhandler.register_book:
-    class: AppBundle\Service\CommandHandler\RegisterBookHandler
+    class: AppBundle\Domain\CommandHandler\RegisterBookHandler
     arguments: ["@librarian.repository.books"]
+    calls:
+      - [setLogger, ["@logger"]]
 
   librarian.commandbus:
     class: AppBundle\Service\CommandBus
-    arguments: [{AppBundle\Service\Command\RegisterBook: "@librarian.commandhandler.register_book"}]
+    arguments: [{AppBundle\Domain\Command\RegisterBook: "@librarian.commandhandler.register_book"}]

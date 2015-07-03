@@ -3,9 +3,9 @@
 namespace AppBundle\Tests\EventStore;
 
 use AppBundle\EventStore\AggregateRoot;
+use AppBundle\EventStore\Event;
 use AppBundle\EventStore\Events;
 use AppBundle\EventStore\UnsupportedEventException;
-use AppBundle\Message\Event;
 
 class AggregateRootTest extends \PHPUnit_Framework_TestCase
 {

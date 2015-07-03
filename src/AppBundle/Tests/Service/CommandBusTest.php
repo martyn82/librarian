@@ -2,7 +2,7 @@
 
 namespace AppBundle\Tests\Service;
 
-use AppBundle\Service\Command\Command;
+use AppBundle\Service\Command;
 use AppBundle\Service\CommandBus;
 use AppBundle\Service\CommandHandler\CommandHandler;
 use AppBundle\Service\NoCommandHandlerException;

@@ -3,10 +3,10 @@
 namespace AppBundle\Tests\EventStore;
 
 use AppBundle\EventStore\AggregateNotFoundException;
+use AppBundle\EventStore\Event;
 use AppBundle\EventStore\Events;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
-use AppBundle\Message\Event;
 
 class EventStoreTest extends \PHPUnit_Framework_TestCase
 {

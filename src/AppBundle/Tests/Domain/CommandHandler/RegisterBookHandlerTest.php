@@ -1,12 +1,12 @@
 <?php
 
-namespace AppBundle\Tests\Service\CommandHandler;
+namespace AppBundle\Tests\Domain\CommandHandler;
 
+use AppBundle\Domain\Command\RegisterBook;
+use AppBundle\Domain\CommandHandler\RegisterBookHandler;
+use AppBundle\Domain\Model\Book;
+use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\Guid;
-use AppBundle\Model\Book;
-use AppBundle\Repository\Books;
-use AppBundle\Service\Command\RegisterBook;
-use AppBundle\Service\CommandHandler\RegisterBookHandler;
 
 class RegisterBookHandlerTest extends \PHPUnit_Framework_TestCase
 {

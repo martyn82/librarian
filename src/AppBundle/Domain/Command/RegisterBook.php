@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Service\Command;
+namespace AppBundle\Domain\Command;
 
-use AppBundle\Model\Book;
 use AppBundle\EventStore\Guid;
+use AppBundle\Service\Command;
 
 class RegisterBook implements Command
 {

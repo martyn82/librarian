@@ -2,8 +2,6 @@
 
 namespace AppBundle\EventStore;
 
-use AppBundle\Message\Event;
-
 class Events implements \IteratorAggregate
 {
     /**
@@ -40,7 +38,7 @@ class Events implements \IteratorAggregate
     }
 
     /**
-     * @see IteratorAggregate::getIterator()
+     * @see \IteratorAggregate::getIterator()
      */
     public function getIterator()
     {

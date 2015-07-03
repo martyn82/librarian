@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Domain\Command\RegisterBook;
 use AppBundle\EventStore\Guid;
-use AppBundle\Service\Command\RegisterBook;
 use AppBundle\Service\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

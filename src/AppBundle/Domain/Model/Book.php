@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Model;
+namespace AppBundle\Domain\Model;
 
+use AppBundle\Domain\Event\BookRegistered;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\Guid;
-use AppBundle\Message\Events\BookRegistered;
 
 class Book extends AggregateRoot
 {

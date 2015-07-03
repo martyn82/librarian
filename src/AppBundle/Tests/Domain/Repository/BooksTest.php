@@ -1,11 +1,11 @@
 <?php
 
-namespace AppBundle\Tests\Repository;
+namespace AppBundle\Tests\Domain\Repository;
 
+use AppBundle\Domain\Model\Book;
+use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
-use AppBundle\Model\Book;
-use AppBundle\Repository\Books;
 
 class BooksTest extends \PHPUnit_Framework_TestCase
 {

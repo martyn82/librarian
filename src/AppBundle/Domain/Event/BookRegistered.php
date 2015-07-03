@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Message\Events;
+namespace AppBundle\Domain\Event;
 
+use AppBundle\EventStore\Event;
 use AppBundle\EventStore\Guid;
-use AppBundle\Message\Event;
 
 class BookRegistered extends Event
 {
