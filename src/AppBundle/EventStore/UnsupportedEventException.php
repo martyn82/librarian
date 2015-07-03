@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventStore;
 
-class UnsupportedEventException extends \Exception
+class UnsupportedEventException extends EventStoreException
 {
     /**
      * @var string

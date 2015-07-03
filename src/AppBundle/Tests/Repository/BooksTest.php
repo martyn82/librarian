@@ -3,9 +3,9 @@
 namespace AppBundle\Tests\Repository;
 
 use AppBundle\EventStore\EventStore;
+use AppBundle\EventStore\Guid;
 use AppBundle\Model\Book;
 use AppBundle\Repository\Books;
-use AppBundle\Model\Guid;
 
 class BooksTest extends \PHPUnit_Framework_TestCase
 {

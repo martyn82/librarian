@@ -3,6 +3,7 @@
 namespace AppBundle\Model;
 
 use AppBundle\EventStore\AggregateRoot;
+use AppBundle\EventStore\Guid;
 use AppBundle\Message\Events\BookRegistered;
 
 class Book extends AggregateRoot

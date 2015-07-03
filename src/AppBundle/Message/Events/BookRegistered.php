@@ -2,8 +2,8 @@
 
 namespace AppBundle\Message\Events;
 
+use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
-use AppBundle\Model\Guid;
 
 class BookRegistered extends Event
 {

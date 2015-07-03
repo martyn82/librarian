@@ -2,9 +2,9 @@
 
 namespace AppBundle\Tests\Service\CommandHandler;
 
-use AppBundle\Repository\Books;
+use AppBundle\EventStore\Guid;
 use AppBundle\Model\Book;
-use AppBundle\Model\Guid;
+use AppBundle\Repository\Books;
 use AppBundle\Service\Command\RegisterBook;
 use AppBundle\Service\CommandHandler\RegisterBookHandler;
 

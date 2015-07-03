@@ -2,9 +2,7 @@
 
 namespace AppBundle\EventStore;
 
-use AppBundle\EventStore\Events;
 use AppBundle\Message\Event;
-use AppBundle\Model\Guid;
 
 abstract class AggregateRoot
 {

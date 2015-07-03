@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Tests\Model;
+namespace AppBundle\Tests\EventStore;
 
-use AppBundle\Model\Guid;
+use AppBundle\EventStore\Guid;
 
 class GuidTest extends \PHPUnit_Framework_TestCase
 {
