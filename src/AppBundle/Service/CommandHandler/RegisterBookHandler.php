@@ -4,6 +4,7 @@ namespace AppBundle\Service\CommandHandler;
 
 use AppBundle\Repository\Books;
 use AppBundle\Service\Command\RegisterBook;
+use AppBundle\Model\Book;
 
 class RegisterBookHandler implements CommandHandler
 {
@@ -25,6 +26,7 @@ class RegisterBookHandler implements CommandHandler
      */
     public function handle(RegisterBook $command)
     {
-        $this->books->store($command->getBook());
+        $book = Book::register($command->getId());
+        $this->books->store($book);
     }
 }

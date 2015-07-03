@@ -20,12 +20,22 @@ class Book extends AggregateRoot
 
     /**
      * @param Guid $id
+     * @return Book
      */
     public static function register(Guid $id)
     {
-        $instance = new self();
-        $instance->applyChange(new BookRegistered($id));
+        $instance = new self($id);
+        $instance->applyChange(new BookRegistered($instance->getId()));
         return $instance;
+    }
+
+    /**
+     * @param Guid $id
+     */
+    public function __construct(Guid $id)
+    {
+        $this->id = $id;
+        parent::__construct();
     }
 
     /**

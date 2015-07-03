@@ -1,9 +1,17 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
-parameters:
-#    parameter_name: value
-
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+  librarian.eventstore:
+    class: AppBundle\EventStore\EventStore
+
+  librarian.repository.books:
+    class: AppBundle\Repository\Books
+    arguments: ["@librarian.eventstore"]
+
+  librarian.commandhandler.register_book:
+    class: AppBundle\Service\CommandHandler\RegisterBookHandler
+    arguments: ["@librarian.repository.books"]
+
+  librarian.commandbus:
+    class: AppBundle\Service\CommandBus
+    arguments: [{AppBundle\Service\Command\RegisterBook: "@librarian.commandhandler.register_book"}]

@@ -3,27 +3,28 @@
 namespace AppBundle\Service\Command;
 
 use AppBundle\Model\Book;
+use AppBundle\EventStore\Guid;
 
 class RegisterBook implements Command
 {
     /**
-     * @var Book
+     * @var Guid
      */
-    private $book;
+    private $id;
 
     /**
-     * @param Book $book
+     * @param Guid $id
      */
-    public function __construct(Book $book)
+    public function __construct(Guid $id)
     {
-        $this->book = $book;
+        $this->id = $id;
     }
 
     /**
-     * @return Book
+     * @return Guid
      */
-    public function getBook()
+    public function getId()
     {
-        return $this->book;
+        return $this->id;
     }
 }
