@@ -7,6 +7,7 @@ use AppBundle\Service\Command\RegisterBook;
 use AppBundle\Service\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
@@ -33,12 +34,15 @@ class ApiController extends Controller
 
     /**
      * @Route("/register-book", name="registerBook")
+     * @Template("default/index.html.twig")
+     *
+     * @return array
      */
     public function registerBookAction()
     {
         $command = new RegisterBook(Guid::createNew());
         $this->commandBus->handle($command);
 
-        return $this->render('default/index.html.twig');
+        return [];
     }
 }

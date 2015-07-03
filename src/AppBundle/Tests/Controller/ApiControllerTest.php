@@ -2,11 +2,18 @@
 
 namespace AppBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use AppBundle\Controller\ApiController;
+use AppBundle\Service\CommandBus;
 
-class ApiControllerTest extends WebTestCase
+class ApiControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testIndex()
+    public function testRegisterBookCallsHandleOnCommandBus()
     {
+        $commandBus = $this->getMockBuilder(CommandBus::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $controller = new ApiController($commandBus);
+        $controller->registerBookAction();
     }
 }
