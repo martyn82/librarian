@@ -54,13 +54,10 @@ abstract class AggregateRoot
      */
     protected function apply(Event $event)
     {
-        $eventClassName = get_class($event);
-        $eventClassParts = explode('\\', $eventClassName);
-        $eventName = end($eventClassParts);
-        $applyMethod = 'apply' . $eventName;
+        $applyMethod = 'apply' . $event->getEventName();
 
         if (!method_exists($this, $applyMethod)) {
-            throw new UnsupportedEventException($eventName, get_class($this));
+            throw new UnsupportedEventException($event->getEventName(), get_class($this));
         }
 
         static::$applyMethod($event);
