@@ -11,8 +11,7 @@ class AggregateRootTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetUncomittedChangesReturnsCompleteEventLog()
     {
-        /* @var $root AggregateRoot */
-        $root = $this->getMockForAbstractClass(AggregateRoot::class);
+        $root = new FakeAggregateRoot();
         $events = $root->getUncommittedChanges();
 
         self::assertInstanceOf(Events::class, $events);
@@ -74,6 +73,13 @@ class FakeAggregateRoot extends AggregateRoot
      * @var int
      */
     private $testEventApplyCount = 0;
+
+    /**
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * @see \AppBundle\EventStore\AggregateRoot::getId()

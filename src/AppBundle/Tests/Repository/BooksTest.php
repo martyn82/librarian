@@ -12,7 +12,7 @@ class BooksTest extends \PHPUnit_Framework_TestCase
     public function testStoreBookCallsSaveOnStorage()
     {
         $id = Guid::createNew();
-        $book = new Book($id);
+        $book = Book::register($id);
 
         $storage = $this->getMockBuilder(EventStore::class)
             ->disableOriginalConstructor()

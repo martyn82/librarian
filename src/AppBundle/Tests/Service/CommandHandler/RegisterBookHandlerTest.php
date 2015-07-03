@@ -13,8 +13,7 @@ class RegisterBookHandlerTest extends \PHPUnit_Framework_TestCase
     public function testRegisterBookHandlerWillCallStoreOnBooksRepository()
     {
         $id = Guid::createNew();
-
-        $book = new Book($id);
+        $book = Book::register($id);
         $command = new RegisterBook($book);
 
         $repository = $this->getMockBuilder(Books::class)
