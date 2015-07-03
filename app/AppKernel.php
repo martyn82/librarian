@@ -5,6 +5,9 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class AppKernel extends Kernel
 {
+    /**
+     * @see \Symfony\Component\HttpKernel\KernelInterface::registerBundles()
+     */
     public function registerBundles()
     {
         $bundles = array(
@@ -29,8 +32,35 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
+    /**
+     * @see \Symfony\Component\HttpKernel\KernelInterface::registerContainerConfiguration()
+     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
+    }
+
+    /**
+     * @see \Symfony\Component\HttpKernel\Kernel::getCacheDir()
+     */
+    public function getCacheDir()
+    {
+        if (in_array($this->environment, ['dev', 'test'])) {
+            return '/dev/shm/librarian/cache/' . $this->environment;
+        }
+
+        return parent::getCacheDir();
+    }
+
+    /**
+     * @see \Symfony\Component\HttpKernel\Kernel::getLogDir()
+     */
+    public function getLogDir()
+    {
+        if (in_array($this->environment, ['dev', 'test'])) {
+            return '/dev/shm/librarian/logs';
+        }
+
+        return parent::getLogDir();
     }
 }
