@@ -2,8 +2,8 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Model\Book;
 use AppBundle\EventStore\EventStore;
+use AppBundle\Model\Book;
 
 class Books implements Repository
 {
@@ -23,7 +23,7 @@ class Books implements Repository
     /**
      * @param Book $book
      */
-    public function add(Book $book)
+    public function store(Book $book)
     {
         $this->storage->save($book->getId(), $book->getUncommittedChanges());
     }

@@ -9,7 +9,7 @@ use AppBundle\Model\Guid;
 
 class BooksTest extends \PHPUnit_Framework_TestCase
 {
-    public function testAddBookCallsSaveOnStorage()
+    public function testStoreBookCallsSaveOnStorage()
     {
         $id = Guid::createNew();
         $book = new Book($id);
@@ -23,6 +23,6 @@ class BooksTest extends \PHPUnit_Framework_TestCase
             ->with($id);
 
         $repository = new Books($storage);
-        $repository->add($book);
+        $repository->store($book);
     }
 }

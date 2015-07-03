@@ -10,7 +10,7 @@ use AppBundle\Service\CommandHandler\RegisterBookHandler;
 
 class RegisterBookHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRegisterBookHandlerWillCallAddOnBooksRepository()
+    public function testRegisterBookHandlerWillCallStoreOnBooksRepository()
     {
         $id = Guid::createNew();
 
@@ -22,7 +22,7 @@ class RegisterBookHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $repository->expects(self::once())
-            ->method('add')
+            ->method('store')
             ->with($book);
 
         $handler = new RegisterBookHandler($repository);
