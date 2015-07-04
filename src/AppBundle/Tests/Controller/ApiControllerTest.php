@@ -3,6 +3,7 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\Controller\ApiController;
+use AppBundle\Domain\Service\ReadModel;
 use AppBundle\Service\CommandBus;
 
 class ApiControllerTest extends \PHPUnit_Framework_TestCase
@@ -13,7 +14,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $controller = new ApiController($commandBus);
+        $readModel = $this->getMockBuilder(ReadModel::class)
+            ->getMock();
+
+        $controller = new ApiController($commandBus, $readModel);
         $controller->registerBookAction();
     }
 }

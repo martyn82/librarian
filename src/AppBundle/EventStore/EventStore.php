@@ -2,12 +2,27 @@
 
 namespace AppBundle\EventStore;
 
+use AppBundle\Service\EventBus;
+
 class EventStore
 {
     /**
      * @var array
      */
     private $current = [];
+
+    /**
+     * @var EventBus
+     */
+    private $eventBus;
+
+    /**
+     * @param EventBus $eventBus
+     */
+    public function __construct(EventBus $eventBus)
+    {
+        $this->eventBus = $eventBus;
+    }
 
     /**
      * @param Guid $aggregateId
@@ -21,6 +36,7 @@ class EventStore
 
         foreach ($events->getIterator() as $event) {
             $this->current[$aggregateId->getValue()][] = $event;
+            $this->eventBus->publish($event);
         }
     }
 

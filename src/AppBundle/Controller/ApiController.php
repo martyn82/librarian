@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Domain\Command\RegisterBook;
 use AppBundle\Domain\Model\Book;
+use AppBundle\Domain\Service\ReadModel;
 use AppBundle\EventStore\Guid;
 use AppBundle\Service\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
@@ -22,15 +23,23 @@ class ApiController extends Controller
     private $commandBus;
 
     /**
+     * @var ReadModel
+     */
+    private $readModel;
+
+    /**
      * @DI\InjectParams({
-     *  "commandBus" = @DI\Inject("librarian.commandbus")
+     *  "commandBus" = @DI\Inject("librarian.commandbus"),
+     *  "readModel" = @DI\Inject("librarian.readmodel.service")
      * })
      *
      * @param CommandBus $commandBus
+     * @param ReadModelFacade $readModel
      */
-    public function __construct(CommandBus $commandBus)
+    public function __construct(CommandBus $commandBus, ReadModel $readModel)
     {
         $this->commandBus = $commandBus;
+        $this->readModel = $readModel;
     }
 
     /**
@@ -46,6 +55,10 @@ class ApiController extends Controller
         $command = new RegisterBook($id, 'book title');
         $this->commandBus->handle($command);
 
-        return [];
+        $book = $this->readModel->getBook($id);
+
+        return [
+            'book' => $book
+        ];
     }
 }

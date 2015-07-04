@@ -1,19 +1,27 @@
 services:
+  librarian.eventbus:
+    class: AppBundle\Service\EventBus
+
   librarian.eventstore:
     class: AppBundle\EventStore\EventStore
+    arguments: ["@librarian.eventbus"]
 
   librarian.repository.books:
     class: AppBundle\Domain\Repository\Books
     arguments: ["@librarian.eventstore"]
 
-  librarian.commandhandler.register_book.plain:
+  librarian.commandhandler.register_book:
     class: AppBundle\Domain\CommandHandler\RegisterBookHandler
     arguments: ["@librarian.repository.books"]
 
   librarian.commandhandler.register_book.logging:
     class: AppBundle\Domain\CommandHandler\LoggingCommandHandler
-    arguments: ["@logger", "@librarian.commandhandler.register_book.plain"]
+    arguments: ["@logger", "@librarian.commandhandler.register_book"]
 
   librarian.commandbus:
     class: AppBundle\Service\CommandBus
     arguments: [{AppBundle\Domain\Command\RegisterBook: "@librarian.commandhandler.register_book.logging"}]
+
+  librarian.readmodel.service:
+    class: AppBundle\Domain\Service\ReadModelService
+    arguments: ["@librarian.eventbus"]

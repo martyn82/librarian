@@ -14,11 +14,6 @@ class Book extends AggregateRoot
     private $id;
 
     /**
-     * @var bool
-     */
-    private $registered;
-
-    /**
      * @param Guid $id
      * @param string $title
      * @return Book
@@ -53,6 +48,5 @@ class Book extends AggregateRoot
     protected function applyBookRegistered(BookRegistered $event)
     {
         $this->id = $event->getId();
-        $this->registered = true;
     }
 }

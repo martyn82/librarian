@@ -7,6 +7,7 @@ use AppBundle\EventStore\Event;
 use AppBundle\EventStore\Events;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
+use AppBundle\Service\EventBus;
 
 class EventStoreTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +21,10 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $store = new EventStore();
+        $eventBus = $this->getMockBuilder(EventBus::class)
+            ->getMock();
+
+        $store = new EventStore($eventBus);
         $store->save($id, $events);
 
         $retrievedEvents = $store->getEventsForAggregate($id);
@@ -39,8 +43,32 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
     {
         self::setExpectedException(AggregateNotFoundException::class);
 
-        $store = new EventStore();
+        $eventBus = $this->getMockBuilder(EventBus::class)
+            ->getMock();
+
+        $store = new EventStore($eventBus);
         $store->getEventsForAggregate(Guid::createNew());
+    }
+
+    public function testSaveEventsForAggregatePublishesEvents()
+    {
+        $id = Guid::createNew();
+        $events = new Events(
+            [
+                new FirstEvent(),
+                new SecondEvent()
+            ]
+        );
+
+        $eventBus = $this->getMockBuilder(EventBus::class)
+            ->getMock();
+
+        $eventBus->expects(self::exactly($events->getIterator()->count()))
+            ->method('publish')
+            ->with(self::logicalOr($events->getIterator()->offsetGet(0), $events->getIterator()->offsetGet(1)));
+
+        $store = new EventStore($eventBus);
+        $store->save($id, $events);
     }
 }
 
