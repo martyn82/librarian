@@ -37,7 +37,7 @@ class RegisterBookHandler implements CommandHandler
      */
     private function handleRegisterBook(RegisterBook $command)
     {
-        $book = Book::register($command->getId());
+        $book = Book::register($command->getId(), $command->getTitle());
         $this->books->store($book);
     }
 }

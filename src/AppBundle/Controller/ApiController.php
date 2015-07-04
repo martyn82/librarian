@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Domain\Command\RegisterBook;
+use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\Guid;
 use AppBundle\Service\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
@@ -40,7 +41,9 @@ class ApiController extends Controller
      */
     public function registerBookAction()
     {
-        $command = new RegisterBook(Guid::createNew());
+        $id = Guid::createNew();
+
+        $command = new RegisterBook($id, 'book title');
         $this->commandBus->handle($command);
 
         return [];

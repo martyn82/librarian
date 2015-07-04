@@ -2,11 +2,14 @@
 
 namespace AppBundle\Domain\Event;
 
+use AppBundle\Domain\Descriptor\BookDescriptor;
 use AppBundle\EventStore\Event;
 use AppBundle\EventStore\Guid;
 
 class BookRegistered extends Event
 {
+    use BookDescriptor;
+
     /**
      * @var Guid
      */
@@ -14,10 +17,12 @@ class BookRegistered extends Event
 
     /**
      * @param Guid $id
+     * @param string $title
      */
-    public function __construct(Guid $id)
+    public function __construct(Guid $id, $title)
     {
         $this->id = $id;
+        $this->title = $title;
     }
 
     /**

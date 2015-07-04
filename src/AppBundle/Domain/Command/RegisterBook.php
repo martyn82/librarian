@@ -2,11 +2,14 @@
 
 namespace AppBundle\Domain\Command;
 
+use AppBundle\Domain\Descriptor\BookDescriptor;
 use AppBundle\EventStore\Guid;
 use AppBundle\Service\Command;
 
 class RegisterBook implements Command
 {
+    use BookDescriptor;
+
     /**
      * @var Guid
      */
@@ -14,10 +17,12 @@ class RegisterBook implements Command
 
     /**
      * @param Guid $id
+     * @param string $title
      */
-    public function __construct(Guid $id)
+    public function __construct(Guid $id, $title)
     {
         $this->id = $id;
+        $this->title = $title;
     }
 
     /**

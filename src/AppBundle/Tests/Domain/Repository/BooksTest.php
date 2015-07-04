@@ -12,7 +12,8 @@ class BooksTest extends \PHPUnit_Framework_TestCase
     public function testStoreBookCallsSaveOnStorage()
     {
         $id = Guid::createNew();
-        $book = Book::register($id);
+        $title = 'foo';
+        $book = Book::register($id, $title);
 
         $storage = $this->getMockBuilder(EventStore::class)
             ->disableOriginalConstructor()
@@ -20,7 +21,7 @@ class BooksTest extends \PHPUnit_Framework_TestCase
 
         $storage->expects(self::once())
             ->method('save')
-            ->with($id);
+            ->with($id, $book->getUncommittedChanges());
 
         $repository = new Books($storage);
         $repository->store($book);
