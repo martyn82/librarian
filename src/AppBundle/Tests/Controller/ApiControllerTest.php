@@ -3,21 +3,20 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\Controller\ApiController;
-use AppBundle\Domain\Service\ReadModel;
-use AppBundle\MessageBus\CommandBus;
+use AppBundle\Domain\Service\BookService;
 
 class ApiControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRegisterBookCallsHandleOnCommandBus()
+    public function testRegisterBookCallsExecuteOnService()
     {
-        $commandBus = $this->getMockBuilder(CommandBus::class)
+        $service = $this->getMockBuilder(BookService::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = $this->getMockBuilder(ReadModel::class)
-            ->getMock();
+        $service->expects(self::once())
+            ->method('execute');
 
-        $controller = new ApiController($commandBus, $readModel);
+        $controller = new ApiController($service);
         $controller->registerBookAction('foo');
     }
 }

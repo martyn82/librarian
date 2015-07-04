@@ -1,7 +1,14 @@
 services:
+  librarian.readmodel:
+    class: AppBundle\Domain\Service\BookReadModel
+
+  librarian.eventhandler.logging:
+    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingEventHandler
+    arguments: ["@logger", "@librarian.readmodel"]
+
   librarian.eventbus:
     class: AppBundle\MessageBus\EventBus
-    arguments: [{AppBundle\Domain\Message\Event\BookRegistered: ["@librarian.readmodel.service.logging"]}]
+    arguments: [{AppBundle\Domain\Message\Event\BookRegistered: ["@librarian.eventhandler.logging"]}]
 
   librarian.eventstore:
     class: AppBundle\EventStore\EventStore
@@ -23,9 +30,10 @@ services:
     class: AppBundle\MessageBus\CommandBus
     arguments: [{AppBundle\Domain\Message\Command\RegisterBook: "@librarian.commandhandler.register_book.logging"}]
 
-  librarian.readmodel.service:
-    class: AppBundle\Domain\Service\ReadModelService
+  librarian.service.book:
+    class: AppBundle\Domain\Service\BookService
+    arguments: ["@librarian.readmodel", "@librarian.commandbus"]
 
-  librarian.readmodel.service.logging:
+  librarian.service.book.logging:
     class: AppBundle\Domain\MessageHandler\EventHandler\LoggingEventHandler
-    arguments: ["@logger", "@librarian.readmodel.service"]
+    arguments: ["@logger", "@librarian.service.book"]

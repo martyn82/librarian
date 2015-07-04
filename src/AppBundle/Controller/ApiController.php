@@ -4,9 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Domain\Message\Command\RegisterBook;
 use AppBundle\Domain\Model\BookView;
-use AppBundle\Domain\Service\ReadModel;
+use AppBundle\Domain\Service\BookService;
 use AppBundle\EventStore\Guid;
-use AppBundle\MessageBus\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,28 +17,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class ApiController extends Controller
 {
     /**
-     * @var CommandBus
+     * @var BookService
      */
-    private $commandBus;
-
-    /**
-     * @var ReadModel
-     */
-    private $readModel;
+    private $bookService;
 
     /**
      * @DI\InjectParams({
-     *  "commandBus" = @DI\Inject("librarian.commandbus"),
-     *  "readModel" = @DI\Inject("librarian.readmodel.service")
+     *  "bookService" = @DI\Inject("librarian.service.book")
      * })
      *
-     * @param CommandBus $commandBus
-     * @param ReadModel $readModel
+     * @param BookService $bookService
      */
-    public function __construct(CommandBus $commandBus, ReadModel $readModel)
+    public function __construct(BookService $bookService)
     {
-        $this->commandBus = $commandBus;
-        $this->readModel = $readModel;
+        $this->bookService = $bookService;
     }
 
     /**
@@ -53,11 +44,12 @@ class ApiController extends Controller
     {
         $id = Guid::createNew();
 
-        $command = new RegisterBook($id, $title);
-        $this->commandBus->handle($command);
+        $this->bookService->execute(
+            new RegisterBook($id, $title)
+        );
 
         return [
-            'book' => $this->readModel->getBook($id)
+            'book' => $this->bookService->getBook($id)
         ];
     }
 }

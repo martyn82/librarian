@@ -2,14 +2,14 @@
 
 namespace AppBundle\Domain\Service;
 
-use AppBundle\Domain\MessageHandler\EventHandler\BookRegisteredHandler;
 use AppBundle\Domain\Message\Event\BookRegistered;
+use AppBundle\Domain\MessageHandler\EventHandler\BookRegisteredHandler;
 use AppBundle\Domain\Model\BookView;
+use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
-use AppBundle\MessageBus\EventBus;
 
-class ReadModelService implements ReadModel, BookRegisteredHandler
+class BookReadModel implements BookRegisteredHandler
 {
     /**
      * @var array

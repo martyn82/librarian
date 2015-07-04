@@ -4,13 +4,13 @@ namespace AppBundle\Tests\Domain\Service;
 
 use AppBundle\Domain\Message\Event\BookRegistered;
 use AppBundle\Domain\Model\BookView;
+use AppBundle\Domain\Service\BookReadModel;
 use AppBundle\Domain\Service\ObjectNotFoundException;
-use AppBundle\Domain\Service\ReadModelService;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 use AppBundle\MessageBus\EventBus;
 
-class ReadModelServiceTest extends \PHPUnit_Framework_TestCase
+class BookReadModelTest extends \PHPUnit_Framework_TestCase
 {
     public function testHandleWithBookRegisteredPropagatesToCorrectHandler()
     {
@@ -23,7 +23,7 @@ class ReadModelServiceTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new ReadModelService($eventBus);
+        $readModel = new BookReadModel($eventBus);
         $readModel->handle($event);
 
         $book = $readModel->getBook($id);
@@ -42,7 +42,7 @@ class ReadModelServiceTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new ReadModelService($eventBus);
+        $readModel = new BookReadModel($eventBus);
         $readModel->handleBookRegistered($event);
 
         $book = $readModel->getBook($id);
@@ -58,7 +58,7 @@ class ReadModelServiceTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new ReadModelService($eventBus);
+        $readModel = new BookReadModel($eventBus);
         $readModel->getBook(Guid::createNew());
     }
 }
