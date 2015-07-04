@@ -9,19 +9,14 @@ class EventBus implements EventPublisher
     /**
      * @var array
      */
-    private $handlers = [];
+    private $eventHandlerMap = [];
 
     /**
-     * @param string $eventClassName
-     * @param EventHandler $handler
+     * @param array $eventHandlerMap
      */
-    public function registerHandler($eventClassName, EventHandler $handler)
+    public function __construct(array $eventHandlerMap)
     {
-        if (!array_key_exists((string) $eventClassName, $this->handlers)) {
-            $this->handlers[(string) $eventClassName] = [];
-        }
-
-        $this->handlers[(string) $eventClassName][] = $handler;
+        $this->eventHandlerMap = $eventHandlerMap;
     }
 
     /**
@@ -31,11 +26,11 @@ class EventBus implements EventPublisher
     {
         $eventClassName = get_class($event);
 
-        if (!array_key_exists($eventClassName, $this->handlers)) {
+        if (!array_key_exists($eventClassName, $this->eventHandlerMap)) {
             return;
         }
 
-        foreach ($this->handlers[$eventClassName] as $handler) {
+        foreach ($this->eventHandlerMap[$eventClassName] as $handler) {
             /* @var $handler EventHandler */
             $handler->handle($event);
         }

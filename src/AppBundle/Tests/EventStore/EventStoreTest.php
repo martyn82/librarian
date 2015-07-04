@@ -22,6 +22,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         );
 
         $eventBus = $this->getMockBuilder(EventBus::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $store = new EventStore($eventBus);
@@ -44,6 +45,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         self::setExpectedException(AggregateNotFoundException::class);
 
         $eventBus = $this->getMockBuilder(EventBus::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $store = new EventStore($eventBus);
@@ -61,6 +63,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         );
 
         $eventBus = $this->getMockBuilder(EventBus::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $eventBus->expects(self::exactly($events->getIterator()->count()))

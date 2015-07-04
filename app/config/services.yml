@@ -1,6 +1,7 @@
 services:
   librarian.eventbus:
     class: AppBundle\Service\EventBus
+    arguments: [{AppBundle\Domain\Event\BookRegistered: ["@librarian.readmodel.service.logging"]}]
 
   librarian.eventstore:
     class: AppBundle\EventStore\EventStore
@@ -24,4 +25,7 @@ services:
 
   librarian.readmodel.service:
     class: AppBundle\Domain\Service\ReadModelService
-    arguments: ["@librarian.eventbus"]
+
+  librarian.readmodel.service.logging:
+    class: AppBundle\Domain\Service\LoggingEventHandler
+    arguments: ["@logger", "@librarian.readmodel.service"]

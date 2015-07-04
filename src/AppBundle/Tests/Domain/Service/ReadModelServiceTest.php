@@ -20,6 +20,7 @@ class ReadModelServiceTest extends \PHPUnit_Framework_TestCase
         $event = new BookRegistered($id, $title);
 
         $eventBus = $this->getMockBuilder(EventBus::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $readModel = new ReadModelService($eventBus);
@@ -37,6 +38,7 @@ class ReadModelServiceTest extends \PHPUnit_Framework_TestCase
         $event = new BookRegistered($id, $title);
 
         $eventBus = $this->getMockBuilder(EventBus::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $readModel = new ReadModelService($eventBus);
@@ -51,6 +53,7 @@ class ReadModelServiceTest extends \PHPUnit_Framework_TestCase
         self::setExpectedException(ObjectNotFoundException::class);
 
         $eventBus = $this->getMockBuilder(EventBus::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $readModel = new ReadModelService($eventBus);

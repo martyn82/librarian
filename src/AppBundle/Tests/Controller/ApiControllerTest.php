@@ -18,6 +18,6 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $controller = new ApiController($commandBus, $readModel);
-        $controller->registerBookAction();
+        $controller->registerBookAction('foo');
     }
 }

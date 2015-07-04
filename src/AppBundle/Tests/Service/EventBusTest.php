@@ -20,8 +20,11 @@ class EventBusTest extends \PHPUnit_Framework_TestCase
             ->method('handle')
             ->with($event);
 
-        $eventBus = new EventBus();
-        $eventBus->registerHandler(get_class($event), $handler);
+        $eventBus = new EventBus(
+            [
+                get_class($event) => [$handler]
+            ]
+        );
 
         $eventBus->publish($event);
     }
@@ -31,7 +34,7 @@ class EventBusTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(Event::class)
             ->getMock();
 
-        $eventBus = new EventBus();
+        $eventBus = new EventBus([]);
         $eventBus->publish($event);
     }
 }

@@ -16,15 +16,6 @@ class ReadModelService implements ReadModel, HandlesBookRegistered
     private $storage = [];
 
     /**
-     * @param EventBus $eventBus
-     */
-    public function __construct(EventBus $eventBus)
-    {
-        $this->storage = [];
-        $eventBus->registerHandler(BookRegistered::class, $this);
-    }
-
-    /**
      * @param Event $event
      */
     public function handle(Event $event)

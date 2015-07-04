@@ -43,16 +43,17 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/register-book", name="registerBook")
+     * @Route("/register-book/{title}", name="registerBook")
      * @Template("default/index.html.twig")
      *
+     * @param string $title
      * @return array
      */
-    public function registerBookAction()
+    public function registerBookAction($title)
     {
         $id = Guid::createNew();
 
-        $command = new RegisterBook($id, 'book title');
+        $command = new RegisterBook($id, $title);
         $this->commandBus->handle($command);
 
         $book = $this->readModel->getBook($id);
