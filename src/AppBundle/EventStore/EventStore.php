@@ -2,27 +2,12 @@
 
 namespace AppBundle\EventStore;
 
-use Psr\Log\LoggerInterface;
-
 class EventStore
 {
     /**
      * @var array
      */
     private $current = [];
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
 
     /**
      * @param Guid $aggregateId
@@ -36,8 +21,6 @@ class EventStore
 
         foreach ($events->getIterator() as $event) {
             $this->current[$aggregateId->getValue()][] = $event;
-
-            $this->logEventStored($event);
         }
     }
 
@@ -53,17 +36,5 @@ class EventStore
         }
 
         return new Events($this->current[$aggregateId->getValue()]);
-    }
-
-    /**
-     * @param Event $event
-     */
-    private function logEventStored(Event $event)
-    {
-        if ($this->logger == null) {
-            return;
-        }
-
-        $this->logger->debug("Event stored", [$event]);
     }
 }
