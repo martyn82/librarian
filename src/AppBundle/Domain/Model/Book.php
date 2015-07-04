@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\Model;
 
-use AppBundle\Domain\Event\BookRegistered;
+use AppBundle\Domain\Message\Event\BookRegistered;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\Guid;
 

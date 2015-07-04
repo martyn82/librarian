@@ -4,9 +4,8 @@ namespace AppBundle\Domain\Repository;
 
 use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\EventStore;
-use AppBundle\Service\Repository;
 
-class Books implements Repository
+class Books
 {
     /**
      * @var EventStore

@@ -2,6 +2,9 @@
 
 namespace AppBundle\EventStore;
 
+use AppBundle\Message\Event;
+use AppBundle\Message\Events;
+
 abstract class AggregateRoot
 {
     /**

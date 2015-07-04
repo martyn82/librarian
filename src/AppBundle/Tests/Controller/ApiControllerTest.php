@@ -4,7 +4,7 @@ namespace AppBundle\Tests\Controller;
 
 use AppBundle\Controller\ApiController;
 use AppBundle\Domain\Service\ReadModel;
-use AppBundle\Service\CommandBus;
+use AppBundle\MessageBus\CommandBus;
 
 class ApiControllerTest extends \PHPUnit_Framework_TestCase
 {

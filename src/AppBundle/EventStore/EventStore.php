@@ -2,7 +2,8 @@
 
 namespace AppBundle\EventStore;
 
-use AppBundle\Service\EventBus;
+use AppBundle\Message\Events;
+use AppBundle\MessageBus\EventBus;
 
 class EventStore
 {

@@ -2,11 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Domain\Command\RegisterBook;
-use AppBundle\Domain\Model\Book;
+use AppBundle\Domain\Message\Command\RegisterBook;
+use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\ReadModel;
 use AppBundle\EventStore\Guid;
-use AppBundle\Service\CommandBus;
+use AppBundle\MessageBus\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -34,7 +34,7 @@ class ApiController extends Controller
      * })
      *
      * @param CommandBus $commandBus
-     * @param ReadModelFacade $readModel
+     * @param ReadModel $readModel
      */
     public function __construct(CommandBus $commandBus, ReadModel $readModel)
     {
@@ -56,10 +56,8 @@ class ApiController extends Controller
         $command = new RegisterBook($id, $title);
         $this->commandBus->handle($command);
 
-        $book = $this->readModel->getBook($id);
-
         return [
-            'book' => $book
+            'book' => $this->readModel->getBook($id)
         ];
     }
 }

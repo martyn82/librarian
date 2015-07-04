@@ -2,13 +2,14 @@
 
 namespace AppBundle\Domain\Service;
 
-use AppBundle\Domain\DTO\Book;
-use AppBundle\Domain\Event\BookRegistered;
-use AppBundle\EventStore\Event;
+use AppBundle\Domain\MessageHandler\EventHandler\BookRegisteredHandler;
+use AppBundle\Domain\Message\Event\BookRegistered;
+use AppBundle\Domain\Model\BookView;
 use AppBundle\EventStore\Guid;
-use AppBundle\Service\EventBus;
+use AppBundle\Message\Event;
+use AppBundle\MessageBus\EventBus;
 
-class ReadModelService implements ReadModel, HandlesBookRegistered
+class ReadModelService implements ReadModel, BookRegisteredHandler
 {
     /**
      * @var array
@@ -34,7 +35,7 @@ class ReadModelService implements ReadModel, HandlesBookRegistered
      */
     public function handleBookRegistered(BookRegistered $event)
     {
-        $this->storage[$event->getId()->getValue()] = new Book($event->getId(), $event->getTitle());
+        $this->storage[$event->getId()->getValue()] = new BookView($event->getId(), $event->getTitle());
     }
 
     /**
