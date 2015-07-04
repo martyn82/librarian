@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\RegisterBook;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\BookService;
+use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -34,22 +36,32 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/register-book/{title}", name="registerBook")
+     * @Route("/register-book/{authorName}/{title}", name="registerBook")
      * @Template("default/index.html.twig")
      *
+     * @param string $authorName
      * @param string $title
      * @return array
      */
-    public function registerBookAction($title)
+    public function registerBookAction($authorName, $title)
     {
-        $id = Guid::createNew();
+        $bookId = Guid::createNew();
 
         $this->bookService->execute(
-            new RegisterBook($id, $title)
+            new RegisterBook($bookId, $title)
+        );
+
+        $authorId = Guid::createNew();
+        $authorNames = explode(' ', $authorName);
+        $authorFirstName = $authorNames[0];
+        $authorLastName = isset($authorNames[1]) ? $authorNames[1] : '';
+
+        $this->bookService->execute(
+            new AddAuthor($authorId, $bookId, $authorFirstName, $authorLastName)
         );
 
         return [
-            'book' => $this->bookService->getBook($id)
+            'book' => $this->bookService->getBook($bookId)
         ];
     }
 }

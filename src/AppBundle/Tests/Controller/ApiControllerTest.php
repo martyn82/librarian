@@ -13,10 +13,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $service->expects(self::once())
+        $service->expects(self::atLeastOnce())
             ->method('execute');
 
         $controller = new ApiController($service);
-        $controller->registerBookAction('foo');
+        $controller->registerBookAction('foo', 'bar');
     }
 }

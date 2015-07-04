@@ -16,11 +16,13 @@ class BookView
 
     /**
      * @param Guid $id
+     * @param array $authors
      * @param string $title
      */
-    public function __construct(Guid $id, $title)
+    public function __construct(Guid $id, array $authors, $title)
     {
         $this->id = $id;
+        $this->authors = $authors;
         $this->title = $title;
     }
 }

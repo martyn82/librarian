@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Repository;
 
 use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\EventStore;
+use AppBundle\Domain\Model\Author;
 
 class Books
 {

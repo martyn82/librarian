@@ -1,23 +1,32 @@
 services:
+  # aggregate read model
   librarian.readmodel:
     class: AppBundle\Domain\Service\BookReadModel
 
-  librarian.eventhandler.logging:
-    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingEventHandler
-    arguments: ["@logger", "@librarian.readmodel"]
-
-  librarian.eventbus:
-    class: AppBundle\MessageBus\EventBus
-    arguments: [{AppBundle\Domain\Message\Event\BookRegistered: ["@librarian.eventhandler.logging"]}]
-
+  # event store
   librarian.eventstore:
     class: AppBundle\EventStore\EventStore
     arguments: ["@librarian.eventbus"]
 
+  # aggregate repositories
   librarian.repository.books:
     class: AppBundle\Domain\Repository\Books
     arguments: ["@librarian.eventstore"]
 
+  # message buses
+  librarian.eventbus:
+    class: AppBundle\MessageBus\EventBus
+    arguments: [{ AppBundle\Domain\Message\Event\BookRegistered: ["@librarian.eventhandler.logging"], AppBundle\Domain\Message\Event\AuthorAdded: ["@librarian.eventhandler.logging"] }]
+
+  librarian.commandbus:
+    class: AppBundle\MessageBus\CommandBus
+    arguments: [{ AppBundle\Domain\Message\Command\RegisterBook: "@librarian.commandhandler.register_book.logging", AppBundle\Domain\Message\Command\AddAuthor: "@librarian.commandhandler.add_author.logging" }]
+
+  # command/event handlers
+  librarian.eventhandler.logging:
+    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingEventHandler
+    arguments: ["@logger", "@librarian.readmodel"]
+  
   librarian.commandhandler.register_book:
     class: AppBundle\Domain\MessageHandler\CommandHandler\RegisterBookHandler
     arguments: ["@librarian.repository.books"]
@@ -26,10 +35,15 @@ services:
     class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingCommandHandler
     arguments: ["@logger", "@librarian.commandhandler.register_book"]
 
-  librarian.commandbus:
-    class: AppBundle\MessageBus\CommandBus
-    arguments: [{AppBundle\Domain\Message\Command\RegisterBook: "@librarian.commandhandler.register_book.logging"}]
+  librarian.commandhandler.add_author:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\AddAuthorHandler
+    arguments: ["@librarian.repository.books"]
 
+  librarian.commandhandler.add_author.logging:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingCommandHandler
+    arguments: ["@logger", "@librarian.commandhandler.add_author"]
+
+  # aggregate services
   librarian.service.book:
     class: AppBundle\Domain\Service\BookService
     arguments: ["@librarian.readmodel", "@librarian.commandbus"]

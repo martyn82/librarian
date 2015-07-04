@@ -2,6 +2,7 @@
 
 namespace AppBundle\Domain\Service;
 
+use AppBundle\Domain\Model\AuthorView;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Command;
