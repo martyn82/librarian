@@ -3,13 +3,13 @@
 namespace AppBundle\Tests\EventStore;
 
 use AppBundle\EventStore\AggregateNotFoundException;
-use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\MemoryEventStore;
 use AppBundle\Message\Event;
 use AppBundle\Message\Events;
 use AppBundle\MessageBus\EventBus;
 
-class EventStoreTest extends \PHPUnit_Framework_TestCase
+class MemoryEventStoreTest extends \PHPUnit_Framework_TestCase
 {
     public function testSaveEventsForAggregateStoresEventsInCorrectOrder()
     {
@@ -25,7 +25,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $store = new EventStore($eventBus);
+        $store = new MemoryEventStore($eventBus);
         $store->save($id, $events);
 
         $retrievedEvents = $store->getEventsForAggregate($id);
@@ -48,7 +48,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $store = new EventStore($eventBus);
+        $store = new MemoryEventStore($eventBus);
         $store->getEventsForAggregate(Guid::createNew());
     }
 
@@ -70,7 +70,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->method('publish')
             ->with(self::logicalOr($events->getIterator()->offsetGet(0), $events->getIterator()->offsetGet(1)));
 
-        $store = new EventStore($eventBus);
+        $store = new MemoryEventStore($eventBus);
         $store->save($id, $events);
     }
 }

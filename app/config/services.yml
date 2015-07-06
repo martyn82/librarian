@@ -5,7 +5,7 @@ services:
 
   # event store
   librarian.eventstore:
-    class: AppBundle\EventStore\EventStore
+    class: AppBundle\EventStore\MemoryEventStore
     arguments: ["@librarian.eventbus"]
 
   # aggregate repositories
