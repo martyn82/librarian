@@ -64,6 +64,6 @@ class BooksTest extends \PHPUnit_Framework_TestCase
 
         self::assertEquals($expectedBook->getId(), $actualBook->getId());
         self::assertEquals($expectedBook->getTitle(), $actualBook->getTitle());
-        self::assertEquals($expectedBook->getAuthors(), $actualBook->getAuthors());
+        self::assertEquals($expectedBook->getAuthorIds(), $actualBook->getAuthorIds());
     }
 }

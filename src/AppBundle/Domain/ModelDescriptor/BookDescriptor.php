@@ -3,13 +3,14 @@
 namespace AppBundle\Domain\ModelDescriptor;
 
 use AppBundle\Domain\Model\AuthorView;
+use AppBundle\EventStore\Guid;
 
 trait BookDescriptor
 {
     /**
-     * @var array
+     * @var Guid[]
      */
-    private $authors = [];
+    private $authorIds = [];
 
     /**
      * @var string
@@ -25,10 +26,10 @@ trait BookDescriptor
     }
 
     /**
-     * @return array
+     * @return Guid[]
      */
-    public function getAuthors()
+    public function getAuthorIds()
     {
-        return $this->authors;
+        return $this->authorIds;
     }
 }

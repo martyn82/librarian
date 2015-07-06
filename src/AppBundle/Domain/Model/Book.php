@@ -70,6 +70,6 @@ class Book extends AggregateRoot
      */
     protected function applyAuthorAdded(AuthorAdded $event)
     {
-        $this->authors[] = $event->getId();
+        $this->authorIds[] = $event->getId();
     }
 }
