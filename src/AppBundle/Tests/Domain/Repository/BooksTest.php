@@ -2,10 +2,14 @@
 
 namespace AppBundle\Tests\Domain\Repository;
 
+use AppBundle\Domain\Message\Event\AuthorAdded;
+use AppBundle\Domain\Message\Event\BookRegistered;
 use AppBundle\Domain\Model\Book;
+use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
+use AppBundle\Message\Events;
 
 class BooksTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,5 +29,41 @@ class BooksTest extends \PHPUnit_Framework_TestCase
 
         $repository = new Books($storage);
         $repository->store($book);
+    }
+
+    public function testFindBookByIdLoadsBookFromHistory()
+    {
+        $bookId = Guid::createNew();
+        $authorId = Guid::createNew();
+
+        $title = 'foo';
+        $authorFirstName = 'first';
+        $authorLastName = 'last';
+
+        $expectedBook = Book::register($bookId, $title);
+        $expectedBook->addAuthor($authorId, $authorFirstName, $authorLastName);
+
+        $events = new Events(
+            [
+                new BookRegistered($bookId, $title),
+                new AuthorAdded($authorId, $bookId, $authorFirstName, $authorLastName)
+            ]
+        );
+
+        $storage = $this->getMockBuilder(EventStore::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $storage->expects(self::once())
+            ->method('getEventsForAggregate')
+            ->with($bookId)
+            ->will(self::returnValue($events));
+
+        $repository = new Books($storage);
+        $actualBook = $repository->findById($bookId);
+
+        self::assertEquals($expectedBook->getId(), $actualBook->getId());
+        self::assertEquals($expectedBook->getTitle(), $actualBook->getTitle());
+        self::assertEquals($expectedBook->getAuthors(), $actualBook->getAuthors());
     }
 }

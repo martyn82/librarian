@@ -4,7 +4,7 @@ namespace AppBundle\Domain\Repository;
 
 use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\EventStore;
-use AppBundle\Domain\Model\Author;
+use AppBundle\EventStore\Guid;
 
 class Books
 {
@@ -19,6 +19,20 @@ class Books
     public function __construct(EventStore $storage)
     {
         $this->storage = $storage;
+    }
+
+    /**
+     * @param Guid $id
+     * @return Book
+     */
+    public function findById(Guid $id)
+    {
+        $events = $this->storage->getEventsForAggregate($id);
+
+        $book = new Book($id);
+        $book->loadFromHistory($events);
+
+        return $book;
     }
 
     /**

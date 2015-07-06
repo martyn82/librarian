@@ -6,18 +6,16 @@ use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookRegistered;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\Guid;
+use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 
 class Book extends AggregateRoot
 {
+    use BookDescriptor;
+
     /**
      * @var Guid
      */
     private $id;
-
-    /**
-     * @var array
-     */
-    private $authors = [];
 
     /**
      * @param Guid $id
@@ -53,7 +51,7 @@ class Book extends AggregateRoot
     /**
      * @see \AppBundle\EventStore\AggregateRoot::getId()
      */
-    public function getId()
+    final public function getId()
     {
         return $this->id;
     }
@@ -64,6 +62,7 @@ class Book extends AggregateRoot
     protected function applyBookRegistered(BookRegistered $event)
     {
         $this->id = $event->getId();
+        $this->title = $event->getTitle();
     }
 
     /**

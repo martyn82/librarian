@@ -9,12 +9,15 @@ use AppBundle\Message\Command;
 
 final class RegisterBook implements Command
 {
-    use BookDescriptor;
-
     /**
      * @var Guid
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $title;
 
     /**
      * @param Guid $id
@@ -32,5 +35,13 @@ final class RegisterBook implements Command
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 }

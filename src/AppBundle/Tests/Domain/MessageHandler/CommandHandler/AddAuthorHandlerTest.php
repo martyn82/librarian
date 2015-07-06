@@ -2,11 +2,12 @@
 
 namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 
-use AppBundle\Domain\Repository\Books;
 use AppBundle\Domain\Message\Command\AddAuthor;
-use AppBundle\EventStore\Guid;
-use AppBundle\Domain\Model\Book;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddAuthorHandler;
+use AppBundle\Domain\Model\Book;
+use AppBundle\Domain\Repository\Books;
+use AppBundle\EventStore\Guid;
+
 class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddAuthorHandlerWillCallStoreOnBooksRepository()
