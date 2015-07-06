@@ -14,13 +14,13 @@ services:
     arguments: ["@librarian.eventstore"]
 
   # message buses
-  librarian.eventbus:
-    class: AppBundle\MessageBus\EventBus
-    arguments: [{ AppBundle\Domain\Message\Event\BookAdded: ["@librarian.eventhandler.logging"], AppBundle\Domain\Message\Event\AuthorAdded: ["@librarian.eventhandler.logging"] }]
-
   librarian.commandbus:
     class: AppBundle\MessageBus\CommandBus
     arguments: [{ AppBundle\Domain\Message\Command\AddBook: "@librarian.commandhandler.add_book.logging", AppBundle\Domain\Message\Command\AddAuthor: "@librarian.commandhandler.add_author.logging" }]
+
+  librarian.eventbus:
+    class: AppBundle\MessageBus\EventBus
+    arguments: [{ AppBundle\Domain\Message\Event\BookAdded: ["@librarian.eventhandler.logging"], AppBundle\Domain\Message\Event\AuthorAdded: ["@librarian.eventhandler.logging"] }]
 
   # command/event handlers
   librarian.eventhandler.logging:
