@@ -4,7 +4,7 @@ namespace AppBundle\Domain\MessageHandler\CommandHandler;
 
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\Model\Book;
-use AppBundle\Domain\Repository\Books;
+use AppBundle\EventStore\Repository;
 use AppBundle\Message\Command;
 use AppBundle\MessageHandler\CommandHandler;
 use Psr\Log\LoggerInterface;
@@ -12,16 +12,16 @@ use Psr\Log\LoggerInterface;
 class AddBookHandler implements CommandHandler
 {
     /**
-     * @var Books
+     * @var Repository
      */
-    private $books;
+    private $repository;
 
     /**
-     * @param Books $repository
+     * @param Repository $repository
      */
-    public function __construct(Books $repository)
+    public function __construct(Repository $repository)
     {
-        $this->books = $repository;
+        $this->repository = $repository;
     }
 
     /**
@@ -38,6 +38,6 @@ class AddBookHandler implements CommandHandler
     private function handleAddBook(AddBook $command)
     {
         $book = Book::add($command->getId(), $command->getTitle());
-        $this->books->store($book);
+        $this->repository->store($book);
     }
 }

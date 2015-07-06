@@ -3,10 +3,12 @@
 namespace AppBundle\Domain\Repository;
 
 use AppBundle\Domain\Model\Book;
+use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Repository;
 
-class Books
+class Books implements Repository
 {
     /**
      * @var EventStore
@@ -23,7 +25,7 @@ class Books
 
     /**
      * @param Guid $id
-     * @return Book
+     * @return AggregateRoot
      */
     public function findById(Guid $id)
     {
@@ -36,10 +38,10 @@ class Books
     }
 
     /**
-     * @param Book $book
+     * @see \AppBundle\EventStore\Repository::store()
      */
-    public function store(Book $book)
+    public function store(AggregateRoot $aggregate)
     {
-        $this->storage->save($book->getId(), $book->getUncommittedChanges());
+        $this->storage->save($aggregate->getId(), $aggregate->getUncommittedChanges());
     }
 }

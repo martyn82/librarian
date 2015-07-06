@@ -5,12 +5,12 @@ namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddAuthorHandler;
 use AppBundle\Domain\Model\Book;
-use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Repository;
 
 class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testAddAuthorHandlerWillCallStoreOnBooksRepository()
+    public function testAddAuthorHandlerWillCallStoreOnRepository()
     {
         $authorId = Guid::createNew();
         $bookId = Guid::createNew();
@@ -20,7 +20,7 @@ class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
         $command = new AddAuthor($authorId, $bookId, $firstName, $lastName);
         $book = Book::add($bookId, 'title');
 
-        $repository = $this->getMockBuilder(Books::class)
+        $repository = $this->getMockBuilder(Repository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
