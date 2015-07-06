@@ -2,12 +2,12 @@
 
 namespace AppBundle\Tests\Domain\MessageHandler\EventHandler;
 
-use AppBundle\Domain\MessageHandler\EventHandler\LoggingEventHandler;
+use AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator;
 use AppBundle\Message\Event;
 use AppBundle\MessageHandler\EventHandler;
 use Psr\Log\LoggerInterface;
 
-class LoggingEventHandlerTest extends \PHPUnit_Framework_TestCase
+class LoggingDecoratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testHandleCallsLogger()
     {
@@ -23,7 +23,7 @@ class LoggingEventHandlerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(Event::class)
             ->getMock();
 
-        $handler = new LoggingEventHandler($logger, $inner);
+        $handler = new LoggingDecorator($logger, $inner);
         $handler->handle($event);
     }
 
@@ -42,7 +42,7 @@ class LoggingEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handle')
             ->with($event);
 
-        $handler = new LoggingEventHandler($logger, $inner);
+        $handler = new LoggingDecorator($logger, $inner);
         $handler->handle($event);
     }
 }

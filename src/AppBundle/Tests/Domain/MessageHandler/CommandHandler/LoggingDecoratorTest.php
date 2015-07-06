@@ -2,12 +2,12 @@
 
 namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 
-use AppBundle\Domain\MessageHandler\CommandHandler\LoggingCommandHandler;
+use AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator;
 use AppBundle\Message\Command;
 use AppBundle\MessageHandler\CommandHandler;
 use Psr\Log\LoggerInterface;
 
-class LoggingCommandHandlerTest extends \PHPUnit_Framework_TestCase
+class LoggingDecoratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testDecoratedHandlerWillBeCalledOnHandle()
     {
@@ -26,7 +26,7 @@ class LoggingCommandHandlerTest extends \PHPUnit_Framework_TestCase
         $logger = $this->getMockBuilder(LoggerInterface::class)
             ->getMock();
 
-        $handler = new LoggingCommandHandler($logger, $inner);
+        $handler = new LoggingDecorator($logger, $inner);
         $handler->handle($command);
     }
 
@@ -44,7 +44,7 @@ class LoggingCommandHandlerTest extends \PHPUnit_Framework_TestCase
         $command = $this->getMockBuilder(Command::class)
             ->getMock();
 
-        $handler = new LoggingCommandHandler($logger, $inner);
+        $handler = new LoggingDecorator($logger, $inner);
         $handler->handle($command);
     }
 }

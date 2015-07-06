@@ -6,7 +6,7 @@ use AppBundle\Message\Event;
 use AppBundle\MessageHandler\EventHandler;
 use Psr\Log\LoggerInterface;
 
-class LoggingEventHandler implements EventHandler
+class LoggingDecorator implements EventHandler
 {
     /**
      * @var LoggerInterface

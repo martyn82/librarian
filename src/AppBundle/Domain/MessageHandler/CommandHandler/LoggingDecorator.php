@@ -6,7 +6,7 @@ use AppBundle\Message\Command;
 use AppBundle\MessageHandler\CommandHandler;
 use Psr\Log\LoggerInterface;
 
-class LoggingCommandHandler implements CommandHandler
+class LoggingDecorator implements CommandHandler
 {
     /**
      * @var LoggerInterface

@@ -24,7 +24,7 @@ services:
 
   # command/event handlers
   librarian.eventhandler.logging:
-    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingEventHandler
+    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator
     arguments: ["@logger", "@librarian.readmodel"]
   
   librarian.commandhandler.add_book:
@@ -32,7 +32,7 @@ services:
     arguments: ["@librarian.repository.books"]
 
   librarian.commandhandler.add_book.logging:
-    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingCommandHandler
+    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator
     arguments: ["@logger", "@librarian.commandhandler.add_book"]
 
   librarian.commandhandler.add_author:
@@ -40,14 +40,10 @@ services:
     arguments: ["@librarian.repository.books"]
 
   librarian.commandhandler.add_author.logging:
-    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingCommandHandler
+    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator
     arguments: ["@logger", "@librarian.commandhandler.add_author"]
 
   # aggregate services
   librarian.service.book:
     class: AppBundle\Domain\Service\BookService
     arguments: ["@librarian.readmodel", "@librarian.commandbus"]
-
-  librarian.service.book.logging:
-    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingEventHandler
-    arguments: ["@logger", "@librarian.service.book"]
