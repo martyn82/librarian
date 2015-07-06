@@ -26,20 +26,14 @@ class BookReadModel implements AuthorAddedHandler, BookAddedHandler
      */
     public function handle(Event $event)
     {
-        $eventClassName = get_class($event);
+        $eventHandleMethod = 'handle' . $event->getEventName();
 
-        switch ($eventClassName) {
-            case BookAdded::class:
-                $this->handleBookAdded($event);
-                break;
-
-            case AuthorAdded::class:
-                $this->handleAuthorAdded($event);
-                break;
-
-            default:
-                throw new \InvalidArgumentException("Unable to handle event '{$eventClassName}'.");
+        if (!method_exists($this, $eventHandleMethod) || $event->getEventName() == null) {
+            $eventClassName = get_class($event);
+            throw new \InvalidArgumentException("Unable to handle event '{$eventClassName}'.");
         }
+
+        $this->{$eventHandleMethod}($event);
     }
 
     /**
