@@ -3,7 +3,7 @@
 namespace AppBundle\Domain\Model;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
-use AppBundle\Domain\Message\Event\BookRegistered;
+use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\Guid;
 use AppBundle\Domain\ModelDescriptor\BookDescriptor;
@@ -22,10 +22,10 @@ class Book extends AggregateRoot
      * @param string $title
      * @return Book
      */
-    public static function register(Guid $id, $title)
+    public static function add(Guid $id, $title)
     {
         $instance = new self($id);
-        $instance->applyChange(new BookRegistered($instance->getId(), $title));
+        $instance->applyChange(new BookAdded($instance->getId(), $title));
         return $instance;
     }
 
@@ -57,9 +57,9 @@ class Book extends AggregateRoot
     }
 
     /**
-     * @param BookRegistered $event
+     * @param BookAdded $event
      */
-    protected function applyBookRegistered(BookRegistered $event)
+    protected function applyBookAdded(BookAdded $event)
     {
         $this->id = $event->getId();
         $this->title = $event->getTitle();

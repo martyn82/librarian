@@ -6,7 +6,7 @@ use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 
-final class BookRegistered extends Event
+final class BookAdded extends Event
 {
     use BookDescriptor;
 

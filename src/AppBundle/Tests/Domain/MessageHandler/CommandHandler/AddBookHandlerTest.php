@@ -2,22 +2,22 @@
 
 namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 
-use AppBundle\Domain\Message\Command\RegisterBook;
-use AppBundle\Domain\MessageHandler\CommandHandler\RegisterBookHandler;
+use AppBundle\Domain\Message\Command\AddBook;
+use AppBundle\Domain\MessageHandler\CommandHandler\AddBookHandler;
 use AppBundle\Domain\Model\Book;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\Guid;
 
-class RegisterBookHandlerTest extends \PHPUnit_Framework_TestCase
+class AddBookHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRegisterBookHandlerWillCallStoreOnBooksRepository()
+    public function testAddBookHandlerWillCallStoreOnBooksRepository()
     {
         $id = Guid::createNew();
         $title = 'foo';
 
-        $command = new RegisterBook($id, $title);
-        $book = Book::register($command->getId(), $command->getTitle());
+        $command = new AddBook($id, $title);
+        $book = Book::add($command->getId(), $command->getTitle());
 
         $repository = $this->getMockBuilder(Books::class)
             ->disableOriginalConstructor()
@@ -27,7 +27,7 @@ class RegisterBookHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('store')
             ->with($book);
 
-        $handler = new RegisterBookHandler($repository);
+        $handler = new AddBookHandler($repository);
         $handler->handle($command);
     }
 }

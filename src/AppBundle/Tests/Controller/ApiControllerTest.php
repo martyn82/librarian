@@ -7,7 +7,7 @@ use AppBundle\Domain\Service\BookService;
 
 class ApiControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRegisterBookCallsExecuteOnService()
+    public function testAddBookCallsExecuteOnService()
     {
         $service = $this->getMockBuilder(BookService::class)
             ->disableOriginalConstructor()
@@ -17,6 +17,6 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase
             ->method('execute');
 
         $controller = new ApiController($service);
-        $controller->registerBookAction('foo', 'bar');
+        $controller->addBookAction('foo', 'bar');
     }
 }

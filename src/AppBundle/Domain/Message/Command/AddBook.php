@@ -7,7 +7,7 @@ use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Command;
 
-final class RegisterBook implements Command
+final class AddBook implements Command
 {
     /**
      * @var Guid

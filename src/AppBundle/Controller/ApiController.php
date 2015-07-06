@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Domain\Message\Command\AddAuthor;
-use AppBundle\Domain\Message\Command\RegisterBook;
+use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
@@ -36,19 +36,19 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/register-book/{authorName}/{title}", name="registerBook")
+     * @Route("/add-book/{authorName}/{title}", name="addBook")
      * @Template("default/index.html.twig")
      *
      * @param string $authorName
      * @param string $title
      * @return array
      */
-    public function registerBookAction($authorName, $title)
+    public function addBookAction($authorName, $title)
     {
         $bookId = Guid::createNew();
 
         $this->bookService->execute(
-            new RegisterBook($bookId, $title)
+            new AddBook($bookId, $title)
         );
 
         $authorId = Guid::createNew();

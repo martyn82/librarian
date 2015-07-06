@@ -2,7 +2,7 @@
 
 namespace AppBundle\Tests\Domain\Service;
 
-use AppBundle\Domain\Message\Event\BookRegistered;
+use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\BookReadModel;
 use AppBundle\Domain\Service\ObjectNotFoundException;
@@ -14,12 +14,12 @@ use AppBundle\Domain\Model\AuthorView;
 
 class BookReadModelTest extends \PHPUnit_Framework_TestCase
 {
-    public function testHandleWithBookRegisteredPropagatesToCorrectHandler()
+    public function testHandleWithBookAddedPropagatesToCorrectHandler()
     {
         $id = Guid::createNew();
         $title = 'foo';
 
-        $event = new BookRegistered($id, $title);
+        $event = new BookAdded($id, $title);
 
         $eventBus = $this->getMockBuilder(EventBus::class)
             ->disableOriginalConstructor()
@@ -33,19 +33,19 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         self::assertEquals($title, $book->getTitle());
     }
 
-    public function testHandlerForEventBookRegistered()
+    public function testHandlerForEventBookAdded()
     {
         $id = Guid::createNew();
         $title = 'foo';
 
-        $event = new BookRegistered($id, $title);
+        $event = new BookAdded($id, $title);
 
         $eventBus = $this->getMockBuilder(EventBus::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $readModel = new BookReadModel($eventBus);
-        $readModel->handleBookRegistered($event);
+        $readModel->handleBookAdded($event);
 
         $book = $readModel->getBook($id);
         self::assertInstanceOf(BookView::class, $book);
@@ -66,7 +66,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         $readModel = new BookReadModel($eventBus);
 
         // Given, a book with $bookId is available
-        $readModel->handleBookRegistered(new BookRegistered($bookId, 'foo'));
+        $readModel->handleBookAdded(new BookAdded($bookId, 'foo'));
 
         // When AuthorAdded for book with $bookId
         $event = new AuthorAdded($id, $bookId, $firstName, $lastName);
@@ -95,7 +95,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         $readModel = new BookReadModel($eventBus);
 
         // Given, a book with $bookId is available
-        $readModel->handleBookRegistered(new BookRegistered($bookId, 'foo'));
+        $readModel->handleBookAdded(new BookAdded($bookId, 'foo'));
 
         // When AuthorAdded for book with $bookId
         $event = new AuthorAdded($id, $bookId, $firstName, $lastName);

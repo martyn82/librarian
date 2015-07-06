@@ -3,16 +3,16 @@
 namespace AppBundle\Domain\Service;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
-use AppBundle\Domain\Message\Event\BookRegistered;
+use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\MessageHandler\EventHandler\AuthorAddedHandler;
-use AppBundle\Domain\MessageHandler\EventHandler\BookRegisteredHandler;
+use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
 use AppBundle\Domain\Model\AuthorView;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 
-class BookReadModel implements AuthorAddedHandler, BookRegisteredHandler
+class BookReadModel implements AuthorAddedHandler, BookAddedHandler
 {
     /**
      * @var array
@@ -28,8 +28,8 @@ class BookReadModel implements AuthorAddedHandler, BookRegisteredHandler
         $eventClassName = get_class($event);
 
         switch ($eventClassName) {
-            case BookRegistered::class:
-                $this->handleBookRegistered($event);
+            case BookAdded::class:
+                $this->handleBookAdded($event);
                 break;
 
             case AuthorAdded::class:
@@ -42,9 +42,9 @@ class BookReadModel implements AuthorAddedHandler, BookRegisteredHandler
     }
 
     /**
-     * @see \AppBundle\Domain\Service\BookRegisteredHandler::handleBookRegistered()
+     * @see \AppBundle\Domain\Service\BookAddedHandler::handleBookAdded()
      */
-    public function handleBookRegistered(BookRegistered $event)
+    public function handleBookAdded(BookAdded $event)
     {
         $this->storage[$event->getId()->getValue()] = new BookView($event->getId(), [], $event->getTitle());
     }
@@ -59,7 +59,11 @@ class BookReadModel implements AuthorAddedHandler, BookRegisteredHandler
         $authors = $oldBook->getAuthors();
         $authors[] = new AuthorView($event->getId(), $event->getFirstName(), $event->getLastName());
 
-        $this->storage[$event->getBookId()->getValue()] = new BookView($event->getBookId(), $authors, $oldBook->getTitle());
+        $this->storage[$event->getBookId()->getValue()] = new BookView(
+            $event->getBookId(),
+            $authors,
+            $oldBook->getTitle()
+        );
     }
 
     /**
