@@ -15,26 +15,29 @@ class BookView
     private $id;
 
     /**
-     * @var AuthorView[]
+     * @var Authors
      */
-    private $authors = [];
+    private $authors;
 
     /**
      * @param Guid $id
-     * @param AuthorView[] $authors
+     * @param Authors $authors
      * @param string $title
      */
-    public function __construct(Guid $id, array $authors, $title)
+    public function __construct(Guid $id, Authors $authors, $title)
     {
         $this->id = $id;
         $this->authors = $authors;
-        $this->authorIds = array_map(
+        $this->title = $title;
+
+        $authorIds = array_map(
             function (AuthorView $author) {
                 return $author->getId();
             },
-            $authors
+            iterator_to_array($authors->getIterator())
         );
-        $this->title = $title;
+
+        $this->authorIds = new Guids($authorIds);
     }
 
     /**
@@ -46,7 +49,7 @@ class BookView
     }
 
     /**
-     * @return AuthorView[]
+     * @return Authors
      */
     public function getAuthors()
     {

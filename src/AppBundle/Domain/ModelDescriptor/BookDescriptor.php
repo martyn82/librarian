@@ -2,15 +2,15 @@
 
 namespace AppBundle\Domain\ModelDescriptor;
 
-use AppBundle\Domain\Model\AuthorView;
+use AppBundle\Domain\Model\Guids;
 use AppBundle\EventStore\Guid;
 
 trait BookDescriptor
 {
     /**
-     * @var Guid[]
+     * @var Guids
      */
-    private $authorIds = [];
+    private $authorIds;
 
     /**
      * @var string
@@ -26,7 +26,7 @@ trait BookDescriptor
     }
 
     /**
-     * @return Guid[]
+     * @return Guids
      */
     public function getAuthorIds()
     {

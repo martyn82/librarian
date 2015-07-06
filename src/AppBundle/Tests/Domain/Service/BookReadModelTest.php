@@ -2,15 +2,15 @@
 
 namespace AppBundle\Tests\Domain\Service;
 
+use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\Model\AuthorView;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\BookReadModel;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 use AppBundle\MessageBus\EventBus;
-use AppBundle\Domain\Message\Event\AuthorAdded;
-use AppBundle\Domain\Model\AuthorView;
 
 class BookReadModelTest extends \PHPUnit_Framework_TestCase
 {
@@ -80,10 +80,13 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         $book = $readModel->getBook($bookId);
 
         self::assertCount(1, $book->getAuthors());
-        self::assertInstanceOf(AuthorView::class, $book->getAuthors()[0]);
-        self::assertEquals($id, $book->getAuthors()[0]->getId());
-        self::assertEquals($firstName, $book->getAuthors()[0]->getFirstName());
-        self::assertEquals($lastName, $book->getAuthors()[0]->getLastName());
+
+        $authors = iterator_to_array($book->getAuthors()->getIterator());
+
+        self::assertInstanceOf(AuthorView::class, $authors[0]);
+        self::assertEquals($id, $authors[0]->getId());
+        self::assertEquals($firstName, $authors[0]->getFirstName());
+        self::assertEquals($lastName, $authors[0]->getLastName());
     }
 
     public function testHandlerForEventAuthorAdded()
@@ -110,10 +113,13 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         $book = $readModel->getBook($bookId);
 
         self::assertCount(1, $book->getAuthors());
-        self::assertInstanceOf(AuthorView::class, $book->getAuthors()[0]);
-        self::assertEquals($id, $book->getAuthors()[0]->getId());
-        self::assertEquals($firstName, $book->getAuthors()[0]->getFirstName());
-        self::assertEquals($lastName, $book->getAuthors()[0]->getLastName());
+
+        $authors = iterator_to_array($book->getAuthors()->getIterator());
+
+        self::assertInstanceOf(AuthorView::class, $authors[0]);
+        self::assertEquals($id, $authors[0]->getId());
+        self::assertEquals($firstName, $authors[0]->getFirstName());
+        self::assertEquals($lastName, $authors[0]->getLastName());
     }
 
     public function testGetBookWithNonExistingIdThrowsException()

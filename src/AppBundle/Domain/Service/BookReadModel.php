@@ -6,6 +6,7 @@ use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\MessageHandler\EventHandler\AuthorAddedHandler;
 use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
+use AppBundle\Domain\Model\Authors;
 use AppBundle\Domain\Model\AuthorView;
 use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\ObjectNotFoundException;
@@ -46,7 +47,7 @@ class BookReadModel implements AuthorAddedHandler, BookAddedHandler
      */
     public function handleBookAdded(BookAdded $event)
     {
-        $this->storage[$event->getId()->getValue()] = new BookView($event->getId(), [], $event->getTitle());
+        $this->storage[$event->getId()->getValue()] = new BookView($event->getId(), new Authors(), $event->getTitle());
     }
 
     /**
@@ -55,9 +56,11 @@ class BookReadModel implements AuthorAddedHandler, BookAddedHandler
     public function handleAuthorAdded(AuthorAdded $event)
     {
         $oldBook = $this->getBook($event->getBookId());
+        $authors = clone $oldBook->getAuthors();
 
-        $authors = $oldBook->getAuthors();
-        $authors[] = new AuthorView($event->getId(), $event->getFirstName(), $event->getLastName());
+        $authors->add(
+            new AuthorView($event->getId(), $event->getFirstName(), $event->getLastName())
+        );
 
         $this->storage[$event->getBookId()->getValue()] = new BookView(
             $event->getBookId(),
