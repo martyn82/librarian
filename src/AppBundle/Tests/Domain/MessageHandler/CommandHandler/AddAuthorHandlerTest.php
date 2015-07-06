@@ -12,17 +12,22 @@ class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddAuthorHandlerWillCallStoreOnBooksRepository()
     {
-        $id = Guid::createNew();
+        $authorId = Guid::createNew();
         $bookId = Guid::createNew();
         $firstName = 'foo';
         $lastName = 'bar';
 
-        $command = new AddAuthor($id, $bookId, $firstName, $lastName);
+        $command = new AddAuthor($authorId, $bookId, $firstName, $lastName);
         $book = Book::register($bookId, 'title');
 
         $repository = $this->getMockBuilder(Books::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $repository->expects(self::once())
+            ->method('findById')
+            ->with($bookId)
+            ->will(self::returnValue($book));
 
         $repository->expects(self::once())
             ->method('store')

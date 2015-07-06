@@ -7,7 +7,6 @@ use AppBundle\Domain\Model\Author;
 use AppBundle\Domain\Repository\Books;
 use AppBundle\Message\Command;
 use AppBundle\MessageHandler\CommandHandler;
-use AppBundle\Domain\Model\Book;
 
 class AddAuthorHandler implements CommandHandler
 {
@@ -37,7 +36,7 @@ class AddAuthorHandler implements CommandHandler
      */
     private function handleAddAuthor(AddAuthor $command)
     {
-        $book = new Book($command->getBookId());
+        $book = $this->books->findById($command->getBookId());
         $book->addAuthor($command->getId(), $command->getFirstName(), $command->getLastName());
         $this->books->store($book);
     }
