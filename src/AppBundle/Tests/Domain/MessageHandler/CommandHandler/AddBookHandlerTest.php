@@ -5,7 +5,6 @@ namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddBookHandler;
 use AppBundle\Domain\Model\Book;
-use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\Guid;
 

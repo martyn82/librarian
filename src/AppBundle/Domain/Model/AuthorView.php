@@ -25,4 +25,12 @@ class AuthorView
         $this->firstName = $firstName;
         $this->lastName = $lastName;
     }
+
+    /**
+     * @return Guid
+     */
+    final public function getId()
+    {
+        return $this->id;
+    }
 }

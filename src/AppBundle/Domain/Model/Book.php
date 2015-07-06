@@ -4,9 +4,9 @@ namespace AppBundle\Domain\Model;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\Guid;
-use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 
 class Book extends AggregateRoot
 {

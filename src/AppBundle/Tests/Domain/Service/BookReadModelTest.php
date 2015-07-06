@@ -29,7 +29,9 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         $readModel->handle($event);
 
         $book = $readModel->getBook($id);
+
         self::assertInstanceOf(BookView::class, $book);
+        self::assertEquals($id, $book->getId());
         self::assertEquals($title, $book->getTitle());
     }
 
@@ -48,7 +50,9 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         $readModel->handleBookAdded($event);
 
         $book = $readModel->getBook($id);
+
         self::assertInstanceOf(BookView::class, $book);
+        self::assertEquals($id, $book->getId());
         self::assertEquals($title, $book->getTitle());
     }
 
@@ -77,6 +81,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
 
         self::assertCount(1, $book->getAuthors());
         self::assertInstanceOf(AuthorView::class, $book->getAuthors()[0]);
+        self::assertEquals($id, $book->getAuthors()[0]->getId());
         self::assertEquals($firstName, $book->getAuthors()[0]->getFirstName());
         self::assertEquals($lastName, $book->getAuthors()[0]->getLastName());
     }
@@ -106,6 +111,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
 
         self::assertCount(1, $book->getAuthors());
         self::assertInstanceOf(AuthorView::class, $book->getAuthors()[0]);
+        self::assertEquals($id, $book->getAuthors()[0]->getId());
         self::assertEquals($firstName, $book->getAuthors()[0]->getFirstName());
         self::assertEquals($lastName, $book->getAuthors()[0]->getLastName());
     }

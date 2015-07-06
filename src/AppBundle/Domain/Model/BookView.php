@@ -25,4 +25,12 @@ class BookView
         $this->authors = $authors;
         $this->title = $title;
     }
+
+    /**
+     * @return Guid
+     */
+    final public function getId()
+    {
+        return $this->id;
+    }
 }

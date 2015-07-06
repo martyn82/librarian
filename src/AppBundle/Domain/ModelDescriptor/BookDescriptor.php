@@ -7,9 +7,9 @@ use AppBundle\Domain\Model\AuthorView;
 trait BookDescriptor
 {
     /**
-     * @var AuthorView[]
+     * @var array
      */
-    private $authors;
+    private $authors = [];
 
     /**
      * @var string
@@ -25,7 +25,7 @@ trait BookDescriptor
     }
 
     /**
-     * @return AuthorView[]
+     * @return array
      */
     public function getAuthors()
     {
