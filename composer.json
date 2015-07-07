@@ -2,7 +2,7 @@
     "name": "Librarian",
     "license": "MIT",
     "type": "project",
-    "description": "Librarian application",
+    "description": "Library application",
     "autoload": {
         "psr-4": { "": "src/", "SymfonyStandard\\": "app/SymfonyStandard/" }
     },
@@ -20,7 +20,7 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "ext-mongo": "*",
         "jms/di-extra-bundle": "~1.5",
-        "doctrine/mongodb-odm-bundle": "~3.0"
+        "doctrine/mongodb": "~1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
