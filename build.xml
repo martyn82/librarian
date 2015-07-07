@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Librarian" default="test">
+    <property file="${project.basedir}/build.properties" />
+
+    <!--
+    <target name="clean">
+        <delete dir="${project.basedir}/build" quiet="true" />
+        <mkdir dir="${project.basedir}/build" />
+    </target>
+
+    <target name="buid" depends="clean"></target>
+    -->
+
+    <target name="test" description="Run Unit Tests">
+        <exec
+            executable="${project.basedir}/bin/phpunit"
+            checkreturn="true"
+            passthru="true"
+        >
+            <arg value="-c" />
+            <arg value="${project.basedir}/app/phpunit.xml.dist" />
+        </exec>
+    </target>
+
+    <target name="run">
+        <exec
+            command="${project.basedir}/app/console server:run ${app.local.host}:${app.local.port}"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <target name="run:mongo">
+        <exec
+            command="docker run --name ${container.events.name} -v ${container.events.volume} -d ${container.events.image}"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+</project>
