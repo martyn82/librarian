@@ -1,7 +1,10 @@
 services:
-  # event storage
+  # storage
   librarian.storage.events.memory:
     class: AppBundle\EventStore\Storage\MemoryEventStorage
+
+  librarian.storage.documents.memory:
+    class: AppBundle\Domain\Storage\MemoryStorage
 
   # event store
   librarian.eventstore:
@@ -46,3 +49,4 @@ services:
   # aggregate services
   librarian.service.book:
     class: AppBundle\Domain\Service\BookService
+    arguments: ["@librarian.storage.documents.memory"]

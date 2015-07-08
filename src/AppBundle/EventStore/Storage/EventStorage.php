@@ -5,21 +5,21 @@ namespace AppBundle\EventStore\Storage;
 interface EventStorage
 {
     /**
-     * @param string $id
+     * @param string $identity
      * @return bool
      */
-    public function contains($id);
+    public function contains($identity);
 
     /**
-     * @param string $id
+     * @param string $identity
      * @param array $data
      * @return bool
      */
-    public function append($id, array $data);
+    public function append($identity, array $data);
 
     /**
-     * @param string $id
+     * @param string $identity
      * @return array
      */
-    public function find($id);
+    public function find($identity);
 }

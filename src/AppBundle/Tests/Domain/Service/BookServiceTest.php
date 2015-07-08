@@ -7,10 +7,11 @@ use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
+use AppBundle\Domain\Storage\Storage;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Command;
 use AppBundle\Message\Event;
-use AppBundle\MessageBus\CommandBus;
+use AppBundle\Domain\Storage\MemoryStorage;
 
 class BookServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,18 +22,16 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
         $event = new BookAdded($id, $title);
 
-        $commandBus = $this->getMockBuilder(CommandBus::class)
+        $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $service = new BookService($commandBus);
+        $storage->expects(self::once())
+            ->method('upsert')
+            ->with($id, self::anything());
+
+        $service = new BookService($storage);
         $service->handle($event);
-
-        $book = $service->getBook($id);
-
-        self::assertInstanceOf(Book::class, $book);
-        self::assertEquals($id, $book->getId());
-        self::assertEquals($title, $book->getTitle());
     }
 
     public function testHandlerForEventBookAdded()
@@ -42,18 +41,16 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
         $event = new BookAdded($id, $title);
 
-        $commandBus = $this->getMockBuilder(CommandBus::class)
+        $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $service = new BookService($commandBus);
+        $storage->expects(self::once())
+            ->method('upsert')
+            ->with($id, self::anything());
+
+        $service = new BookService($storage);
         $service->handleBookAdded($event);
-
-        $book = $service->getBook($id);
-
-        self::assertInstanceOf(Book::class, $book);
-        self::assertEquals($id, $book->getId());
-        self::assertEquals($title, $book->getTitle());
     }
 
     public function testHandleWithAuthorAddedPropagatesToCorrectHandler()
@@ -63,29 +60,21 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $firstName = 'foo';
         $lastName = 'bar';
 
-        $commandBus = $this->getMockBuilder(CommandBus::class)
+        $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $service = new BookService($commandBus);
+        $storage->expects(self::once())
+            ->method('upsert')
+            ->with($bookId, self::anything());
 
-        // Given, a book with $bookId is available
-        $service->handleBookAdded(new BookAdded($bookId, 'foo'));
+        $storage->expects(self::once())
+            ->method('find')
+            ->with($bookId)
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo')));
 
-        // When AuthorAdded for book with $bookId
+        $service = new BookService($storage);
         $service->handle(new AuthorAdded($id, $bookId, $firstName, $lastName));
-
-        // Then book with $bookId contains new Author
-        $book = $service->getBook($bookId);
-
-        self::assertCount(1, $book->getAuthors());
-
-        $authors = iterator_to_array($book->getAuthors()->getIterator());
-
-        self::assertInstanceOf(Author::class, $authors[0]);
-        self::assertEquals($id, $authors[0]->getId());
-        self::assertEquals($firstName, $authors[0]->getFirstName());
-        self::assertEquals($lastName, $authors[0]->getLastName());
     }
 
     public function testHandlerForEventAuthorAdded()
@@ -95,40 +84,32 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $firstName = 'foo';
         $lastName = 'bar';
 
-        $commandBus = $this->getMockBuilder(CommandBus::class)
+        $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $service = new BookService($commandBus);
+        $storage->expects(self::once())
+            ->method('upsert')
+            ->with($bookId, self::anything());
 
-        // Given, a book with $bookId is available
-        $service->handleBookAdded(new BookAdded($bookId, 'foo'));
+        $storage->expects(self::once())
+            ->method('find')
+            ->with($bookId)
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo')));
 
-        // When AuthorAdded for book with $bookId
+        $service = new BookService($storage);
         $service->handleAuthorAdded(new AuthorAdded($id, $bookId, $firstName, $lastName));
-
-        // Then book with $bookId contains Author
-        $book = $service->getBook($bookId);
-
-        self::assertCount(1, $book->getAuthors());
-
-        $authors = iterator_to_array($book->getAuthors()->getIterator());
-
-        self::assertInstanceOf(Author::class, $authors[0]);
-        self::assertEquals($id, $authors[0]->getId());
-        self::assertEquals($firstName, $authors[0]->getFirstName());
-        self::assertEquals($lastName, $authors[0]->getLastName());
     }
 
     public function testGetBookWithNonExistingIdThrowsException()
     {
         self::setExpectedException(ObjectNotFoundException::class);
 
-        $commandBus = $this->getMockBuilder(CommandBus::class)
+        $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $service = new BookService($commandBus);
+        $service = new BookService($storage);
         $service->getBook(Guid::createNew());
     }
 
@@ -139,11 +120,37 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(Event::class)
            ->getMock();
 
-        $commandBus = $this->getMockBuilder(CommandBus::class)
+        $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $service = new BookService($commandBus);
+        $service = new BookService($storage);
         $service->handle($event);
+    }
+
+    public function testBookIsAvailableAfterBookAdded()
+    {
+        $bookId = Guid::createNew();
+        $title = 'foo';
+        $authorId = Guid::createNew();
+        $firstName = 'bar';
+        $lastName = 'baz';
+
+        $storage = new MemoryStorage();
+        $service = new BookService($storage);
+        $service->handle(new BookAdded($bookId, $title));
+        $service->handle(new AuthorAdded($authorId, $bookId, $firstName, $lastName));
+
+        $book = $service->getBook($bookId);
+
+        self::assertEquals($bookId, $book->getId());
+        self::assertEquals($title, $book->getTitle());
+
+        foreach ($book->getAuthors()->getIterator() as $author) {
+            /* @var $author Author */
+            self::assertEquals($authorId, $author->getId());
+            self::assertEquals($firstName, $author->getFirstName());
+            self::assertEquals($lastName, $author->getLastName());
+        }
     }
 }

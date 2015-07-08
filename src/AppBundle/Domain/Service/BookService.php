@@ -9,15 +9,24 @@ use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
+use AppBundle\Domain\Storage\Storage;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 
 class BookService implements AuthorAddedHandler, BookAddedHandler
 {
     /**
-     * @var array
+     * @var Storage
      */
-    private $storage = [];
+    private $storage;
+
+    /**
+     * @param Storage $storage
+     */
+    public function __construct(Storage $storage)
+    {
+        $this->storage = $storage;
+    }
 
     /**
      * @param Event $event
@@ -40,7 +49,10 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
      */
     public function handleBookAdded(BookAdded $event)
     {
-        $this->storage[$event->getId()->getValue()] = new Book($event->getId(), new Authors(), $event->getTitle());
+        $this->storage->upsert(
+            $event->getId()->getValue(),
+            new Book($event->getId(), new Authors(), $event->getTitle())
+        );
     }
 
     /**
@@ -55,10 +67,13 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
             new Author($event->getId(), $event->getFirstName(), $event->getLastName())
         );
 
-        $this->storage[$event->getBookId()->getValue()] = new Book(
-            $event->getBookId(),
-            $authors,
-            $oldBook->getTitle()
+        $this->storage->upsert(
+            $event->getBookId()->getValue(),
+            new Book(
+                $event->getBookId(),
+                $authors,
+                $oldBook->getTitle()
+            )
         );
     }
 
@@ -69,10 +84,12 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
      */
     public function getBook(Guid $id)
     {
-        if (!array_key_exists($id->getValue(), $this->storage)) {
+        $book = $this->storage->find($id->getValue());
+
+        if ($book === null) {
             throw new ObjectNotFoundException('Book', $id);
         }
 
-        return $this->storage[$id->getValue()];
+        return $book;
     }
 }

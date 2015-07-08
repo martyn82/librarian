@@ -4,9 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
-use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\BookService;
-use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
 use AppBundle\MessageBus\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
