@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventStore;
 
-use AppBundle\EventStore\Storage\Storage;
+use AppBundle\EventStore\Storage\EventStorage;
 use AppBundle\Message\Event;
 use AppBundle\Message\Events;
 use AppBundle\MessageBus\EventBus;
@@ -15,15 +15,15 @@ class EventStore
     private $eventBus;
 
     /**
-     * @var Storage
+     * @var EventStorage
      */
     private $storage;
 
     /**
      * @param EventBus $eventBus
-     * @param Storage $storage
+     * @param EventStorage $storage
      */
-    public function __construct(EventBus $eventBus, Storage $storage)
+    public function __construct(EventBus $eventBus, EventStorage $storage)
     {
         $this->eventBus = $eventBus;
         $this->storage = $storage;
@@ -56,7 +56,7 @@ class EventStore
             'payload' => serialize($event)
         ];
 
-        $this->storage->upsert($aggregateId->getValue(), $eventData);
+        $this->storage->append($aggregateId->getValue(), $eventData);
     }
 
     /**
@@ -71,6 +71,7 @@ class EventStore
         }
 
         $eventsData = $this->storage->find($aggregateId->getValue());
+
         $events = array_map(
             function (array $eventData) {
                 return unserialize($eventData['payload']);

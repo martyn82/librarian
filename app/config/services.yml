@@ -1,7 +1,7 @@
 services:
   # event storage
   librarian.storage.events.memory:
-    class: AppBundle\EventStore\Storage\MemoryStorage
+    class: AppBundle\EventStore\Storage\MemoryEventStorage
 
   # event store
   librarian.eventstore:

@@ -2,44 +2,44 @@
 
 namespace AppBundle\Tests\EventStore\Storage;
 
-use AppBundle\EventStore\Storage\MemoryStorage;
+use AppBundle\EventStore\Storage\MemoryEventStorage;
 
-class MemoryStorageTest extends \PHPUnit_Framework_TestCase
+class MemoryEventStorageTest extends \PHPUnit_Framework_TestCase
 {
     public function testContainsReturnsFalseIfIdentityDoesNotExistInStorage()
     {
         $id = 'foo';
-        $storage = new MemoryStorage();
+        $storage = new MemoryEventStorage();
         self::assertFalse($storage->contains($id));
     }
 
-    public function testUpsertAddsRecordToStorageWhenIdentityDoesNotExist()
+    public function testAppendAddsRecordToStorageWhenIdentityDoesNotExist()
     {
         $id = 'foo';
-        $storage = new MemoryStorage();
+        $storage = new MemoryEventStorage();
         self::assertFalse($storage->contains($id));
 
         $record = ['foo' => 'bar'];
-        $storage->upsert($id, $record);
+        $storage->append($id, $record);
 
         self::assertTrue($storage->contains($id));
         self::assertEquals([$record], $storage->find($id));
     }
 
-    public function testUpsertAppendsRecordToStorageWhenIdentityAlreadyExists()
+    public function testAppendAppendsRecordToStorageWhenIdentityAlreadyExists()
     {
         $id = 'foo';
-        $storage = new MemoryStorage();
+        $storage = new MemoryEventStorage();
         self::assertFalse($storage->contains($id));
 
         $initialRecord = ['foo' => 'bar'];
-        $storage->upsert($id, $initialRecord);
+        $storage->append($id, $initialRecord);
 
         self::assertTrue($storage->contains($id));
         self::assertEquals([$initialRecord], $storage->find($id));
 
         $appendRecord = ['baz' => 'boo'];
-        $storage->upsert($id, $appendRecord);
+        $storage->append($id, $appendRecord);
 
         self::assertEquals(
             [
@@ -52,7 +52,7 @@ class MemoryStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testFindWillReturnEmptyResultIfIdentityDoesNotExist()
     {
-        $storage = new MemoryStorage();
+        $storage = new MemoryEventStorage();
         self::assertEquals([], $storage->find('foo'));
     }
 }

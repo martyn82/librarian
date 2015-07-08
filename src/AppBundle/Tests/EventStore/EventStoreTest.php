@@ -6,7 +6,7 @@ use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\EventStore\AggregateNotFoundException;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
-use AppBundle\EventStore\Storage\Storage;
+use AppBundle\EventStore\Storage\EventStorage;
 use AppBundle\Message\Event;
 use AppBundle\Message\Events;
 use AppBundle\MessageBus\EventBus;
@@ -28,7 +28,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
      */
     private function getStorage()
     {
-        return $this->getMockBuilder(Storage::class)
+        return $this->getMockBuilder(EventStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -47,7 +47,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $storage = $this->getStorage();
 
         $storage->expects(self::exactly($events->getIterator()->count()))
-            ->method('upsert')
+            ->method('append')
             ->with($id);
 
         $store = new EventStore($eventBus, $storage);

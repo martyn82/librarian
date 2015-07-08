@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventStore\Storage;
 
-interface Storage
+interface EventStorage
 {
     /**
      * @param string $id
@@ -15,7 +15,7 @@ interface Storage
      * @param array $data
      * @return bool
      */
-    public function upsert($id, array $data);
+    public function append($id, array $data);
 
     /**
      * @param string $id

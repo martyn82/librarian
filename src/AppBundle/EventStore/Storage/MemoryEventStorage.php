@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventStore\Storage;
 
-class MemoryStorage implements Storage
+class MemoryEventStorage implements EventStorage
 {
     /**
      * @var array
@@ -10,7 +10,7 @@ class MemoryStorage implements Storage
     private $data = [];
 
     /**
-     * @see \AppBundle\EventStore\Storage\Storage::contains()
+     * @see \AppBundle\EventStore\Storage\EventStorage::contains()
      */
     public function contains($id)
     {
@@ -18,9 +18,9 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\Storage::upsert()
+     * @see \AppBundle\EventStore\Storage\EventStorage::upsert()
      */
-    public function upsert($id, array $data)
+    public function append($id, array $data)
     {
         if (!$this->contains($id)) {
             $this->data[$id] = [];
@@ -31,7 +31,7 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\Storage::find()
+     * @see \AppBundle\EventStore\Storage\EventStorage::find()
      */
     public function find($id)
     {
