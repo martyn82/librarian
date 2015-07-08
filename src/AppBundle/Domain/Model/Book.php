@@ -4,15 +4,11 @@ namespace AppBundle\Domain\Model;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
-use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\Guid;
-use AppBundle\Collections\BasicSet;
 
 class Book extends AggregateRoot
 {
-    use BookDescriptor;
-
     /**
      * @var Guid
      */
@@ -46,7 +42,6 @@ class Book extends AggregateRoot
     public function __construct(Guid $id)
     {
         $this->id = $id;
-        $this->authorIds = new Guids();
         parent::__construct();
     }
 
@@ -64,7 +59,6 @@ class Book extends AggregateRoot
     protected function applyBookAdded(BookAdded $event)
     {
         $this->id = $event->getId();
-        $this->title = $event->getTitle();
     }
 
     /**
@@ -72,6 +66,5 @@ class Book extends AggregateRoot
      */
     protected function applyAuthorAdded(AuthorAdded $event)
     {
-        $this->authorIds->add($event->getId());
     }
 }

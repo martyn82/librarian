@@ -6,13 +6,13 @@ use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Model\AuthorView;
 use AppBundle\Domain\Model\BookView;
-use AppBundle\Domain\Service\BookReadModel;
-use AppBundle\Domain\Service\ObjectNotFoundException;
+use AppBundle\Domain\ReadModel\Book;
+use AppBundle\Domain\ReadModel\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 use AppBundle\MessageBus\EventBus;
 
-class BookReadModelTest extends \PHPUnit_Framework_TestCase
+class BookTest extends \PHPUnit_Framework_TestCase
 {
     public function testHandleWithBookAddedPropagatesToCorrectHandler()
     {
@@ -25,7 +25,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new BookReadModel($eventBus);
+        $readModel = new Book($eventBus);
         $readModel->handle($event);
 
         $book = $readModel->getBook($id);
@@ -46,7 +46,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new BookReadModel($eventBus);
+        $readModel = new Book($eventBus);
         $readModel->handleBookAdded($event);
 
         $book = $readModel->getBook($id);
@@ -67,7 +67,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new BookReadModel($eventBus);
+        $readModel = new Book($eventBus);
 
         // Given, a book with $bookId is available
         $readModel->handleBookAdded(new BookAdded($bookId, 'foo'));
@@ -100,7 +100,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new BookReadModel($eventBus);
+        $readModel = new Book($eventBus);
 
         // Given, a book with $bookId is available
         $readModel->handleBookAdded(new BookAdded($bookId, 'foo'));
@@ -130,7 +130,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = new BookReadModel($eventBus);
+        $readModel = new Book($eventBus);
         $readModel->getBook(Guid::createNew());
     }
 
@@ -145,7 +145,7 @@ class BookReadModelTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(Event::class)
             ->getMock();
 
-        $readModel = new BookReadModel($eventBus);
+        $readModel = new Book($eventBus);
         $readModel->handle($event);
     }
 }

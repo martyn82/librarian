@@ -2,6 +2,7 @@
 
 namespace AppBundle\Domain\Service;
 
+use AppBundle\Domain\ReadModel\Book;
 use AppBundle\EventStore\Guid;
 use AppBundle\MessageBus\CommandBus;
 use AppBundle\Message\Command;
@@ -14,7 +15,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $readModel = $this->getMockBuilder(BookReadModel::class)
+        $readModel = $this->getMockBuilder(Book::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -30,7 +31,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteCallsHandleOnCommandBus()
     {
-        $readModel = $this->getMockBuilder(BookReadModel::class)
+        $readModel = $this->getMockBuilder(Book::class)
             ->disableOriginalConstructor()
             ->getMock();
 

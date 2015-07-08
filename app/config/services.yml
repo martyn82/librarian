@@ -1,7 +1,7 @@
 services:
   # aggregate read model
-  librarian.readmodel:
-    class: AppBundle\Domain\Service\BookReadModel
+  librarian.readmodel.book:
+    class: AppBundle\Domain\ReadModel\Book
 
   # event storage
   librarian.storage.events.memory:
@@ -29,7 +29,7 @@ services:
   # command/event handlers
   librarian.eventhandler.logging:
     class: AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator
-    arguments: ["@logger", "@librarian.readmodel"]
+    arguments: ["@logger", "@librarian.readmodel.book"]
   
   librarian.commandhandler.add_book:
     class: AppBundle\Domain\MessageHandler\CommandHandler\AddBookHandler
@@ -50,4 +50,4 @@ services:
   # aggregate services
   librarian.service.book:
     class: AppBundle\Domain\Service\BookService
-    arguments: ["@librarian.readmodel", "@librarian.commandbus"]
+    arguments: ["@librarian.readmodel.book", "@librarian.commandbus"]

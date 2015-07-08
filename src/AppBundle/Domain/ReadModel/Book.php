@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Service;
+namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
@@ -9,11 +9,10 @@ use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
 use AppBundle\Domain\Model\Authors;
 use AppBundle\Domain\Model\AuthorView;
 use AppBundle\Domain\Model\BookView;
-use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 
-class BookReadModel implements AuthorAddedHandler, BookAddedHandler
+class Book implements AuthorAddedHandler, BookAddedHandler
 {
     /**
      * @var array

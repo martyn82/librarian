@@ -5,7 +5,6 @@ namespace AppBundle\Tests\Domain\Repository;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Model\Book;
-use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
@@ -63,7 +62,5 @@ class BooksTest extends \PHPUnit_Framework_TestCase
         $actualBook = $repository->findById($bookId);
 
         self::assertEquals($expectedBook->getId(), $actualBook->getId());
-        self::assertEquals($expectedBook->getTitle(), $actualBook->getTitle());
-        self::assertEquals($expectedBook->getAuthorIds(), $actualBook->getAuthorIds());
     }
 }

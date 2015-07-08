@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Service;
+namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\EventStore\Guid;
 

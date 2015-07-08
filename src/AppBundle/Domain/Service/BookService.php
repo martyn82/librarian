@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Service;
 
 use AppBundle\Domain\Model\AuthorView;
 use AppBundle\Domain\Model\BookView;
+use AppBundle\Domain\ReadModel\Book;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Command;
 use AppBundle\MessageBus\CommandBus;
@@ -16,15 +17,15 @@ class BookService
     private $commandBus;
 
     /**
-     * @var BookReadModel
+     * @var Book
      */
     private $readModel;
 
     /**
-     * @param BookReadModel $readModel
+     * @param Book $readModel
      * @param CommandBus $commandBus
      */
-    public function __construct(BookReadModel $readModel, CommandBus $commandBus)
+    public function __construct(Book $readModel, CommandBus $commandBus)
     {
         $this->readModel = $readModel;
         $this->commandBus = $commandBus;
