@@ -12,9 +12,9 @@ class MemoryStorage implements Storage
     /**
      * @see \AppBundle\Domain\ReadModel\Storage\Storage::upsert()
      */
-    public function upsert($identity, Document $data)
+    public function upsert($identity, Document $document)
     {
-        $this->data[$identity] = $data;
+        $this->data[$identity] = $document;
     }
 
     /**

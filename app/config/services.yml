@@ -1,20 +1,20 @@
 services:
   # storage
-  librarian.storage.events.memory:
+  librarian.storage.events.book.memory:
     class: AppBundle\EventStore\Storage\MemoryEventStorage
 
-  librarian.storage.documents.memory:
+  librarian.storage.documents.book.memory:
     class: AppBundle\Domain\Storage\MemoryStorage
 
   # event store
-  librarian.eventstore:
+  librarian.eventstore.book:
     class: AppBundle\EventStore\EventStore
-    arguments: ["@librarian.eventbus", "@librarian.storage.events.memory"]
+    arguments: ["@librarian.eventbus", "@librarian.storage.events.book.memory"]
 
   # aggregate repositories
   librarian.repository.books:
     class: AppBundle\Domain\Repository\Books
-    arguments: ["@librarian.eventstore"]
+    arguments: ["@librarian.eventstore.book"]
 
   # message buses
   librarian.commandbus:
@@ -49,4 +49,4 @@ services:
   # aggregate services
   librarian.service.book:
     class: AppBundle\Domain\Service\BookService
-    arguments: ["@librarian.storage.documents.memory"]
+    arguments: ["@librarian.storage.documents.book.memory"]

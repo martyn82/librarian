@@ -20,7 +20,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "ext-mongo": "*",
         "jms/di-extra-bundle": "~1.5",
-        "doctrine/mongodb": "~1.1"
+        "doctrine/mongodb": "~1.1",
+        "jms/serializer-bundle": "~1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
