@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Model;
+namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\Collections\BasicSet;
 use AppBundle\Collections\Set;
@@ -13,7 +13,7 @@ class Authors implements \IteratorAggregate
     private $innerSet;
 
     /**
-     * @param AuthorView[] $elements
+     * @param Author[] $elements
      */
     public function __construct(array $elements = [])
     {
@@ -21,16 +21,16 @@ class Authors implements \IteratorAggregate
 
         array_walk(
             $elements,
-            function (AuthorView $author) {
+            function (Author $author) {
                 $this->add($author);
             }
         );
     }
 
     /**
-     * @param AuthorView $author
+     * @param Author $author
      */
-    public function add(AuthorView $author)
+    public function add(Author $author)
     {
         $this->innerSet->add($author);
     }

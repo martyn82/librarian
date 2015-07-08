@@ -1,18 +1,25 @@
 <?php
 
-namespace AppBundle\Domain\Model;
+namespace AppBundle\Domain\ReadModel;
 
-use AppBundle\Domain\ModelDescriptor\AuthorDescriptor;
 use AppBundle\EventStore\Guid;
 
-class AuthorView
+class Author
 {
-    use AuthorDescriptor;
-
     /**
      * @var Guid
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $firstName;
+
+    /**
+     * @var string
+     */
+    private $lastName;
 
     /**
      * @param Guid $id
@@ -32,5 +39,21 @@ class AuthorView
     final public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
     }
 }

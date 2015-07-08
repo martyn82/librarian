@@ -2,14 +2,11 @@
 
 namespace AppBundle\Domain\Message\Command;
 
-use AppBundle\Domain\ModelDescriptor\AuthorDescriptor;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Command;
 
 final class AddAuthor implements Command
 {
-    use AuthorDescriptor;
-
     /**
      * @var Guid
      */
@@ -19,6 +16,16 @@ final class AddAuthor implements Command
      * @var Guid
      */
     private $bookId;
+
+    /**
+     * @var string
+     */
+    private $firstName;
+
+    /**
+     * @var string
+     */
+    private $lastName;
 
     /**
      * @param Guid $id
@@ -48,5 +55,21 @@ final class AddAuthor implements Command
     public function getBookId()
     {
         return $this->bookId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace AppBundle\Tests\Domain\Model;
+namespace AppBundle\Tests\Domain\ReadModel;
 
-use AppBundle\Domain\Model\Authors;
-use AppBundle\Domain\Model\AuthorView;
+use AppBundle\Domain\ReadModel\Author;
+use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\EventStore\Guid;
 
 class AuthorsTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructAcceptsAuthorViewElements()
     {
-        $element = new AuthorView(Guid::createNew(), 'first', 'last');
+        $element = new Author(Guid::createNew(), 'first', 'last');
         $authors = new Authors([$element]);
 
         self::assertCount(1, $authors->getIterator());

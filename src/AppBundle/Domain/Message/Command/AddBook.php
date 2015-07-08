@@ -3,7 +3,6 @@
 namespace AppBundle\Domain\Message\Command;
 
 use AppBundle\Domain\Model\BookView;
-use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Command;
 

@@ -8,6 +8,7 @@ use AppBundle\Domain\Model\BookView;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Guid;
+use AppBundle\MessageBus\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -24,15 +25,23 @@ class ApiController extends Controller
     private $bookService;
 
     /**
+     * @var CommandBus
+     */
+    private $commandBus;
+
+    /**
      * @DI\InjectParams({
-     *  "bookService" = @DI\Inject("librarian.service.book")
+     *  "bookService" = @DI\Inject("librarian.service.book"),
+     *  "commandBus" = @DI\Inject("librarian.commandbus")
      * })
      *
      * @param BookService $bookService
+     * @param CommandBus $commandBus
      */
-    public function __construct(BookService $bookService)
+    public function __construct(BookService $bookService, CommandBus $commandBus)
     {
         $this->bookService = $bookService;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -47,7 +56,7 @@ class ApiController extends Controller
     {
         $bookId = Guid::createNew();
 
-        $this->bookService->execute(
+        $this->commandBus->handle(
             new AddBook($bookId, $title)
         );
 
@@ -56,7 +65,7 @@ class ApiController extends Controller
         $authorFirstName = $authorNames[0];
         $authorLastName = isset($authorNames[1]) ? $authorNames[1] : '';
 
-        $this->bookService->execute(
+        $this->commandBus->handle(
             new AddAuthor($authorId, $bookId, $authorFirstName, $authorLastName)
         );
 

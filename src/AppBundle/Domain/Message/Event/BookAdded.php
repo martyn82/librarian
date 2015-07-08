@@ -2,18 +2,20 @@
 
 namespace AppBundle\Domain\Message\Event;
 
-use AppBundle\Domain\ModelDescriptor\BookDescriptor;
 use AppBundle\EventStore\Guid;
 use AppBundle\Message\Event;
 
 final class BookAdded extends Event
 {
-    use BookDescriptor;
-
     /**
      * @var Guid
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $title;
 
     /**
      * @param Guid $id
@@ -31,5 +33,13 @@ final class BookAdded extends Event
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 }
