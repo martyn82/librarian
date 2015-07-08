@@ -6,7 +6,7 @@ use AppBundle\Collections\BasicSet;
 use AppBundle\Collections\Set;
 use AppBundle\Domain\Storage\Document;
 
-class Authors extends Document implements \IteratorAggregate
+class Authors implements \IteratorAggregate
 {
     /**
      * @var Set
