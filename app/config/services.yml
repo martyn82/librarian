@@ -3,10 +3,14 @@ services:
   librarian.readmodel:
     class: AppBundle\Domain\Service\BookReadModel
 
+  # event storage
+  librarian.storage.events.memory:
+    class: AppBundle\EventStore\Storage\MemoryStorage
+
   # event store
   librarian.eventstore:
-    class: AppBundle\EventStore\MemoryEventStore
-    arguments: ["@librarian.eventbus"]
+    class: AppBundle\EventStore\EventStore
+    arguments: ["@librarian.eventbus", "@librarian.storage.events.memory"]
 
   # aggregate repositories
   librarian.repository.books:
