@@ -22,7 +22,7 @@
         </exec>
     </target>
 
-    <target name="run">
+    <target name="run" description="Run the app">
         <exec
             command="${project.basedir}/app/console server:run ${app.local.host}:${app.local.port}"
             checkreturn="true"
@@ -30,7 +30,7 @@
         />
     </target>
 
-    <target name="run:mongo">
+    <target name="run:mongo" description="Run MongoDB container">
         <exec
             command="docker run --name ${container.events.name} -v ${container.events.volume} -p ${container.events.port} -d ${container.events.image}"
             checkreturn="true"
