@@ -46,3 +46,6 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+
+parameters:
+    librarian.database.events.address: 172.17.42.1:27017

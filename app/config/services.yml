@@ -1,5 +1,14 @@
 services:
+  # DB
+  librarian.database.events.books:
+    class: Doctrine\MongoDB\Connection
+    arguments: ["%librarian.database.events.address%"]
+
   # storage
+  librarian.storage.events.book.persistent:
+    class: AppBundle\EventStore\Storage\PersistentEventStorage
+    arguments: ["@librarian.database.events.books", "books"]
+
   librarian.storage.events.book.memory:
     class: AppBundle\EventStore\Storage\MemoryEventStorage
 
@@ -9,7 +18,7 @@ services:
   # event store
   librarian.eventstore.book:
     class: AppBundle\EventStore\EventStore
-    arguments: ["@librarian.eventbus", "@librarian.storage.events.book.memory"]
+    arguments: ["@librarian.eventbus", "@librarian.storage.events.book.persistent"]
 
   # aggregate repositories
   librarian.repository.books:
