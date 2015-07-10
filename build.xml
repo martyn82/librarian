@@ -11,6 +11,14 @@
     <target name="buid" depends="clean"></target>
     -->
 
+    <target name="analyse" description="Run static analysis" depends="sonarqube:start">
+        <exec
+            command="sonar-runner"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
     <target name="test" description="Run Unit Tests">
         <exec
             executable="${project.basedir}/bin/phpunit"
@@ -25,6 +33,35 @@
     <target name="run" description="Run the app">
         <exec
             command="${project.basedir}/app/console server:run ${app.local.host}:${app.local.port}"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <target name="sonarqube:start" description="Start SonarQube service">
+        <exec command="docker ps -aq --filter=&quot;name=${container.sonarqube.name}&quot;" outputProperty="sonarqube.container.id" />
+        <if>
+            <equals arg1="${sonarqube.container.id}" arg2="" />
+            <then>
+                <exec
+                    command="docker run --name ${container.sonarqube.name} -p 9000:9000 -p 9092:9092 -d ${container.sonarqube.image}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </then>
+            <else>
+                <exec
+                    command="docker start ${container.sonarqube.name}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </else>
+        </if>
+    </target>
+
+    <target name="sonarqube:stop" description="Stop SonarQube service">
+        <exec
+            command="docker stop ${container.sonarqube.name}"
             checkreturn="true"
             passthru="true"
         />
