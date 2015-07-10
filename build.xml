@@ -31,16 +31,29 @@
     </target>
 
     <target name="mongodb:start" description="Start MongoDB service">
-        <exec
-            command="docker run --name ${container.events.name} -v ${container.events.volume} -p ${container.events.port} -d ${container.events.image}"
-            checkreturn="true"
-            passthru="true"
-        />
+        <exec command="docker ps -aq --filter=&quot;name=${container.events.name}&quot;" outputProperty="mongodb.container.id" />
+        <if>
+            <equals arg1="${mongodb.container.id}" arg2="" />
+            <then>
+                <exec
+                    command="docker run --name ${container.events.name} -v ${container.events.volume} -p ${container.events.port} -d ${container.events.image}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </then>
+            <else>
+                <exec
+                    command="docker start ${container.events.name}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </else>
+        </if>
     </target>
 
     <target name="mongodb:stop" description="Stop MongoDB service">
         <exec
-            command="docker stop --name ${container.events.name}"
+            command="docker stop ${container.events.name}"
             checkreturn="true"
             passthru="true"
         />
