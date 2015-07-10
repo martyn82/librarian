@@ -54,17 +54,16 @@ class ApiController extends Controller
     {
         $bookId = Guid::createNew();
 
-        $this->commandBus->handle(
+        $this->commandBus->send(
             new AddBook($bookId, $title)
         );
 
-        $authorId = Guid::createNew();
         $authorNames = explode(' ', $authorName);
         $authorFirstName = $authorNames[0];
         $authorLastName = isset($authorNames[1]) ? $authorNames[1] : '';
 
-        $this->commandBus->handle(
-            new AddAuthor($authorId, $bookId, $authorFirstName, $authorLastName)
+        $this->commandBus->send(
+            new AddAuthor($bookId, $authorFirstName, $authorLastName)
         );
 
         return [

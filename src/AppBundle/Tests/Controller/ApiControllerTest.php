@@ -19,7 +19,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $commandBus->expects(self::atLeastOnce())
-            ->method('handle');
+            ->method('send');
 
         $controller = new ApiController($service, $commandBus);
         $controller->addBookAction('foo', 'bar');

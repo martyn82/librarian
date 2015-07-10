@@ -60,17 +60,17 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
      */
     public function handleAuthorAdded(AuthorAdded $event)
     {
-        $oldBook = $this->getBook($event->getBookId());
+        $oldBook = $this->getBook($event->getId());
         $authors = clone $oldBook->getAuthors();
 
         $authors->add(
-            new Author($event->getId(), $event->getFirstName(), $event->getLastName())
+            new Author($event->getFirstName(), $event->getLastName())
         );
 
         $this->storage->upsert(
-            $event->getBookId()->getValue(),
+            $event->getId()->getValue(),
             new Book(
-                $event->getBookId(),
+                $event->getId(),
                 $authors,
                 $oldBook->getTitle()
             )

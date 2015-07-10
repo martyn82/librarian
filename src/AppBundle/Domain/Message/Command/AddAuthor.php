@@ -13,11 +13,6 @@ final class AddAuthor implements Command
     private $id;
 
     /**
-     * @var Guid
-     */
-    private $bookId;
-
-    /**
      * @var string
      */
     private $firstName;
@@ -29,14 +24,12 @@ final class AddAuthor implements Command
 
     /**
      * @param Guid $id
-     * @param Guid $bookId
      * @param string $firstName
      * @param string $lastName
      */
-    public function __construct(Guid $id, Guid $bookId, $firstName, $lastName)
+    public function __construct(Guid $id, $firstName, $lastName)
     {
         $this->id = $id;
-        $this->bookId = $bookId;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
     }
@@ -47,14 +40,6 @@ final class AddAuthor implements Command
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return Guid
-     */
-    public function getBookId()
-    {
-        return $this->bookId;
     }
 
     /**

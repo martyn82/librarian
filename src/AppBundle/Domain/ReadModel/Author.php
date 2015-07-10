@@ -8,11 +8,6 @@ use AppBundle\EventStore\Guid;
 class Author
 {
     /**
-     * @var Guid
-     */
-    private $id;
-
-    /**
      * @var string
      */
     private $firstName;
@@ -23,23 +18,13 @@ class Author
     private $lastName;
 
     /**
-     * @param Guid $id
      * @param string $firstName
      * @param string $lastName
      */
-    public function __construct(Guid $id, $firstName, $lastName)
+    public function __construct($firstName, $lastName)
     {
-        $this->id = $id;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
-    }
-
-    /**
-     * @return Guid
-     */
-    final public function getId()
-    {
-        return $this->id;
     }
 
     /**

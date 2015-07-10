@@ -4,12 +4,14 @@ namespace AppBundle\Tests\EventStore;
 
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\EventStore\AggregateNotFoundException;
+use AppBundle\EventStore\EventClassMap;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
 use AppBundle\EventStore\Storage\EventStorage;
 use AppBundle\Message\Event;
 use AppBundle\Message\Events;
 use AppBundle\MessageBus\EventBus;
+use JMS\Serializer\Serializer;
 
 class EventStoreTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,6 +35,26 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->getMock();
     }
 
+    /**
+     * @return Serializer
+     */
+    private function getSerializer()
+    {
+        return $this->getMockBuilder(Serializer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return EventClassMap
+     */
+    private function getEventClassMap()
+    {
+        return $this->getMockBuilder(EventClassMap::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
     public function testSaveEventsForAggregateCallsStorage()
     {
         $id = Guid::createNew();
@@ -45,12 +67,14 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
         $eventBus = $this->getEventBus();
         $storage = $this->getStorage();
+        $serializer = $this->getSerializer();
+        $classMap = $this->getEventClassMap();
 
         $storage->expects(self::exactly($events->getIterator()->count()))
             ->method('append')
             ->with($id);
 
-        $store = new EventStore($eventBus, $storage);
+        $store = new EventStore($eventBus, $storage, $serializer, $classMap);
         $store->save($id, $events);
     }
 
@@ -60,8 +84,10 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
         $eventBus = $this->getEventBus();
         $storage = $this->getStorage();
+        $serializer = $this->getSerializer();
+        $classMap = $this->getEventClassMap();
 
-        $store = new EventStore($eventBus, $storage);
+        $store = new EventStore($eventBus, $storage, $serializer, $classMap);
         $store->getEventsForAggregate(Guid::createNew());
     }
 
@@ -70,6 +96,8 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $id = Guid::createNew();
         $eventBus = $this->getEventBus();
         $storage = $this->getStorage();
+        $serializer = $this->getSerializer();
+        $classMap = $this->getEventClassMap();
 
         $storage->expects(self::any())
             ->method('contains')
@@ -81,7 +109,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->with($id->getValue())
             ->will(self::returnValue([]));
 
-        $store = new EventStore($eventBus, $storage);
+        $store = new EventStore($eventBus, $storage, $serializer, $classMap);
 
         $event = $this->getMockBuilder(Event::class)
             ->getMock();
@@ -95,14 +123,29 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $id = Guid::createNew();
         $eventBus = $this->getEventBus();
         $storage = $this->getStorage();
+        $serializer = $this->getSerializer();
+        $classMap = $this->getEventClassMap();
 
         $event = new BookAdded($id, 'foo');
 
+        $classMap->expects(self::any())
+            ->method('getClassByEventName')
+            ->with($event->getEventName())
+            ->will(self::returnValue(get_class($event)));
+
+        $serializer->expects(self::any())
+            ->method('serialize')
+            ->will(self::returnValue(json_encode(['id' => $event->getId(), 'title' => $event->getTitle()])));
+
+        $serializer->expects(self::any())
+            ->method('deserialize')
+            ->will(self::returnValue($event));
+
         $eventStructure = [
-            'timeStamp' => time(),
-            'dateTime' => date('r'),
             'identity' => $id->getValue(),
-            'payload' => serialize($event)
+            'eventName' => $event->getEventName(),
+            'payload' => $serializer->serialize($event, 'json'),
+            'recordedOn' => date('r')
         ];
 
         $storage->expects(self::any())
@@ -115,7 +158,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->with($id->getValue())
             ->will(self::returnValue([$eventStructure]));
 
-        $store = new EventStore($eventBus, $storage);
+        $store = new EventStore($eventBus, $storage, $serializer, $classMap);
         $events = $store->getEventsForAggregate($id);
 
         self::assertInstanceOf(Events::class, $events);
@@ -134,12 +177,14 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
         $eventBus = $this->getEventBus();
         $storage = $this->getStorage();
+        $serializer = $this->getSerializer();
+        $classMap = $this->getEventClassMap();
 
         $eventBus->expects(self::exactly($events->getIterator()->count()))
             ->method('publish')
             ->with(self::logicalOr($events->getIterator()->offsetGet(0), $events->getIterator()->offsetGet(1)));
 
-        $store = new EventStore($eventBus, $storage);
+        $store = new EventStore($eventBus, $storage, $serializer, $classMap);
         $store->save($id, $events);
     }
 }

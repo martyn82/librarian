@@ -27,13 +27,12 @@ class Book extends AggregateRoot
     }
 
     /**
-     * @param Guid $id
      * @param string $firstName
      * @param string $lastName
      */
-    public function addAuthor(Guid $id, $firstName, $lastName)
+    public function addAuthor($firstName, $lastName)
     {
-        $this->applyChange(new AuthorAdded($id, $this->id, $firstName, $lastName));
+        $this->applyChange(new AuthorAdded($this->id, $firstName, $lastName));
     }
 
     /**

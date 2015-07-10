@@ -56,7 +56,6 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
     public function testHandleWithAuthorAddedPropagatesToCorrectHandler()
     {
         $bookId = Guid::createNew();
-        $id = Guid::createNew();
         $firstName = 'foo';
         $lastName = 'bar';
 
@@ -74,13 +73,12 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue(new Book($bookId, new Authors(), 'foo')));
 
         $service = new BookService($storage);
-        $service->handle(new AuthorAdded($id, $bookId, $firstName, $lastName));
+        $service->handle(new AuthorAdded($bookId, $firstName, $lastName));
     }
 
     public function testHandlerForEventAuthorAdded()
     {
         $bookId = Guid::createNew();
-        $id = Guid::createNew();
         $firstName = 'foo';
         $lastName = 'bar';
 
@@ -98,7 +96,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue(new Book($bookId, new Authors(), 'foo')));
 
         $service = new BookService($storage);
-        $service->handleAuthorAdded(new AuthorAdded($id, $bookId, $firstName, $lastName));
+        $service->handleAuthorAdded(new AuthorAdded($bookId, $firstName, $lastName));
     }
 
     public function testGetBookWithNonExistingIdThrowsException()
@@ -132,14 +130,13 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
     {
         $bookId = Guid::createNew();
         $title = 'foo';
-        $authorId = Guid::createNew();
         $firstName = 'bar';
         $lastName = 'baz';
 
         $storage = new MemoryStorage();
         $service = new BookService($storage);
         $service->handle(new BookAdded($bookId, $title));
-        $service->handle(new AuthorAdded($authorId, $bookId, $firstName, $lastName));
+        $service->handle(new AuthorAdded($bookId, $firstName, $lastName));
 
         $book = $service->getBook($bookId);
 
@@ -148,7 +145,6 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
         foreach ($book->getAuthors()->getIterator() as $author) {
             /* @var $author Author */
-            self::assertEquals($authorId, $author->getId());
             self::assertEquals($firstName, $author->getFirstName());
             self::assertEquals($lastName, $author->getLastName());
         }

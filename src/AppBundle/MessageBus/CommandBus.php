@@ -23,7 +23,7 @@ class CommandBus
      * @param Command $command
      * @throws NoCommandHandlerException
      */
-    public function handle(Command $command)
+    public function send(Command $command)
     {
         $commandClassName = get_class($command);
 

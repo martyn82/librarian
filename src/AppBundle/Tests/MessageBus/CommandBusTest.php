@@ -29,7 +29,7 @@ class CommandBusTest extends \PHPUnit_Framework_TestCase
         ];
 
         $commandBus = new CommandBus($commandHandlerMap);
-        $commandBus->handle($command);
+        $commandBus->send($command);
     }
 
     public function testCommandBusHandleCommandThrowsExceptionIfNoHandlerExist()
@@ -41,6 +41,6 @@ class CommandBusTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $commandBus = new CommandBus([]);
-        $commandBus->handle($command);
+        $commandBus->send($command);
     }
 }

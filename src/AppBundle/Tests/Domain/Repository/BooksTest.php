@@ -33,19 +33,18 @@ class BooksTest extends \PHPUnit_Framework_TestCase
     public function testFindBookByIdLoadsBookFromHistory()
     {
         $bookId = Guid::createNew();
-        $authorId = Guid::createNew();
 
         $title = 'foo';
         $authorFirstName = 'first';
         $authorLastName = 'last';
 
         $expectedBook = Book::add($bookId, $title);
-        $expectedBook->addAuthor($authorId, $authorFirstName, $authorLastName);
+        $expectedBook->addAuthor($authorFirstName, $authorLastName);
 
         $events = new Events(
             [
                 new BookAdded($bookId, $title),
-                new AuthorAdded($authorId, $bookId, $authorFirstName, $authorLastName)
+                new AuthorAdded($bookId, $authorFirstName, $authorLastName)
             ]
         );
 

@@ -36,8 +36,8 @@ class AddAuthorHandler implements CommandHandler
      */
     private function handleAddAuthor(AddAuthor $command)
     {
-        $book = $this->repository->findById($command->getBookId());
-        $book->addAuthor($command->getId(), $command->getFirstName(), $command->getLastName());
+        $book = $this->repository->findById($command->getId());
+        $book->addAuthor($command->getFirstName(), $command->getLastName());
         $this->repository->store($book);
     }
 }

@@ -2,9 +2,12 @@
 
 namespace AppBundle\EventStore;
 
+use JMS\Serializer\Annotation as Serializer;
+
 class Guid
 {
     /**
+     * @Serializer\Type("string")
      * @var string
      */
     private $value;

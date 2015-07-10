@@ -6,6 +6,7 @@ use AppBundle\EventStore\Storage\EventStorage;
 use AppBundle\Message\Event;
 use AppBundle\Message\Events;
 use AppBundle\MessageBus\EventBus;
+use JMS\Serializer\Serializer;
 
 class EventStore
 {
@@ -20,13 +21,27 @@ class EventStore
     private $storage;
 
     /**
+     * @var Serializer
+     */
+    private $serializer;
+
+    /**
+     * @var EventClassMap
+     */
+    private $eventMap;
+
+    /**
      * @param EventBus $eventBus
      * @param EventStorage $storage
+     * @param Serializer $serializer
+     * @param EventClassMap $map
      */
-    public function __construct(EventBus $eventBus, EventStorage $storage)
+    public function __construct(EventBus $eventBus, EventStorage $storage, Serializer $serializer, EventClassMap $map)
     {
         $this->eventBus = $eventBus;
         $this->storage = $storage;
+        $this->serializer = $serializer;
+        $this->eventMap = $map;
     }
 
     /**
@@ -49,11 +64,10 @@ class EventStore
     private function saveEvent(Guid $aggregateId, Event $event)
     {
         $eventData = [
-            'timeStamp' => time(),
-            'dateTime' => date('r'),
             'identity' => $aggregateId->getValue(),
             'eventName' => $event->getEventName(),
-            'payload' => serialize($event)
+            'payload' => $this->serializer->serialize($event, 'json'),
+            'recordedOn' => date('r')
         ];
 
         $this->storage->append($aggregateId->getValue(), $eventData);
@@ -73,8 +87,13 @@ class EventStore
         $eventsData = $this->storage->find($aggregateId->getValue());
 
         $events = array_map(
+            /**
+             * @param array $eventData
+             * @return Event
+             */
             function (array $eventData) {
-                return unserialize($eventData['payload']);
+                $className = $this->eventMap->getClassByEventName($eventData['eventName']);
+                return $this->serializer->deserialize($eventData['payload'], $className, 'json');
             },
             $eventsData
         );

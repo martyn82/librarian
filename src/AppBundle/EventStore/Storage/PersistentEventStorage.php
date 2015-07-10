@@ -3,35 +3,20 @@
 namespace AppBundle\EventStore\Storage;
 
 use Doctrine\MongoDB\Collection;
-use Doctrine\MongoDB\Connection;
 
 class PersistentEventStorage implements EventStorage
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
-
     /**
      * @var Collection
      */
     private $collection;
 
     /**
-     * @param Connection $connection
-     * @param string $type
+     * @param Collection $collection
      */
-    public function __construct(Connection $connection, $type)
+    public function __construct(Collection $collection)
     {
-        $this->connection = $connection;
-        $this->collection = $connection->selectCollection('events', $type);
-    }
-
-    /**
-     */
-    public function __destruct()
-    {
-        $this->connection->close();
+        $this->collection = $collection;
     }
 
     /**
@@ -56,7 +41,7 @@ class PersistentEventStorage implements EventStorage
      */
     public function append($identity, array $data)
     {
-        $result = $this->collection->upsert(['identity' => $identity], $data);
+        $result = $this->collection->insert($data);
         return $result !== false;
     }
 }

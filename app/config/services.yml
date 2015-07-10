@@ -1,13 +1,18 @@
 services:
   # DB
-  librarian.database.events.books:
+  librarian.database.events:
     class: Doctrine\MongoDB\Connection
     arguments: ["%librarian.database.events.address%"]
+
+  librarian.database.events.books:
+    class: Doctrine\MongoDB\Collection
+    factory: ["@librarian.database.events", selectCollection]
+    arguments: [events, books]
 
   # storage
   librarian.storage.events.book.persistent:
     class: AppBundle\EventStore\Storage\PersistentEventStorage
-    arguments: ["@librarian.database.events.books", "books"]
+    arguments: ["@librarian.database.events.books"]
 
   librarian.storage.events.book.memory:
     class: AppBundle\EventStore\Storage\MemoryEventStorage
@@ -16,9 +21,20 @@ services:
     class: AppBundle\Domain\Storage\MemoryStorage
 
   # event store
+  librarian.eventstore.classmap:
+    class: AppBundle\EventStore\EventClassMap
+    arguments:
+      -
+        - AppBundle\Domain\Message\Event\BookAdded
+        - AppBundle\Domain\Message\Event\AuthorAdded
+
   librarian.eventstore.book:
     class: AppBundle\EventStore\EventStore
-    arguments: ["@librarian.eventbus", "@librarian.storage.events.book.persistent"]
+    arguments:
+      - "@librarian.eventbus"
+      - "@librarian.storage.events.book.persistent"
+      - "@jms_serializer"
+      - "@librarian.eventstore.classmap"
 
   # aggregate repositories
   librarian.repository.books:
@@ -28,11 +44,17 @@ services:
   # message buses
   librarian.commandbus:
     class: AppBundle\MessageBus\CommandBus
-    arguments: [{ AppBundle\Domain\Message\Command\AddBook: "@librarian.commandhandler.add_book.logging", AppBundle\Domain\Message\Command\AddAuthor: "@librarian.commandhandler.add_author.logging" }]
+    arguments:
+      -
+        AppBundle\Domain\Message\Command\AddBook: "@librarian.commandhandler.add_book.logging"
+        AppBundle\Domain\Message\Command\AddAuthor: "@librarian.commandhandler.add_author.logging"
 
   librarian.eventbus:
     class: AppBundle\MessageBus\EventBus
-    arguments: [{ AppBundle\Domain\Message\Event\BookAdded: ["@librarian.eventhandler.logging"], AppBundle\Domain\Message\Event\AuthorAdded: ["@librarian.eventhandler.logging"] }]
+    arguments:
+      -
+        AppBundle\Domain\Message\Event\BookAdded: ["@librarian.eventhandler.logging"]
+        AppBundle\Domain\Message\Event\AuthorAdded: ["@librarian.eventhandler.logging"]
 
   # command/event handlers
   librarian.eventhandler.logging:
