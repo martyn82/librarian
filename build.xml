@@ -30,9 +30,17 @@
         />
     </target>
 
-    <target name="run:mongo" description="Run MongoDB container">
+    <target name="mongodb:start" description="Start MongoDB service">
         <exec
             command="docker run --name ${container.events.name} -v ${container.events.volume} -p ${container.events.port} -d ${container.events.image}"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <target name="mongodb:stop" description="Stop MongoDB service">
+        <exec
+            command="docker stop --name ${container.events.name}"
             checkreturn="true"
             passthru="true"
         />
