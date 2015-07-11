@@ -61,7 +61,7 @@
         </exec>
     </target>
 
-    <target name="analyse" description="Run static analysis" depends="sonarqube:status">
+    <target name="analyse" description="Run static code analysis" depends="sonarqube:status">
         <exec
             command="sonar-runner"
             checkreturn="true"
@@ -109,7 +109,7 @@
         </if>
     </target>
 
-    <target name="sonarqube:status">
+    <target name="sonarqube:status" description="Determines the status of the SonarQube service">
         <exec command="docker ps -q --filter=&quot;name=${container.sonarqube.name}&quot;" outputProperty="sonarqube.container.id" />
         <if>
             <equals arg1="${sonarqube.container.id}" arg2="" />
