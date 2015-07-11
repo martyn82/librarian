@@ -2,6 +2,8 @@
 
 namespace AppBundle\EventStore;
 
+use AppBundle\Collections\BasicMap;
+use AppBundle\Collections\Map;
 use AppBundle\EventStore\Storage\EventStorage;
 use AppBundle\Message\Event;
 use AppBundle\Message\Events;
@@ -31,6 +33,11 @@ class EventStore
     private $eventMap;
 
     /**
+     * @var Map
+     */
+    private $current;
+
+    /**
      * @param EventBus $eventBus
      * @param EventStorage $storage
      * @param Serializer $serializer
@@ -42,19 +49,54 @@ class EventStore
         $this->storage = $storage;
         $this->serializer = $serializer;
         $this->eventMap = $map;
+        $this->current = new BasicMap();
     }
 
     /**
      * @param Guid $aggregateId
      * @param Events $events
+     * @param int $expectedPlayhead
+     *
      */
-    public function save(Guid $aggregateId, Events $events)
+    public function save(Guid $aggregateId, Events $events, $expectedPlayhead)
     {
+        $expectedPlayhead = (int) $expectedPlayhead;
+
+        if (!$this->isValidPlayhead($aggregateId, $expectedPlayhead)) {
+            throw new ConcurrencyException($expectedPlayhead, $this->current->get($aggregateId->getValue()));
+        }
+
+        $playhead = $expectedPlayhead;
+
         foreach ($events->getIterator() as $event) {
             /* @var $event Event */
+            $playhead++;
+            $event->setVersion($playhead);
+
             $this->saveEvent($aggregateId, $event);
+            $this->current->put($aggregateId->getValue(), $playhead);
             $this->eventBus->publish($event);
         }
+    }
+
+    /**
+     * @param Guid $aggregateId
+     * @param int $playhead
+     * @return bool
+     */
+    private function isValidPlayhead(Guid $aggregateId, $playhead)
+    {
+        $eventDescriptors = $this->storage->find($aggregateId->getValue());
+
+        if (!empty($eventDescriptors)) {
+            $this->current->put($aggregateId->getValue(), end($eventDescriptors)->getPlayhead());
+        }
+
+        if ($this->current->get($aggregateId->getValue()) != $playhead && $playhead != -1) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -66,7 +108,8 @@ class EventStore
         $eventData = EventDescriptor::record(
             $aggregateId->getValue(),
             $event->getEventName(),
-            $this->serializer->serialize($event, 'json')
+            $this->serializer->serialize($event, 'json'),
+            $event->getVersion()
         );
 
         $this->storage->append($eventData);

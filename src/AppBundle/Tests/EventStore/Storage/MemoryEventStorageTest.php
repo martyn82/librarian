@@ -20,7 +20,7 @@ class MemoryEventStorageTest extends \PHPUnit_Framework_TestCase
         $storage = new MemoryEventStorage();
         self::assertFalse($storage->contains($id));
 
-        $record = EventDescriptor::record($id, 'foo', '[bar]');
+        $record = EventDescriptor::record($id, 'foo', '[bar]', -1);
         $storage->append($record);
 
         self::assertTrue($storage->contains($id));
@@ -33,13 +33,13 @@ class MemoryEventStorageTest extends \PHPUnit_Framework_TestCase
         $storage = new MemoryEventStorage();
         self::assertFalse($storage->contains($id));
 
-        $initialRecord = EventDescriptor::record($id, 'foo', '["foo":"bar"]');
+        $initialRecord = EventDescriptor::record($id, 'foo', '["foo":"bar"]', -1);
         $storage->append($initialRecord);
 
         self::assertTrue($storage->contains($id));
         self::assertEquals([$initialRecord], $storage->find($id));
 
-        $appendRecord = EventDescriptor::record($id, 'foo', '["baz":"boo"]');
+        $appendRecord = EventDescriptor::record($id, 'foo', '["baz":"boo"]', -1);
         $storage->append($appendRecord);
 
         self::assertEquals(

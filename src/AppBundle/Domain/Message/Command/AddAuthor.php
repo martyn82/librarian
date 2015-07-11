@@ -23,15 +23,22 @@ final class AddAuthor implements Command
     private $lastName;
 
     /**
+     * @var int
+     */
+    private $version;
+
+    /**
      * @param Guid $id
      * @param string $firstName
      * @param string $lastName
+     * @param int $version
      */
-    public function __construct(Guid $id, $firstName, $lastName)
+    public function __construct(Guid $id, $firstName, $lastName, $version)
     {
         $this->id = $id;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
+        $this->firstName = (string) $firstName;
+        $this->lastName = (string) $lastName;
+        $this->version = (int) $version;
     }
 
     /**
@@ -56,5 +63,13 @@ final class AddAuthor implements Command
     public function getLastName()
     {
         return $this->lastName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 }

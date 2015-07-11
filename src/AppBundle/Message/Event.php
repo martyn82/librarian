@@ -2,8 +2,16 @@
 
 namespace AppBundle\Message;
 
+use JMS\Serializer\Annotation as Serializer;
+
 abstract class Event
 {
+    /**
+     * @Serializer\Type("integer")
+     * @var int
+     */
+    private $version;
+
     /**
      * @return string
      */
@@ -19,5 +27,21 @@ abstract class Event
     public function getEventName()
     {
         return self::getName();
+    }
+
+    /**
+     * @return int
+     */
+    final public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param int $version
+     */
+    final public function setVersion($version)
+    {
+        $this->version = (int) $version;
     }
 }

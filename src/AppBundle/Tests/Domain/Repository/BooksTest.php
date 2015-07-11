@@ -24,10 +24,10 @@ class BooksTest extends \PHPUnit_Framework_TestCase
 
         $storage->expects(self::once())
             ->method('save')
-            ->with($id, $book->getUncommittedChanges());
+            ->with($id, $book->getUncommittedChanges(), self::anything());
 
         $repository = new Books($storage);
-        $repository->store($book);
+        $repository->store($book, -1);
     }
 
     public function testFindBookByIdLoadsBookFromHistory()

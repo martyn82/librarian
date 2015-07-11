@@ -60,7 +60,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
         $collection = $this->getCollection();
 
         $eventData = [
-            EventDescriptor::record($identity, 'foo', '[]')->toArray()
+            EventDescriptor::record($identity, 'foo', '[]', -1)->toArray()
         ];
         $cursor = new FakeCursor($eventData);
 
@@ -80,7 +80,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
     {
         $identity = 1;
         $identityField = 'identity';
-        $event = EventDescriptor::record($identity, 'foo', '[]');
+        $event = EventDescriptor::record($identity, 'foo', '[]', -1);
 
         $collection = $this->getCollection();
 

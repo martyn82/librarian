@@ -62,8 +62,10 @@ class ApiController extends Controller
         $authorFirstName = $authorNames[0];
         $authorLastName = isset($authorNames[1]) ? $authorNames[1] : '';
 
+        $book = $this->bookService->getBook($bookId);
+
         $this->commandBus->send(
-            new AddAuthor($bookId, $authorFirstName, $authorLastName)
+            new AddAuthor($bookId, $authorFirstName, $authorLastName, $book->getVersion())
         );
 
         return [

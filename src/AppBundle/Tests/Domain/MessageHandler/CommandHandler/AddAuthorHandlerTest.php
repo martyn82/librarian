@@ -16,7 +16,7 @@ class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
         $firstName = 'foo';
         $lastName = 'bar';
 
-        $command = new AddAuthor($bookId, $firstName, $lastName);
+        $command = new AddAuthor($bookId, $firstName, $lastName, 0);
         $book = Book::add($bookId, 'title');
 
         $repository = $this->getMockBuilder(Repository::class)

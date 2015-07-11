@@ -33,16 +33,17 @@ final class EventDescriptor
      * @param string $identity
      * @param string $event
      * @param string $payload
+     * @param int $playhead
      * @return EventDescriptor
      */
-    public static function record($identity, $event, $payload)
+    public static function record($identity, $event, $payload, $playhead)
     {
         return new self(
             $identity,
             $event,
             $payload,
             date('r'),
-            0
+            $playhead
         );
     }
 
@@ -57,7 +58,7 @@ final class EventDescriptor
             $data['event'],
             $data['payload'],
             $data['recorded'],
-            0
+            $data['playhead']
         );
     }
 
@@ -99,6 +100,14 @@ final class EventDescriptor
     public function getPayload()
     {
         return $this->payload;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPlayhead()
+    {
+        return $this->playhead;
     }
 
     /**

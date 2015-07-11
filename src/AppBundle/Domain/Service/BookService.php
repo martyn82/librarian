@@ -51,7 +51,12 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     {
         $this->storage->upsert(
             $event->getId()->getValue(),
-            new Book($event->getId(), new Authors(), $event->getTitle())
+            new Book(
+                $event->getId(),
+                new Authors(),
+                $event->getTitle(),
+                $event->getVersion()
+            )
         );
     }
 
@@ -72,7 +77,8 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
             new Book(
                 $event->getId(),
                 $authors,
-                $oldBook->getTitle()
+                $oldBook->getTitle(),
+                $event->getVersion()
             )
         );
     }

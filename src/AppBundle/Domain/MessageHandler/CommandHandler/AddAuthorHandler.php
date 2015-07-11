@@ -38,6 +38,6 @@ class AddAuthorHandler implements CommandHandler
     {
         $book = $this->repository->findById($command->getId());
         $book->addAuthor($command->getFirstName(), $command->getLastName());
-        $this->repository->store($book);
+        $this->repository->store($book, $command->getVersion());
     }
 }

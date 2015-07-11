@@ -6,8 +6,9 @@ interface Repository
 {
     /**
      * @param AggregateRoot $aggregate
+     * @param int $expectedPlayhead
      */
-    public function store(AggregateRoot $aggregate);
+    public function store(AggregateRoot $aggregate, $expectedPlayhead);
 
     /**
      * @param Guid $id

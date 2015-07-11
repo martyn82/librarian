@@ -3,7 +3,10 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\Controller\ApiController;
+use AppBundle\Domain\ReadModel\Authors;
+use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Service\BookService;
+use AppBundle\EventStore\Guid;
 use AppBundle\MessageBus\CommandBus;
 
 class ApiControllerTest extends \PHPUnit_Framework_TestCase
@@ -13,6 +16,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase
         $service = $this->getMockBuilder(BookService::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $service->expects(self::atLeastOnce())
+            ->method('getBook')
+            ->will(self::returnValue(new Book(Guid::createNew(), new Authors(), 'foo', 0)));
 
         $commandBus = $this->getMockBuilder(CommandBus::class)
             ->disableOriginalConstructor()

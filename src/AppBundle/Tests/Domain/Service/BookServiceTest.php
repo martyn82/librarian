@@ -70,7 +70,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo')));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', -1)));
 
         $service = new BookService($storage);
         $service->handle(new AuthorAdded($bookId, $firstName, $lastName));
@@ -93,7 +93,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo')));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', -1)));
 
         $service = new BookService($storage);
         $service->handleAuthorAdded(new AuthorAdded($bookId, $firstName, $lastName));

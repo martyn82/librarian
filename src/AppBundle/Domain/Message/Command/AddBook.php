@@ -25,7 +25,7 @@ final class AddBook implements Command
     public function __construct(Guid $id, $title)
     {
         $this->id = $id;
-        $this->title = $title;
+        $this->title = (string) $title;
     }
 
     /**

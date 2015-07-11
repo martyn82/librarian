@@ -13,6 +13,11 @@ class Book extends Document
     private $id;
 
     /**
+     * @var int
+     */
+    private $version;
+
+    /**
      * @var string
      */
     private $title;
@@ -26,12 +31,14 @@ class Book extends Document
      * @param Guid $id
      * @param Authors $authors
      * @param string $title
+     * @param int $version
      */
-    public function __construct(Guid $id, Authors $authors, $title)
+    public function __construct(Guid $id, Authors $authors, $title, $version)
     {
         $this->id = $id;
         $this->authors = $authors;
         $this->title = $title;
+        $this->version = (int) $version;
     }
 
     /**
@@ -40,6 +47,14 @@ class Book extends Document
     final public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    final public function getVersion()
+    {
+        return $this->version;
     }
 
     /**
