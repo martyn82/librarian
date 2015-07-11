@@ -4,7 +4,6 @@ namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\Collections\BasicSet;
 use AppBundle\Collections\Set;
-use AppBundle\Domain\Storage\Document;
 
 class Authors implements \IteratorAggregate
 {

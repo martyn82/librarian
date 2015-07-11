@@ -2,7 +2,6 @@
 
 namespace AppBundle\Domain\ReadModel;
 
-use AppBundle\Domain\Storage\Document;
 use AppBundle\EventStore\Guid;
 
 class Author
