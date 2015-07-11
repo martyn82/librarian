@@ -37,6 +37,12 @@
 # Composer PHAR
 /composer.phar
 
+# Sonar
+.sonar/
+
+# Vagrant
+.vagrant/
+
 # IDE files
 .settings/
 .buildpath

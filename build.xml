@@ -11,7 +11,7 @@
     <target name="buid" depends="clean"></target>
     -->
 
-    <target name="analyse" description="Run static analysis" depends="sonarqube:start">
+    <target name="analyse" description="Run static analysis" depends="sonarqube:status">
         <exec
             command="sonar-runner"
             checkreturn="true"
@@ -56,6 +56,16 @@
                     passthru="true"
                 />
             </else>
+        </if>
+    </target>
+
+    <target name="sonarqube:status">
+        <exec command="docker ps -q --filter=&quot;name=${container.sonarqube.name}&quot;" outputProperty="sonarqube.container.id" />
+        <if>
+            <equals arg1="${sonarqube.container.id}" arg2="" />
+            <then>
+                <fail message="The SonarQube service is not running. Run the &quot;sonarqube:start&quot; task." />
+            </then>
         </if>
     </target>
 
