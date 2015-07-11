@@ -80,7 +80,11 @@
         />
     </target>
 
-    <target name="test" description="Run Unit Tests" depends="clean:test">
+    <target name="test" description="Run tests" depends="clean:test">
+        <phingcall target="test:unit" />
+    </target>
+
+    <target name="test:unit" description="Run unit tests" depends="clean:test">
         <exec
             executable="${project.basedir}/bin/phpunit"
             checkreturn="true"
@@ -88,6 +92,19 @@
         >
             <arg value="-c" />
             <arg value="${project.basedir}/app/phpunit.xml.dist" />
+        </exec>
+    </target>
+
+    <target name="test:uuid" description="Test UUID generation">
+        <exec
+            executable="${project.basedir}/bin/phpunit"
+            checkreturn="true"
+            passthru="true"
+        >
+            <arg value="-c" />
+            <arg value="${project.basedir}/app/phpunit.xml.dist" />
+            <arg value="--group" />
+            <arg value="uuid-big" />
         </exec>
     </target>
 

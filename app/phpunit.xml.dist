@@ -16,6 +16,13 @@
         </testsuite>
     </testsuites>
 
+    <groups>
+        <exclude>
+            <group>uuid-medium</group>
+            <group>uuid-big</group>
+        </exclude>
+    </groups>
+
     <filter>
         <whitelist>
             <directory>../src</directory>
