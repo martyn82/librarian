@@ -55,7 +55,8 @@ class PersistentEventStorage implements EventStorage
      */
     public function append(EventDescriptor $event)
     {
-        $result = $this->collection->insert($event->toArray());
+        $eventData = $event->toArray();
+        $result = $this->collection->insert($eventData);
         return $result !== false;
     }
 }
