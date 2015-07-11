@@ -11,9 +11,16 @@
     <target name="buid" depends="clean"></target>
     -->
 
-    <target name="static" description="Run static checks and analysis" depends="lint, analyse" />
+    <target name="static" description="Run static checks and analysis">
+        <phingcall target="lint" />
+        <phingcall target="analyse" />
+    </target>
 
-    <target name="lint" description="Check for syntax errors" depends="lint:php, lint:twig, lint:yaml" />
+    <target name="lint" description="Check for syntax errors">
+        <phingcall target="lint:php" />
+        <phingcall target="lint:twig" />
+        <phingcall target="lint:yaml" />
+    </target>
 
     <target name="lint:php" description="Check for PHP syntax errors">
         <phplint>
