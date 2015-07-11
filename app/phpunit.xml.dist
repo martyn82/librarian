@@ -31,8 +31,8 @@
     </filter>
 
     <logging>
-        <log type="coverage-html" target="../report/" lowUpperBound="50" highLowerBound="90" />
-        <log type="coverage-clover" target="../report/coverage.xml" />
-        <log type="junit" target="../report/logfile.xml" logIncompleteSkipped="false" />
+        <log type="coverage-html" target="../report/test" lowUpperBound="50" highLowerBound="90" />
+        <log type="coverage-clover" target="../report/test/coverage.xml" />
+        <log type="junit" target="../report/test/logfile.xml" logIncompleteSkipped="false" />
     </logging>
 </phpunit>

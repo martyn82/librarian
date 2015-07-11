@@ -11,6 +11,10 @@
     <target name="buid" depends="clean"></target>
     -->
 
+    <target name="clean:test" description="Clean test reports">
+        <delete dir="${project.basedir}/report/test" quiet="true" />
+    </target>
+
     <target name="static" description="Run static checks and analysis">
         <phingcall target="lint" />
         <phingcall target="analyse" />
@@ -76,7 +80,7 @@
         />
     </target>
 
-    <target name="test" description="Run Unit Tests">
+    <target name="test" description="Run Unit Tests" depends="clean:test">
         <exec
             executable="${project.basedir}/bin/phpunit"
             checkreturn="true"
