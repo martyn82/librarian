@@ -5,14 +5,14 @@ namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddBookHandler;
 use AppBundle\Domain\Model\Book;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\EventStore\Repository;
 
 class AddBookHandlerTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddBookHandlerWillCallStoreOnRepository()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $title = 'foo';
 
         $command = new AddBook($id, $title);

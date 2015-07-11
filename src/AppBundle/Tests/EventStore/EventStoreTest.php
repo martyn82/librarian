@@ -8,7 +8,7 @@ use AppBundle\EventStore\ConcurrencyException;
 use AppBundle\EventStore\EventClassMap;
 use AppBundle\EventStore\EventDescriptor;
 use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\EventStore\Storage\MemoryEventStorage;
 use AppBundle\EventStore\Storage\EventStorage;
 use AppBundle\Message\Event;
@@ -60,7 +60,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveEventsForAggregateCallsStorage()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $events = new Events(
             [
                 new FirstEvent(),
@@ -90,12 +90,12 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $classMap = $this->getEventClassMap();
 
         $store = new EventStore($eventBus, $storage, $serializer, $classMap);
-        $store->getEventsForAggregate(Guid::createNew());
+        $store->getEventsForAggregate(Uuid::createNew());
     }
 
     public function testGetEventsForAggregateCallsStorage()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $eventBus = $this->getEventBus();
         $storage = $this->getStorage();
         $serializer = $this->getSerializer();
@@ -122,7 +122,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testGetEventsForAggregateWillReturnEvents()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $eventBus = $this->getEventBus();
         $storage = $this->getStorage();
         $serializer = $this->getSerializer();
@@ -170,7 +170,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveEventsForAggregatePublishesEvents()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $events = new Events(
             [
                 new FirstEvent(),
@@ -193,7 +193,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveEventsIncreasesPlayhead()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $events = new Events(
             [
                 new FirstEvent(),
@@ -247,7 +247,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
     {
         self::setExpectedException(ConcurrencyException::class);
 
-        $aggregateId = Guid::createNew();
+        $aggregateId = Uuid::createNew();
         $events = new Events([new FirstEvent()]);
 
         $eventBus = $this->getEventBus();
@@ -263,7 +263,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
     {
         self::setExpectedException(ConcurrencyException::class);
 
-        $aggregateId = Guid::createNew();
+        $aggregateId = Uuid::createNew();
         $events = new Events([new FirstEvent()]);
 
         $eventBus = $this->getEventBus();

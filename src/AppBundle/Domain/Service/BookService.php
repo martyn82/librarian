@@ -10,7 +10,7 @@ use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Storage\Storage;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Event;
 
 class BookService implements AuthorAddedHandler, BookAddedHandler
@@ -84,11 +84,11 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     }
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @return Book
      * @throws ObjectNotFoundException
      */
-    public function getBook(Guid $id)
+    public function getBook(Uuid $id)
     {
         $book = $this->storage->find($id->getValue());
 

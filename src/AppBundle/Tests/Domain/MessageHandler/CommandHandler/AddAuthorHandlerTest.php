@@ -5,14 +5,14 @@ namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddAuthorHandler;
 use AppBundle\Domain\Model\Book;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\EventStore\Repository;
 
 class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddAuthorHandlerWillCallStoreOnRepository()
     {
-        $bookId = Guid::createNew();
+        $bookId = Uuid::createNew();
         $firstName = 'foo';
         $lastName = 'bar';
 

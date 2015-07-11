@@ -2,13 +2,13 @@
 
 namespace AppBundle\Domain\Message\Command;
 
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Command;
 
 final class AddAuthor implements Command
 {
     /**
-     * @var Guid
+     * @var Uuid
      */
     private $id;
 
@@ -28,12 +28,12 @@ final class AddAuthor implements Command
     private $version;
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @param string $firstName
      * @param string $lastName
      * @param int $version
      */
-    public function __construct(Guid $id, $firstName, $lastName, $version)
+    public function __construct(Uuid $id, $firstName, $lastName, $version)
     {
         $this->id = $id;
         $this->firstName = (string) $firstName;
@@ -42,7 +42,7 @@ final class AddAuthor implements Command
     }
 
     /**
-     * @return Guid
+     * @return Uuid
      */
     public function getId()
     {

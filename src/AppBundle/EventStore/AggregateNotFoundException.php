@@ -10,9 +10,9 @@ class AggregateNotFoundException extends EventStoreException
     private static $messageTemplate = "Aggregate with ID '%s' not found.";
 
     /**
-     * @param Guid $aggregateId
+     * @param Uuid $aggregateId
      */
-    public function __construct(Guid $aggregateId)
+    public function __construct(Uuid $aggregateId)
     {
         parent::__construct(sprintf(self::$messageTemplate, $aggregateId->getValue()));
     }

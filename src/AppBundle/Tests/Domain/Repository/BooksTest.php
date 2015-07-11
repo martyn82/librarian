@@ -7,14 +7,14 @@ use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Model\Book;
 use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Events;
 
 class BooksTest extends \PHPUnit_Framework_TestCase
 {
     public function testStoreBookCallsSaveOnStorage()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $title = 'foo';
         $book = Book::add($id, $title);
 
@@ -32,7 +32,7 @@ class BooksTest extends \PHPUnit_Framework_TestCase
 
     public function testFindBookByIdLoadsBookFromHistory()
     {
-        $bookId = Guid::createNew();
+        $bookId = Uuid::createNew();
 
         $title = 'foo';
         $authorFirstName = 'first';

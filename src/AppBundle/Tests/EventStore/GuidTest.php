@@ -2,16 +2,16 @@
 
 namespace AppBundle\Tests\EventStore;
 
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 
-class GuidTest extends \PHPUnit_Framework_TestCase
+class UuidTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreateNewWillGenerateAUniqueID()
     {
-        $guid = Guid::createNew();
+        $Uuid = Uuid::createNew();
 
-        self::assertNotNull($guid->getValue());
-        self::assertNotEmpty($guid->getValue());
-        self::assertEquals($guid->getValue(), $guid->__toString());
+        self::assertNotNull($Uuid->getValue());
+        self::assertNotEmpty($Uuid->getValue());
+        self::assertEquals($Uuid->getValue(), $Uuid->__toString());
     }
 }

@@ -2,15 +2,15 @@
 
 namespace AppBundle\Domain\Message\Event;
 
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Event;
 use JMS\Serializer\Annotation as Serializer;
 
 final class AuthorAdded extends Event
 {
     /**
-     * @Serializer\Type("AppBundle\EventStore\Guid")
-     * @var Guid
+     * @Serializer\Type("AppBundle\EventStore\Uuid")
+     * @var Uuid
      */
     private $id;
 
@@ -27,11 +27,11 @@ final class AuthorAdded extends Event
     private $lastName;
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @param string $firstName
      * @param string $lastName
      */
-    public function __construct(Guid $id, $firstName, $lastName)
+    public function __construct(Uuid $id, $firstName, $lastName)
     {
         $this->id = $id;
         $this->firstName = $firstName;
@@ -39,7 +39,7 @@ final class AuthorAdded extends Event
     }
 
     /**
-     * @return Guid
+     * @return Uuid
      */
     public function getId()
     {

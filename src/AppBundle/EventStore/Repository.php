@@ -11,8 +11,8 @@ interface Repository
     public function store(AggregateRoot $aggregate, $expectedPlayhead);
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @return AggregateRoot
      */
-    public function findById(Guid $id);
+    public function findById(Uuid $id);
 }

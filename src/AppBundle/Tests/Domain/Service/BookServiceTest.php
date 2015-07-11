@@ -8,7 +8,7 @@ use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Storage\Storage;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Command;
 use AppBundle\Message\Event;
 use AppBundle\Domain\Storage\MemoryStorage;
@@ -17,7 +17,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function testHandleWithBookAddedPropagatesToCorrectHandler()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $title = 'foo';
 
         $event = new BookAdded($id, $title);
@@ -36,7 +36,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testHandlerForEventBookAdded()
     {
-        $id = Guid::createNew();
+        $id = Uuid::createNew();
         $title = 'foo';
 
         $event = new BookAdded($id, $title);
@@ -55,7 +55,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleWithAuthorAddedPropagatesToCorrectHandler()
     {
-        $bookId = Guid::createNew();
+        $bookId = Uuid::createNew();
         $firstName = 'foo';
         $lastName = 'bar';
 
@@ -78,7 +78,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testHandlerForEventAuthorAdded()
     {
-        $bookId = Guid::createNew();
+        $bookId = Uuid::createNew();
         $firstName = 'foo';
         $lastName = 'bar';
 
@@ -108,7 +108,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $service = new BookService($storage);
-        $service->getBook(Guid::createNew());
+        $service->getBook(Uuid::createNew());
     }
 
     public function testHandleWithUnsupportedEventThrowsException()
@@ -128,7 +128,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testBookIsAvailableAfterBookAdded()
     {
-        $bookId = Guid::createNew();
+        $bookId = Uuid::createNew();
         $title = 'foo';
         $firstName = 'bar';
         $lastName = 'baz';

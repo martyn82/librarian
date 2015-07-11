@@ -53,12 +53,12 @@ class EventStore
     }
 
     /**
-     * @param Guid $aggregateId
+     * @param Uuid $aggregateId
      * @param Events $events
      * @param int $expectedPlayhead
      *
      */
-    public function save(Guid $aggregateId, Events $events, $expectedPlayhead)
+    public function save(Uuid $aggregateId, Events $events, $expectedPlayhead)
     {
         $expectedPlayhead = (int) $expectedPlayhead;
 
@@ -80,11 +80,11 @@ class EventStore
     }
 
     /**
-     * @param Guid $aggregateId
+     * @param Uuid $aggregateId
      * @param int $playhead
      * @return bool
      */
-    private function isValidPlayhead(Guid $aggregateId, $playhead)
+    private function isValidPlayhead(Uuid $aggregateId, $playhead)
     {
         $eventDescriptors = $this->storage->find($aggregateId->getValue());
 
@@ -100,10 +100,10 @@ class EventStore
     }
 
     /**
-     * @param Guid $aggregateId
+     * @param Uuid $aggregateId
      * @param Event $event
      */
-    private function saveEvent(Guid $aggregateId, Event $event)
+    private function saveEvent(Uuid $aggregateId, Event $event)
     {
         $eventData = EventDescriptor::record(
             $aggregateId->getValue(),
@@ -116,11 +116,11 @@ class EventStore
     }
 
     /**
-     * @param Guid $aggregateId
+     * @param Uuid $aggregateId
      * @return Events
      * @throws AggregateNotFoundException
      */
-    public function getEventsForAggregate(Guid $aggregateId)
+    public function getEventsForAggregate(Uuid $aggregateId)
     {
         if (!$this->storage->contains($aggregateId->getValue())) {
             throw new AggregateNotFoundException($aggregateId);

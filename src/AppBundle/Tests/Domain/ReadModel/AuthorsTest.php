@@ -4,13 +4,13 @@ namespace AppBundle\Tests\Domain\ReadModel;
 
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 
 class AuthorsTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructAcceptsAuthorViewElements()
     {
-        $element = new Author(Guid::createNew(), 'first', 'last');
+        $element = new Author(Uuid::createNew(), 'first', 'last');
         $authors = new Authors([$element]);
 
         self::assertCount(1, $authors->getIterator());

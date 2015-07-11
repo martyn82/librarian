@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\Service;
 
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 
 class ObjectNotFoundException extends \Exception
 {
@@ -13,9 +13,9 @@ class ObjectNotFoundException extends \Exception
 
     /**
      * @param string $objectName
-     * @param Guid $objectId
+     * @param Uuid $objectId
      */
-    public function __construct($objectName, Guid $objectId)
+    public function __construct($objectName, Uuid $objectId)
     {
         parent::__construct(sprintf(self::$messageTemplate, $objectName, $objectId->getValue()));
     }

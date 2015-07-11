@@ -5,7 +5,7 @@ namespace AppBundle\Domain\Repository;
 use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\EventStore\Repository;
 
 class Books implements Repository
@@ -24,10 +24,10 @@ class Books implements Repository
     }
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @return AggregateRoot
      */
-    public function findById(Guid $id)
+    public function findById(Uuid $id)
     {
         $events = $this->storage->getEventsForAggregate($id);
 

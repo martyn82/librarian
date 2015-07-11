@@ -5,21 +5,21 @@ namespace AppBundle\Domain\Model;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\EventStore\AggregateRoot;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 
 class Book extends AggregateRoot
 {
     /**
-     * @var Guid
+     * @var Uuid
      */
     private $id;
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @param string $title
      * @return Book
      */
-    public static function add(Guid $id, $title)
+    public static function add(Uuid $id, $title)
     {
         $instance = new self($id);
         $instance->applyChange(new BookAdded($instance->getId(), $title));
@@ -36,9 +36,9 @@ class Book extends AggregateRoot
     }
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      */
-    public function __construct(Guid $id)
+    public function __construct(Uuid $id)
     {
         $this->id = $id;
         parent::__construct();

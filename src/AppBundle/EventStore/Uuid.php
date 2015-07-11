@@ -4,7 +4,7 @@ namespace AppBundle\EventStore;
 
 use JMS\Serializer\Annotation as Serializer;
 
-class Guid
+class Uuid
 {
     /**
      * @Serializer\Type("string")
@@ -13,7 +13,7 @@ class Guid
     private $value;
 
     /**
-     * @return Guid
+     * @return Uuid
      */
     public static function createNew()
     {

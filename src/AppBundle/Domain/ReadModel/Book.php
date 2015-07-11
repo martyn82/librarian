@@ -3,12 +3,12 @@
 namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\Domain\Storage\Document;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 
 class Book extends Document
 {
     /**
-     * @var Guid
+     * @var Uuid
      */
     private $id;
 
@@ -28,12 +28,12 @@ class Book extends Document
     private $authors;
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @param Authors $authors
      * @param string $title
      * @param int $version
      */
-    public function __construct(Guid $id, Authors $authors, $title, $version)
+    public function __construct(Uuid $id, Authors $authors, $title, $version)
     {
         $this->id = $id;
         $this->authors = $authors;
@@ -42,7 +42,7 @@ class Book extends Document
     }
 
     /**
-     * @return Guid
+     * @return Uuid
      */
     final public function getId()
     {

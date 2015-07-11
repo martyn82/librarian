@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\Service\BookService;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\MessageBus\CommandBus;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -52,7 +52,7 @@ class ApiController extends Controller
      */
     public function addBookAction($authorName, $title)
     {
-        $bookId = Guid::createNew();
+        $bookId = Uuid::createNew();
 
         $this->commandBus->send(
             new AddBook($bookId, $title)

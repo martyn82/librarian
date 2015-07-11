@@ -2,8 +2,6 @@
 
 namespace AppBundle\Domain\ReadModel;
 
-use AppBundle\EventStore\Guid;
-
 class Author
 {
     /**

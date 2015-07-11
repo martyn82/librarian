@@ -3,13 +3,13 @@
 namespace AppBundle\Domain\Message\Command;
 
 use AppBundle\Domain\Model\BookView;
-use AppBundle\EventStore\Guid;
+use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Command;
 
 final class AddBook implements Command
 {
     /**
-     * @var Guid
+     * @var Uuid
      */
     private $id;
 
@@ -19,17 +19,17 @@ final class AddBook implements Command
     private $title;
 
     /**
-     * @param Guid $id
+     * @param Uuid $id
      * @param string $title
      */
-    public function __construct(Guid $id, $title)
+    public function __construct(Uuid $id, $title)
     {
         $this->id = $id;
         $this->title = (string) $title;
     }
 
     /**
-     * @return Guid
+     * @return Uuid
      */
     public function getId()
     {

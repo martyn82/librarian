@@ -20,7 +20,7 @@ abstract class AggregateRoot
     }
 
     /**
-     * @return Guid
+     * @return Uuid
      */
     abstract public function getId();
 
