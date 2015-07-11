@@ -11,6 +11,56 @@
     <target name="buid" depends="clean"></target>
     -->
 
+    <target name="static" description="Run static checks and analysis" depends="lint, analyse" />
+
+    <target name="lint" description="Check for syntax errors" depends="lint:php, lint:twig, lint:yaml" />
+
+    <target name="lint:php" description="Check for PHP syntax errors">
+        <phplint>
+            <fileset dir="${project.basedir}/src">
+                <include name="**/*.php" />
+            </fileset>
+        </phplint>
+    </target>
+
+    <target name="lint:twig" description="Check for Twig syntax errors">
+        <exec
+            executable="${project.basedir}/app/console"
+            checkreturn="true"
+            passthru="true"
+        >
+            <arg value="lint:twig" />
+            <arg value="${project.basedir}/app" />
+        </exec>
+        <exec
+            executable="${project.basedir}/app/console"
+            checkreturn="true"
+            passthru="true"
+        >
+            <arg value="lint:twig" />
+            <arg value="${project.basedir}/src" />
+        </exec>
+    </target>
+
+    <target name="lint:yaml" description="Check for Yaml syntax errors">
+        <exec
+            executable="${project.basedir}/app/console"
+            checkreturn="true"
+            passthru="true"
+        >
+            <arg value="lint:yaml" />
+            <arg value="${project.basedir}/app" />
+        </exec>
+        <exec
+            executable="${project.basedir}/app/console"
+            checkreturn="true"
+            passthru="true"
+        >
+            <arg value="lint:yaml" />
+            <arg value="${project.basedir}/src" />
+        </exec>
+    </target>
+
     <target name="analyse" description="Run static analysis" depends="sonarqube:status">
         <exec
             command="sonar-runner"
@@ -66,6 +116,9 @@
             <then>
                 <fail message="The SonarQube service is not running. Run the &quot;sonarqube:start&quot; task." />
             </then>
+            <else>
+                <echo msg="SonarQube is up and running." />
+            </else>
         </if>
     </target>
 
