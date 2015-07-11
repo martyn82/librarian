@@ -2,6 +2,8 @@
 
 namespace AppBundle\EventStore\Storage;
 
+use AppBundle\EventStore\EventDescriptor;
+
 class MemoryEventStorage implements EventStorage
 {
     /**
@@ -18,15 +20,15 @@ class MemoryEventStorage implements EventStorage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\EventStorage::upsert()
+     * @see \AppBundle\EventStore\Storage\EventStorage::append()
      */
-    public function append($identity, array $data)
+    public function append(EventDescriptor $event)
     {
-        if (!$this->contains($identity)) {
-            $this->data[$identity] = [];
+        if (!$this->contains($event->getIdentity())) {
+            $this->data[$event->getIdentity()] = [];
         }
 
-        $this->data[$identity][] = $data;
+        $this->data[$event->getIdentity()][] = $event->toArray();
         return true;
     }
 
@@ -39,6 +41,11 @@ class MemoryEventStorage implements EventStorage
             return [];
         }
 
-        return $this->data[$identity];
+        return array_map(
+            function (array $eventData) {
+                return EventDescriptor::reconstructFromArray($eventData);
+            },
+            $this->data[$identity]
+        );
     }
 }

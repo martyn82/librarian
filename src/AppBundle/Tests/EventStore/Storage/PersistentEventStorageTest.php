@@ -2,6 +2,7 @@
 
 namespace AppBundle\Tests\EventStore\Storage;
 
+use AppBundle\EventStore\EventDescriptor;
 use AppBundle\EventStore\Storage\PersistentEventStorage;
 use Doctrine\MongoDB\Collection;
 use Doctrine\MongoDB\Cursor;
@@ -21,21 +22,22 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
     public function testContainsCallsCountOnCollection()
     {
         $identity = 1;
+        $identityField = 'identity';
 
         $collection = $this->getCollection();
 
         $collection->expects(self::once())
             ->method('count')
-            ->with(['identity' => $identity]);
+            ->with([$identityField => $identity]);
 
-        $storage = new PersistentEventStorage($collection);
+        $storage = new PersistentEventStorage($collection, $identityField);
         $storage->contains($identity);
     }
 
     public function testFindCallsFindOnCollection()
     {
         $identity = 1;
-
+        $identityField = 'identity';
         $collection = $this->getCollection();
 
         $cursor = $this->getMockBuilder(Cursor::class)
@@ -44,25 +46,51 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
 
         $collection->expects(self::once())
             ->method('find')
-            ->with(['identity' => $identity])
+            ->with([$identityField => $identity])
             ->will(self::returnValue($cursor));
 
-        $storage = new PersistentEventStorage($collection);
+        $storage = new PersistentEventStorage($collection, $identityField);
         $storage->find($identity);
+    }
+
+    public function testFindReconstructsEventDescriptors()
+    {
+        $identity = 1;
+        $identityField = 'identity';
+        $collection = $this->getCollection();
+
+        $eventData = [
+            EventDescriptor::record($identity, 'foo', '[]')->toArray()
+        ];
+        $cursor = new FakeCursor($eventData);
+
+        $collection->expects(self::once())
+            ->method('find')
+            ->with([$identityField => $identity])
+            ->will(self::returnValue($cursor));
+
+        $storage = new PersistentEventStorage($collection, $identityField);
+        $events = $storage->find($identity);
+
+        self::assertCount(1, $events);
+        self::assertEquals($eventData[0], $events[0]->toArray());
     }
 
     public function testAppendCallsUpsertOnCollection()
     {
         $identity = 1;
-        $data = ['foo' => 'bar'];
+        $identityField = 'identity';
+        $event = EventDescriptor::record($identity, 'foo', '[]');
 
         $collection = $this->getCollection();
 
         $collection->expects(self::once())
             ->method('insert')
-            ->with($data);
+            ->with($event->toArray());
 
-        $storage = new PersistentEventStorage($collection);
-        $storage->append($identity, $data);
+        $storage = new PersistentEventStorage($collection, $identityField);
+        $storage->append($event);
     }
 }
+
+class FakeCursor extends \ArrayObject {}

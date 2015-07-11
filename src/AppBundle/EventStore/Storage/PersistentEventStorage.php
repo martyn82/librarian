@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventStore\Storage;
 
+use AppBundle\EventStore\EventDescriptor;
 use Doctrine\MongoDB\Collection;
 
 class PersistentEventStorage implements EventStorage
@@ -12,11 +13,18 @@ class PersistentEventStorage implements EventStorage
     private $collection;
 
     /**
-     * @param Collection $collection
+     * @var string
      */
-    public function __construct(Collection $collection)
+    private $identityField;
+
+    /**
+     * @param Collection $collection
+     * @param string $identityField
+     */
+    public function __construct(Collection $collection, $identityField)
     {
         $this->collection = $collection;
+        $this->identityField = (string) $identityField;
     }
 
     /**
@@ -24,7 +32,7 @@ class PersistentEventStorage implements EventStorage
      */
     public function contains($identity)
     {
-        return $this->collection->count(['identity' => $identity], 1) > 0;
+        return $this->collection->count([$this->identityField => $identity], 1) > 0;
     }
 
     /**
@@ -32,16 +40,22 @@ class PersistentEventStorage implements EventStorage
      */
     public function find($identity)
     {
-        $cursor = $this->collection->find(['identity' => $identity]);
-        return iterator_to_array($cursor);
+        $cursor = $this->collection->find([$this->identityField => $identity]);
+
+        return array_map(
+            function (array $eventData) {
+                return EventDescriptor::reconstructFromArray($eventData);
+            },
+            iterator_to_array($cursor)
+        );
     }
 
     /**
      * @see \AppBundle\EventStore\Storage\EventStorage::append()
      */
-    public function append($identity, array $data)
+    public function append(EventDescriptor $event)
     {
-        $result = $this->collection->insert($data);
+        $result = $this->collection->insert($event->toArray());
         return $result !== false;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace AppBundle\EventStore\Storage;
 
+use AppBundle\EventStore\EventDescriptor;
+
 interface EventStorage
 {
     /**
@@ -11,15 +13,14 @@ interface EventStorage
     public function contains($identity);
 
     /**
-     * @param string $identity
-     * @param array $data
+     * @param EventDescriptor $event
      * @return bool
      */
-    public function append($identity, array $data);
+    public function append(EventDescriptor $event);
 
     /**
      * @param string $identity
-     * @return array
+     * @return EventDescriptor[]
      */
     public function find($identity);
 }

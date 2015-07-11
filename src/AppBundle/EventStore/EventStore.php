@@ -63,14 +63,13 @@ class EventStore
      */
     private function saveEvent(Guid $aggregateId, Event $event)
     {
-        $eventData = [
-            'identity' => $aggregateId->getValue(),
-            'eventName' => $event->getEventName(),
-            'payload' => $this->serializer->serialize($event, 'json'),
-            'recordedOn' => date('r')
-        ];
+        $eventData = EventDescriptor::record(
+            $aggregateId->getValue(),
+            $event->getEventName(),
+            $this->serializer->serialize($event, 'json')
+        );
 
-        $this->storage->append($aggregateId->getValue(), $eventData);
+        $this->storage->append($eventData);
     }
 
     /**
@@ -88,12 +87,15 @@ class EventStore
 
         $events = array_map(
             /**
-             * @param array $eventData
+             * @param EventDescriptor $eventData
              * @return Event
              */
-            function (array $eventData) {
-                $className = $this->eventMap->getClassByEventName($eventData['eventName']);
-                return $this->serializer->deserialize($eventData['payload'], $className, 'json');
+            function (EventDescriptor $eventData) {
+                return $this->serializer->deserialize(
+                    $eventData->getPayload(),
+                    $this->eventMap->getClassByEventName($eventData->getEvent()),
+                    'json'
+                );
             },
             $eventsData
         );

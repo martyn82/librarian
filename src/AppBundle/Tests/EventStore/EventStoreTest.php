@@ -5,6 +5,7 @@ namespace AppBundle\Tests\EventStore;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\EventStore\AggregateNotFoundException;
 use AppBundle\EventStore\EventClassMap;
+use AppBundle\EventStore\EventDescriptor;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Guid;
 use AppBundle\EventStore\Storage\EventStorage;
@@ -71,8 +72,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $classMap = $this->getEventClassMap();
 
         $storage->expects(self::exactly($events->getIterator()->count()))
-            ->method('append')
-            ->with($id);
+            ->method('append');
 
         $store = new EventStore($eventBus, $storage, $serializer, $classMap);
         $store->save($id, $events);
@@ -141,12 +141,12 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->method('deserialize')
             ->will(self::returnValue($event));
 
-        $eventStructure = [
+        $eventStructure = EventDescriptor::reconstructFromArray([
             'identity' => $id->getValue(),
-            'eventName' => $event->getEventName(),
+            'event' => $event->getEventName(),
             'payload' => $serializer->serialize($event, 'json'),
-            'recordedOn' => date('r')
-        ];
+            'recorded' => date('r')
+        ]);
 
         $storage->expects(self::any())
             ->method('contains')

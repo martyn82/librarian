@@ -12,7 +12,7 @@ services:
   # storage
   librarian.storage.events.book.persistent:
     class: AppBundle\EventStore\Storage\PersistentEventStorage
-    arguments: ["@librarian.database.events.books"]
+    arguments: ["@librarian.database.events.books", identity]
 
   librarian.storage.events.book.memory:
     class: AppBundle\EventStore\Storage\MemoryEventStorage
