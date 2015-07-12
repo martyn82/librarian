@@ -3,6 +3,7 @@
 namespace AppBundle\Tests\EventStore\Storage;
 
 use AppBundle\EventStore\EventDescriptor;
+use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Storage\MemoryEventStorage;
 
 class MemoryEventStorageTest extends \PHPUnit_Framework_TestCase
@@ -20,7 +21,7 @@ class MemoryEventStorageTest extends \PHPUnit_Framework_TestCase
         $storage = new MemoryEventStorage();
         self::assertFalse($storage->contains($id));
 
-        $record = EventDescriptor::record($id, 'foo', '[bar]', -1);
+        $record = EventDescriptor::record($id, 'foo', '[bar]', EventStore::FIRST_VERSION);
         $storage->append($record);
 
         self::assertTrue($storage->contains($id));
@@ -33,13 +34,13 @@ class MemoryEventStorageTest extends \PHPUnit_Framework_TestCase
         $storage = new MemoryEventStorage();
         self::assertFalse($storage->contains($id));
 
-        $initialRecord = EventDescriptor::record($id, 'foo', '["foo":"bar"]', -1);
+        $initialRecord = EventDescriptor::record($id, 'foo', '["foo":"bar"]', EventStore::FIRST_VERSION);
         $storage->append($initialRecord);
 
         self::assertTrue($storage->contains($id));
         self::assertEquals([$initialRecord], $storage->find($id));
 
-        $appendRecord = EventDescriptor::record($id, 'foo', '["baz":"boo"]', -1);
+        $appendRecord = EventDescriptor::record($id, 'foo', '["baz":"boo"]', EventStore::FIRST_VERSION);
         $storage->append($appendRecord);
 
         self::assertEquals(

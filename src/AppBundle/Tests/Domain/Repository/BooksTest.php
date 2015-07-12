@@ -27,7 +27,7 @@ class BooksTest extends \PHPUnit_Framework_TestCase
             ->with($id, $book->getUncommittedChanges(), self::anything());
 
         $repository = new Books($storage);
-        $repository->store($book, -1);
+        $repository->store($book);
     }
 
     public function testFindBookByIdLoadsBookFromHistory()

@@ -77,7 +77,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->method('append');
 
         $store = new EventStore($eventBus, $storage, $serializer, $classMap);
-        $store->save($id, $events, -1);
+        $store->save($id, $events, EventStore::FIRST_VERSION);
     }
 
     public function testGetEventsForForUnknownAggregateThrowsException()
@@ -116,7 +116,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(Event::class)
             ->getMock();
 
-        $store->save($id, new Events([$event]), -1);
+        $store->save($id, new Events([$event]), EventStore::FIRST_VERSION);
         $store->getEventsForAggregate($id);
     }
 
@@ -188,7 +188,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
             ->with(self::logicalOr($events->getIterator()->offsetGet(0), $events->getIterator()->offsetGet(1)));
 
         $store = new EventStore($eventBus, $storage, $serializer, $classMap);
-        $store->save($id, $events, -1);
+        $store->save($id, $events, EventStore::FIRST_VERSION);
     }
 
     public function testSaveEventsIncreasesPlayhead()
@@ -231,7 +231,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $store = new EventStore($eventBus, new MemoryEventStorage(), $serializer, $classMap);
-        $store->save($id, $events, -1);
+        $store->save($id, $events, EventStore::FIRST_VERSION);
 
         $recordedEvents = $store->getEventsForAggregate($id);
 
@@ -272,7 +272,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $map = $this->getEventClassMap();
 
         $store = new EventStore($eventBus, $storage, $serializer, $map);
-        $store->save($aggregateId, $events, -1);
+        $store->save($aggregateId, $events, EventStore::FIRST_VERSION);
 
         $store->save($aggregateId, new Events([new SecondEvent()]), 1);
     }

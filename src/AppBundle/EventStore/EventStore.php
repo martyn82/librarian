@@ -13,6 +13,11 @@ use JMS\Serializer\Serializer;
 class EventStore
 {
     /**
+     * @var int
+     */
+    const FIRST_VERSION = -1;
+
+    /**
      * @var EventBus
      */
     private $eventBus;
@@ -92,7 +97,7 @@ class EventStore
             $this->current->put($aggregateId->getValue(), end($eventDescriptors)->getPlayhead());
         }
 
-        if ($this->current->get($aggregateId->getValue()) != $playhead && $playhead != -1) {
+        if ($this->current->get($aggregateId->getValue()) != $playhead && $playhead != self::FIRST_VERSION) {
             return false;
         }
 

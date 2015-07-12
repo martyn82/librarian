@@ -3,6 +3,7 @@
 namespace AppBundle\Tests\EventStore\Storage;
 
 use AppBundle\EventStore\EventDescriptor;
+use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Storage\PersistentEventStorage;
 use Doctrine\MongoDB\Collection;
 use Doctrine\MongoDB\Cursor;
@@ -60,7 +61,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
         $collection = $this->getCollection();
 
         $eventData = [
-            EventDescriptor::record($identity, 'foo', '[]', -1)->toArray()
+            EventDescriptor::record($identity, 'foo', '[]', EventStore::FIRST_VERSION)->toArray()
         ];
         $cursor = new FakeCursor($eventData);
 
@@ -80,7 +81,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
     {
         $identity = 1;
         $identityField = 'identity';
-        $event = EventDescriptor::record($identity, 'foo', '[]', -1);
+        $event = EventDescriptor::record($identity, 'foo', '[]', EventStore::FIRST_VERSION);
 
         $collection = $this->getCollection();
 

@@ -40,7 +40,7 @@ class Books implements Repository
     /**
      * @see \AppBundle\EventStore\Repository::store()
      */
-    public function store(AggregateRoot $aggregate, $expectedPlayhead)
+    public function store(AggregateRoot $aggregate, $expectedPlayhead = EventStore::FIRST_VERSION)
     {
         $this->storage->save($aggregate->getId(), $aggregate->getUncommittedChanges(), $expectedPlayhead);
     }
