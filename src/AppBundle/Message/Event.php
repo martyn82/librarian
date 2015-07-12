@@ -26,7 +26,7 @@ abstract class Event
      */
     public function getEventName()
     {
-        return self::getName();
+        return static::getName();
     }
 
     /**

@@ -14,6 +14,6 @@ class AggregateNotFoundException extends EventStoreException
      */
     public function __construct(Uuid $aggregateId)
     {
-        parent::__construct(sprintf(self::$messageTemplate, $aggregateId->getValue()));
+        parent::__construct(sprintf(static::$messageTemplate, $aggregateId->getValue()));
     }
 }

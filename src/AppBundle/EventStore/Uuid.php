@@ -17,13 +17,13 @@ class Uuid
      */
     public static function createNew()
     {
-        return new self(self::generate());
+        return new self(static::generate());
     }
 
     /**
      * @codeCoverageIgnore
      * @return string
-     * @throws \RuntimeException
+     * @throws UuidException
      */
     private static function generate()
     {
@@ -32,10 +32,10 @@ class Uuid
         } else if (\function_exists('openssl_random_pseudo_bytes')) {
             $bytes = \openssl_random_pseudo_bytes(16);
         } else {
-            throw new \RuntimeException("Unable to generate a random byte sequence.");
+            throw new UuidException("Unable to generate a random byte sequence.");
         }
 
-        return self::guid4($bytes);
+        return static::guid4($bytes);
     }
 
     /**
@@ -46,8 +46,8 @@ class Uuid
     {
         assert(strlen($data) == 16);
 
-        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }

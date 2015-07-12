@@ -97,7 +97,7 @@ class EventStore
             $this->current->put($aggregateId->getValue(), end($eventDescriptors)->getPlayhead());
         }
 
-        if ($this->current->get($aggregateId->getValue()) != $playhead && $playhead != self::FIRST_VERSION) {
+        if ($this->current->get($aggregateId->getValue()) != $playhead && $playhead != static::FIRST_VERSION) {
             return false;
         }
 

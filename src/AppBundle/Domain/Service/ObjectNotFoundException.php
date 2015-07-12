@@ -17,6 +17,6 @@ class ObjectNotFoundException extends \Exception
      */
     public function __construct($objectName, Uuid $objectId)
     {
-        parent::__construct(sprintf(self::$messageTemplate, $objectName, $objectId->getValue()));
+        parent::__construct(sprintf(static::$messageTemplate, $objectName, $objectId->getValue()));
     }
 }

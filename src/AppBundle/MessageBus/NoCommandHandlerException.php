@@ -14,6 +14,6 @@ class NoCommandHandlerException extends \Exception
      */
     public function __construct($command)
     {
-        parent::__construct(sprintf(self::$messageTemplate, $command));
+        parent::__construct(sprintf(static::$messageTemplate, $command));
     }
 }

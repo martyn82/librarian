@@ -15,6 +15,6 @@ class UnsupportedEventException extends EventStoreException
      */
     public function __construct($eventName, $aggregateClassName)
     {
-        parent::__construct(sprintf(self::$messageTemplate, $eventName, $aggregateClassName));
+        parent::__construct(sprintf(static::$messageTemplate, $eventName, $aggregateClassName));
     }
 }

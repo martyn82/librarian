@@ -15,6 +15,6 @@ class ConcurrencyException extends EventStoreException
      */
     public function __construct($expectedPlayhead, $actualPlayhead)
     {
-        parent::__construct(sprintf(self::$messageTemplate, $expectedPlayhead, $actualPlayhead));
+        parent::__construct(sprintf(static::$messageTemplate, $expectedPlayhead, $actualPlayhead));
     }
 }
