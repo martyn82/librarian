@@ -3,6 +3,7 @@ MAINTAINER Martijn Endenburg <martijn.endenburg@gmail.com>
 
 RUN apt-get update && \
     apt-get install -y \
+        php5-curl \
         php5-fpm \
         php5-mongo
 
