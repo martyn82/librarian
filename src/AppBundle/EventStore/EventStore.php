@@ -61,7 +61,7 @@ class EventStore
      * @param Uuid $aggregateId
      * @param Events $events
      * @param int $expectedPlayhead
-     *
+     * @throws ConcurrencyException
      */
     public function save(Uuid $aggregateId, Events $events, $expectedPlayhead)
     {

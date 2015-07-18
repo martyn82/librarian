@@ -2,7 +2,9 @@
 
 namespace AppBundle\Domain\ReadModel;
 
-class Author
+use AppBundle\Serializing\Serializable;
+
+class Author implements Serializable
 {
     /**
      * @var string
@@ -38,5 +40,28 @@ class Author
     public function getLastName()
     {
         return $this->lastName;
+    }
+
+    /**
+     * @param array $data
+     * @return Author
+     */
+    public static function deserialize(array $data)
+    {
+        assert(array_key_exists('firstName', $data));
+        assert(array_key_exists('lastName', $data));
+
+        return new self($data['firstName'], $data['lastName']);
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return [
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName
+        ];
     }
 }

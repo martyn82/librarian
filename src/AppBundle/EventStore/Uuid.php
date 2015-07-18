@@ -2,9 +2,10 @@
 
 namespace AppBundle\EventStore;
 
+use AppBundle\Serializing\Serializable;
 use JMS\Serializer\Annotation as Serializer;
 
-class Uuid
+class Uuid implements Serializable
 {
     /**
      * @Serializer\Type("string")
@@ -74,5 +75,25 @@ class Uuid
     public function __toString()
     {
         return $this->getValue();
+    }
+
+    /**
+     * @param array $data
+     * @return Uuid
+     */
+    public static function deserialize(array $data)
+    {
+        assert(array_key_exists('value', $data));
+        return new self($data['value']);
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return [
+            'value' => $this->value
+        ];
     }
 }

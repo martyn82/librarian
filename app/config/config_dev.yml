@@ -49,3 +49,5 @@ assetic:
 
 parameters:
     librarian.database.events.address: 172.17.42.1:27017
+    librarian.database.read.host: 172.17.42.1
+    librarian.database.read.port: 9200

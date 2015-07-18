@@ -2,6 +2,8 @@
 
 namespace AppBundle\Domain\Storage;
 
-abstract class Document
+use AppBundle\Serializing\Serializable;
+
+abstract class Document implements Serializable
 {
 }

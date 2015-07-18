@@ -9,13 +9,27 @@ services:
     factory: ["@librarian.database.events", selectCollection]
     arguments: [events, books]
 
+  librarian.client.elasticsearch:
+    class: Elasticsearch\Client
+    arguments: [{hosts: {host: "%librarian.database.read.host%", port: "%librarian.database.read.port%"}}]
+
   # storage
   librarian.storage.events.book.persistent:
-    class: AppBundle\EventStore\Storage\PersistentEventStorage
-    arguments: ["@librarian.database.events.books", identity]
+    class: AppBundle\EventStore\Storage\MongoDbEventStorage
+    arguments:
+      - "@librarian.database.events.books"
+      - identity
 
   librarian.storage.events.book.memory:
     class: AppBundle\EventStore\Storage\MemoryEventStorage
+
+  librarian.storage.documents.book.read:
+    class: AppBundle\Domain\Storage\ElasticSearchStorage
+    arguments:
+      - "@librarian.client.elasticsearch"
+      - AppBundle\Domain\ReadModel\Book
+      - books
+      - book
 
   librarian.storage.documents.book.memory:
     class: AppBundle\Domain\Storage\MemoryStorage
@@ -80,4 +94,4 @@ services:
   # aggregate services
   librarian.service.book:
     class: AppBundle\Domain\Service\BookService
-    arguments: ["@librarian.storage.documents.book.memory"]
+    arguments: ["@librarian.storage.documents.book.read"]

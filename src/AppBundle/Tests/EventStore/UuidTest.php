@@ -1,9 +1,20 @@
 <?php
 
-namespace AppBundle\EventStore;
+namespace AppBundle\Tests\EventStore;
+
+use AppBundle\EventStore\Uuid;
 
 class UuidTest extends \PHPUnit_Framework_TestCase
 {
+    public function testCreateNewWillGenerateAUniqueID()
+    {
+        $Uuid = Uuid::createNew();
+
+        self::assertNotNull($Uuid->getValue());
+        self::assertNotEmpty($Uuid->getValue());
+        self::assertEquals($Uuid->getValue(), $Uuid->__toString());
+    }
+
     /**
      * @group uuid-small
      */
@@ -50,5 +61,14 @@ class UuidTest extends \PHPUnit_Framework_TestCase
 
         self::assertNotEmpty($uuids);
         self::assertCount($cycles, $uuids);
+    }
+
+    public function testSerialization()
+    {
+        $uuid = Uuid::createNew();
+        $serialized = $uuid->serialize();
+        $deserialized = Uuid::deserialize($serialized);
+
+        self::assertEquals($uuid->getValue(), $deserialized->getValue());
     }
 }

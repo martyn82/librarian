@@ -4,13 +4,12 @@ namespace AppBundle\Tests\Domain\ReadModel;
 
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
-use AppBundle\EventStore\Uuid;
 
 class AuthorsTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructAcceptsAuthorViewElements()
     {
-        $element = new Author(Uuid::createNew(), 'first', 'last');
+        $element = new Author('first', 'last');
         $authors = new Authors([$element]);
 
         self::assertCount(1, $authors->getIterator());
@@ -22,5 +21,14 @@ class AuthorsTest extends \PHPUnit_Framework_TestCase
 
         $element = 'foo';
         $authors = new Authors([$element]);
+    }
+
+    public function testSerialization()
+    {
+        $authors = new Authors([new Author('first', 'last')]);
+        $serialized = $authors->serialize();
+        $deserialized = Authors::deserialize($serialized);
+
+        self::assertEquals($authors, $deserialized);
     }
 }

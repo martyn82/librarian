@@ -72,4 +72,36 @@ class Book extends Document
     {
         return $this->title;
     }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return [
+            'id' => $this->id->serialize(),
+            'version' => $this->version,
+            'authors' => $this->authors->serialize(),
+            'title' => $this->title
+        ];
+    }
+
+    /**
+     * @param array $data
+     * @return Book
+     */
+    public static function deserialize(array $data)
+    {
+        assert(array_key_exists('id', $data));
+        assert(array_key_exists('authors', $data));
+        assert(array_key_exists('title', $data));
+        assert(array_key_exists('version', $data));
+
+        return new self(
+            Uuid::deserialize($data['id']),
+            Authors::deserialize($data['authors']),
+            $data['title'],
+            $data['version']
+        );
+    }
 }

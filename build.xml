@@ -181,7 +181,7 @@
     </target>
 
     <!-- Run distributed app -->
-    <target name="run:dist" description="Run the distribution-version of the app">
+    <target name="run:dist" description="Run the distribution-version of the app" depends="services:start">
         <exec command="docker ps -aq --filter=&quot;name=${container.app.name}&quot;" outputProperty="app.container.id" />
         <if>
             <not>
@@ -245,6 +245,17 @@
         />
     </target>
 
+    <!-- Depending services -->
+    <target name="services:start" description="Starts depending services">
+        <phingcall target="mongodb:start" />
+        <phingcall target="elasticsearch:start" />
+    </target>
+
+    <target name="services:stop" description="Stop depending services">
+        <phingcall target="mongodb:stop" />
+        <phingcall target="elasticsearch:stop" />
+    </target>
+
     <target name="mongodb:start" description="Start MongoDB service">
         <exec command="docker ps -aq --filter=&quot;name=${container.events.name}&quot;" outputProperty="mongodb.container.id" />
         <if>
@@ -269,6 +280,35 @@
     <target name="mongodb:stop" description="Stop MongoDB service">
         <exec
             command="docker stop ${container.events.name}"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <target name="elasticsearch:start" description="Start ElasticSearch service">
+        <exec command="docker ps -aq --filter=&quot;name=${container.index.name}&quot;" outputProperty="elasticsearch.container.id" />
+        <if>
+            <equals arg1="${elasticsearch.container.id}" arg2="" />
+            <then>
+                <exec
+                    command="docker run --name ${container.index.name} -v ${container.index.volume} -p ${container.index.port} -d ${container.index.image}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </then>
+            <else>
+                <exec
+                    command="docker start ${container.index.name}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </else>
+        </if>
+    </target>
+
+    <target name="elasticsearch:stop" description="Stop ElasticSearch service">
+        <exec
+            command="docker stop ${container.index.name}"
             checkreturn="true"
             passthru="true"
         />
