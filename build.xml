@@ -1,20 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Librarian" default="test">
+<project name="librarian" default="test">
     <property file="${project.basedir}/build.properties" />
 
-    <!--
+    <!-- Clean task -->
     <target name="clean">
+        <phingcall target="clean:build" />
+        <phingcall target="clean:test" />
+    </target>
+
+    <!-- Build task -->
+    <target name="build" description="Full build" depends="clean">
+        <delete dir="${project.basedir}/app/cache/prod" quiet="true" />
+        <mkdir dir="${project.basedir}/build/app" />
+        <copy todir="${project.basedir}/build/app">
+            <fileset dir=".">
+                <include name="app/**" />
+                <include name="composer.*" />
+                <include name="src/.htaccess" />
+                <include name="src/AppBundle/**" />
+                <include name="web/*" />
+
+                <exclude name="app/cache/**" />
+                <exclude name="app/logs/**" />
+                <exclude name="src/*/Tests/**" />
+                <exclude name="web/app_dev.php" />
+            </fileset>
+        </copy>
+        <exec
+            command="SYMFONY_ENV=prod composer install -o --no-dev --no-scripts"
+            dir="${project.basedir}/build/app"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <!-- Distribute built app, package and create image -->
+    <target name="dist" description="Build distribution" depends="build">
+        <mkdir dir="${project.basedir}/build/docker" />
+        <tar basedir="${project.basedir}"
+             destfile="${project.basedir}/build/docker/${phing.project.name}.tar.gz"
+             compression="gzip">
+            <fileset dir="${project.basedir}/build/app">
+                <include name="app/**" />
+                <include name="src/**" />
+                <include name="web/**" />
+                <include name="vendor/**" />
+
+                <exclude name="app/cache/**" />
+                <exclude name="app/logs/**" />
+            </fileset>
+        </tar>
+
+        <copy todir="${project.basedir}/build/docker">
+            <fileset dir="docker">
+                <include name="**" />
+            </fileset>
+        </copy>
+
+        <exec
+            command="docker build -t ${phing.project.name} ."
+            dir="${project.basedir}/build/docker"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <!-- Clean subtasks -->
+    <target name="clean:build">
         <delete dir="${project.basedir}/build" quiet="true" />
         <mkdir dir="${project.basedir}/build" />
     </target>
 
-    <target name="buid" depends="clean"></target>
-    -->
-
-    <target name="clean:test" description="Clean test reports">
+    <target name="clean:test">
         <delete dir="${project.basedir}/report/test" quiet="true" />
+        <mkdir dir="${project.basedir}/report/test" />
     </target>
 
+    <!-- Static analysis -->
     <target name="static" description="Run static checks and analysis">
         <phingcall target="lint" />
         <phingcall target="analyse" />
@@ -80,6 +142,7 @@
         />
     </target>
 
+    <!-- Test task -->
     <target name="test" description="Run tests" depends="clean:test">
         <phingcall target="test:unit" />
     </target>
@@ -108,6 +171,7 @@
         </exec>
     </target>
 
+    <!-- Run task -->
     <target name="run" description="Run the app">
         <exec
             command="${project.basedir}/app/console server:run ${app.local.host}:${app.local.port}"
@@ -116,6 +180,29 @@
         />
     </target>
 
+    <!-- Run distributed app -->
+    <target name="run:dist" description="Run the distribution-version of the app">
+        <exec command="docker ps -aq --filter=&quot;name=${container.app.name}&quot;" outputProperty="app.container.id" />
+        <if>
+            <not>
+                <equals arg1="${app.container.id}" arg2="" />
+            </not>
+            <then>
+                <exec
+                    command="docker rm -f ${app.container.id}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </then>
+        </if>
+        <exec
+            command="docker run -p ${container.app.port} --name=${container.app.name} -d ${container.app.image}"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <!-- Utilities tasks -->
     <target name="sonarqube:start" description="Start SonarQube service">
         <exec command="docker ps -aq --filter=&quot;name=${container.sonarqube.name}&quot;" outputProperty="sonarqube.container.id" />
         <if>
