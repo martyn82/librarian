@@ -3,7 +3,8 @@ MAINTAINER Martijn Endenburg <martijn.endenburg@gmail.com>
 
 RUN apt-get update && \
     apt-get install -y \
-        php5-fpm
+        php5-fpm \
+        php5-mongo
 
 ADD librarian.tar.gz /opt/www/webapp
 COPY nginx.conf /etc/nginx/nginx.conf
