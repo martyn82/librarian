@@ -2,8 +2,8 @@
 
 namespace AppBundle\Tests\Domain\Storage;
 
-use AppBundle\Domain\Storage\MemoryStorage;
 use AppBundle\Domain\Storage\Document;
+use AppBundle\Domain\Storage\MemoryStorage;
 
 class MemoryStorageTest extends \PHPUnit_Framework_TestCase
 {

@@ -5,8 +5,8 @@ namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddBookHandler;
 use AppBundle\Domain\Model\Book;
-use AppBundle\EventStore\Uuid;
 use AppBundle\EventStore\Repository;
+use AppBundle\EventStore\Uuid;
 
 class AddBookHandlerTest extends \PHPUnit_Framework_TestCase
 {

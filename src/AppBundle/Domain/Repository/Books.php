@@ -5,8 +5,8 @@ namespace AppBundle\Domain\Repository;
 use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\AggregateRoot;
 use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Uuid;
 use AppBundle\EventStore\Repository;
+use AppBundle\EventStore\Uuid;
 
 class Books implements Repository
 {
