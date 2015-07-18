@@ -4,11 +4,11 @@ namespace AppBundle\Tests\EventStore\Storage;
 
 use AppBundle\EventStore\EventDescriptor;
 use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Storage\PersistentEventStorage;
+use AppBundle\EventStore\Storage\MongoDbEventStorage;
 use Doctrine\MongoDB\Collection;
 use Doctrine\MongoDB\Cursor;
 
-class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
+class MongoDbEventStorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return Collection
@@ -31,7 +31,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
             ->method('count')
             ->with([$identityField => $identity]);
 
-        $storage = new PersistentEventStorage($collection, $identityField);
+        $storage = new MongoDbEventStorage($collection, $identityField);
         $storage->contains($identity);
     }
 
@@ -50,7 +50,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
             ->with([$identityField => $identity])
             ->will(self::returnValue($cursor));
 
-        $storage = new PersistentEventStorage($collection, $identityField);
+        $storage = new MongoDbEventStorage($collection, $identityField);
         $storage->find($identity);
     }
 
@@ -70,7 +70,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
             ->with([$identityField => $identity])
             ->will(self::returnValue($cursor));
 
-        $storage = new PersistentEventStorage($collection, $identityField);
+        $storage = new MongoDbEventStorage($collection, $identityField);
         $events = $storage->find($identity);
 
         self::assertCount(1, $events);
@@ -89,7 +89,7 @@ class PersistentEventStorageTest extends \PHPUnit_Framework_TestCase
             ->method('insert')
             ->with($event->toArray());
 
-        $storage = new PersistentEventStorage($collection, $identityField);
+        $storage = new MongoDbEventStorage($collection, $identityField);
         $storage->append($event);
     }
 }

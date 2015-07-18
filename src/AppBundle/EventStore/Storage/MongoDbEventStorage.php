@@ -5,7 +5,7 @@ namespace AppBundle\EventStore\Storage;
 use AppBundle\EventStore\EventDescriptor;
 use Doctrine\MongoDB\Collection;
 
-class PersistentEventStorage implements EventStorage
+class MongoDbEventStorage implements EventStorage
 {
     /**
      * @var Collection
