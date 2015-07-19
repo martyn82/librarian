@@ -53,4 +53,15 @@ class MemoryStorageTest extends \PHPUnit_Framework_TestCase
         $storage->delete(1);
         self::assertNull($storage->find(1));
     }
+
+    public function testFindAllReturnsAll()
+    {
+        $initialRecord = $this->getMockBuilder(Document::class)
+            ->getMock();
+
+        $storage = new MemoryStorage();
+        $storage->upsert(1, $initialRecord);
+
+        self::assertEquals([$initialRecord], $storage->findAll());
+    }
 }

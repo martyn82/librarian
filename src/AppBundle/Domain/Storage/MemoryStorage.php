@@ -10,7 +10,7 @@ class MemoryStorage implements Storage
     private $data = [];
 
     /**
-     * @see \AppBundle\Domain\ReadModel\Storage\Storage::upsert()
+     * @see \AppBundle\Domain\Storage\Storage::upsert()
      */
     public function upsert($identity, Document $document)
     {
@@ -18,7 +18,7 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @see \AppBundle\Domain\ReadModel\Storage\Storage::delete()
+     * @see \AppBundle\Domain\Storage\Storage::delete()
      */
     public function delete($identity)
     {
@@ -30,7 +30,7 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @see \AppBundle\Domain\ReadModel\Storage\Storage::find()
+     * @see \AppBundle\Domain\Storage\Storage::find()
      */
     public function find($identity)
     {
@@ -39,5 +39,13 @@ class MemoryStorage implements Storage
         }
 
         return $this->data[$identity];
+    }
+
+    /**
+     * @see \AppBundle\Domain\Storage\Storage::findAll()
+     */
+    public function findAll()
+    {
+        return array_values($this->data);
     }
 }

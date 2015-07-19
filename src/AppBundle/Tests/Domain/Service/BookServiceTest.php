@@ -150,4 +150,17 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             self::assertEquals($lastName, $author->getLastName());
         }
     }
+
+    public function testGetAllRetrievesAll()
+    {
+        $storage = $this->getMockBuilder(Storage::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $storage->expects(self::once())
+            ->method('findAll');
+
+        $service = new BookService($storage);
+        $service->getAll();
+    }
 }

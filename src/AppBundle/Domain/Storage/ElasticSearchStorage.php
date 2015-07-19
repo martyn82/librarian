@@ -99,4 +99,36 @@ class ElasticSearchStorage implements Storage
 
         return null;
     }
+
+    /**
+     * @return Document[]
+     */
+    public function findAll()
+    {
+        $result = $this->client->search(
+            [
+                'index' => $this->index,
+                'type' => $this->type,
+                'body' => [
+                    'query' => [
+                        'match_all' => []
+                    ]
+                ],
+                'size' => 500
+            ]
+        );
+
+        if (!array_key_exists('hits', $result)) {
+            return [];
+        }
+
+        $documentClass = $this->documentClass;
+
+        return array_map(
+            function (array $hit) use ($documentClass) {
+                return $documentClass::deserialize($hit['_source']);
+            },
+            $result['hits']['hits']
+        );
+    }
 }

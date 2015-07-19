@@ -79,10 +79,10 @@ class Book extends Document
     public function serialize()
     {
         return [
-            'id' => $this->id->serialize(),
-            'version' => $this->version,
-            'authors' => $this->authors->serialize(),
-            'title' => $this->title
+            'id' => $this->getId()->serialize(),
+            'version' => $this->getVersion(),
+            'authors' => $this->getAuthors()->serialize(),
+            'title' => $this->getTitle()
         ];
     }
 

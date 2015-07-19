@@ -20,4 +20,9 @@ interface Storage
      * @return Document
      */
     public function find($identity);
+
+    /**
+     * @return Document[]
+     */
+    public function findAll();
 }

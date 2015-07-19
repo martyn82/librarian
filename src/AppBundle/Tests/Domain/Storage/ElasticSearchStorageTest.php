@@ -65,6 +65,34 @@ class ElasticSearchStorageTest extends \PHPUnit_Framework_TestCase
         $storage = new ElasticSearchStorage($client, Document::class, 'foo', 'bar');
         self::assertNull($storage->find('1'));
     }
+
+    public function testFindAllReturnsAllDocuments()
+    {
+        $client = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $client->expects(self::once())
+            ->method('search')
+            ->will(self::returnValue(['hits' => ['hits' => [['_source' => []]]]]));
+
+        $storage = new ElasticSearchStorage($client, FakeDocument::class, 'foo', 'bar');
+        $storage->findAll();
+    }
+
+    public function testFindAllReturnsEmptyArrayIfNotFound()
+    {
+        $client = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $client->expects(self::once())
+            ->method('search')
+            ->will(self::returnValue([]));
+
+        $storage = new ElasticSearchStorage($client, Document::class, 'foo', 'bar');
+        self::assertEmpty($storage->findAll());
+    }
 }
 
 class FakeDocument extends Document

@@ -98,4 +98,12 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
 
         return $book;
     }
+
+    /**
+     * @return Book[]
+     */
+    public function getAll()
+    {
+       return $this->storage->findAll();
+    }
 }
