@@ -49,9 +49,9 @@ assetic:
 
 services:
   librarian.storage.events.book:
-    alias: librarian.storage.events.book.mongodb
+    alias: librarian.storage.events.book.memory
   librarian.storage.documents.book:
-    alias: librarian.storage.documents.book.elasticsearch
+    alias: librarian.storage.documents.book.memory
   librarian.commandhandler.add_book:
     alias: librarian.commandhandler.add_book.logging
   librarian.commandhandler.add_author:
