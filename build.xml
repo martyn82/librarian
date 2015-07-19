@@ -202,6 +202,22 @@
         />
     </target>
 
+    <target name="stop:dist" description="Stop the distribution-version of the app">
+        <exec command="docker ps -aq --filter=&quot;name=${container.app.name}&quot;" outputProperty="app.container.id" />
+        <if>
+            <not>
+                <equals arg1="${app.container.id}" arg2="" />
+            </not>
+            <then>
+                <exec
+                    command="docker stop ${app.container.id}"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </then>
+        </if>
+    </target>
+
     <!-- Utilities tasks -->
     <target name="sonarqube:start" description="Start SonarQube service">
         <exec command="docker ps -aq --filter=&quot;name=${container.sonarqube.name}&quot;" outputProperty="sonarqube.container.id" />
