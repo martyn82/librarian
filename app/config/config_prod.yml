@@ -1,33 +1,47 @@
 imports:
-    - { resource: config.yml }
+  - { resource: config.yml }
 
 #framework:
-#    validation:
-#        cache: validator.mapping.cache.apc
-#    serializer:
-#        cache: serializer.mapping.cache.apc
+#  validation:
+#    cache: validator.mapping.cache.apc
+#  serializer:
+#    cache: serializer.mapping.cache.apc
 
 #doctrine:
-#    orm:
-#        metadata_cache_driver: apc
-#        result_cache_driver: apc
-#        query_cache_driver: apc
+#  orm:
+#    metadata_cache_driver: apc
+#    result_cache_driver: apc
+#    query_cache_driver: apc
 
 monolog:
-    handlers:
-        main:
-            type:         fingers_crossed
-            action_level: error
-            handler:      nested
-        nested:
-            type:  stream
-            path:  "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
-        console:
-            type:  console
+  handlers:
+    main:
+      type:         fingers_crossed
+      action_level: error
+      handler:      nested
+    nested:
+      type:  stream
+      path:  "%kernel.logs_dir%/%kernel.environment%.log"
+      level: debug
+    console:
+      type:  console
+
+services:
+  librarian.storage.events.book:
+    alias: librarian.storage.events.book.mongodb
+  librarian.storage.documents.book:
+    alias: librarian.storage.documents.book.elasticsearch
+  librarian.commandhandler.add_book:
+    alias: librarian.commandhandler.add_book.plain
+  librarian.commandhandler.add_author:
+    alias: librarian.commandhandler.add_author.plain
+  librarian.eventhandler.book_added:
+    alias: librarian.eventhandler.book_added.plain
+  librarian.eventhandler.author_added:
+    alias: librarian.eventhandler.author_added.plain
 
 parameters:
-    librarian.database.events.address: 172.17.42.1:27017
-    librarian.database.read.host: 172.17.42.1
-    librarian.database.read.port: 9200
-
+  librarian.database.events.host: 172.17.42.1
+  librarian.database.events.port: 27017
+  librarian.database.documents.host: 172.17.42.1
+  librarian.database.documents.port: 9200
