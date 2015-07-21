@@ -35,20 +35,22 @@ sensio_framework_extra:
 
 fos_rest:
   param_fetcher_listener: true
-  body_listener: true
+  body_listener: false
   format_listener:
+    enabled: true
     rules:
-      - priorities: [json]
-      - fallback_format: json
+      - { path: "^/api", priorities: [ json ], fallback_format: json, prefer_extension: false }
+    media_type:
+      enabled: true
+      service: null
   view:
     view_response_listener: 'force'
     formats:
-      xml: false
       json : true
     templating_formats:
-      html: false
+      json: false
     force_redirects:
-      html: false
+      json: false
     failed_validation: HTTP_BAD_REQUEST
     default_engine: twig
   routing_loader:

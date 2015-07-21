@@ -22,6 +22,15 @@ class Uuid implements Serializable
     }
 
     /**
+     * @param string $value
+     * @return Uuid
+     */
+    public static function createFromValue($value)
+    {
+        return new self((string)$value);
+    }
+
+    /**
      * @codeCoverageIgnore
      * @return string
      * @throws UuidException

@@ -7,6 +7,7 @@ use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Uuid;
 use AppBundle\MessageBus\CommandBus;
+use JMS\Serializer\Serializer;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BooksControllerTest extends \PHPUnit_Framework_TestCase
@@ -21,6 +22,11 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
      */
     private $commandBus;
 
+    /**
+     * @var Serializer
+     */
+    private $serializer;
+
     protected function setUp()
     {
         $this->service = $this->getMockBuilder(BookService::class)
@@ -30,6 +36,10 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
         $this->commandBus = $this->getMockBuilder(CommandBus::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->serializer = $this->getMockBuilder(Serializer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testIndexActionRetrievesAllBooks()
@@ -37,7 +47,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
         $this->service->expects(self::once())
             ->method('getAll');
 
-        $controller = new BooksController($this->service, $this->commandBus);
+        $controller = new BooksController($this->service, $this->commandBus, $this->serializer);
         $controller->indexAction();
     }
 
@@ -49,7 +59,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ->method('getBook')
             ->with($id);
 
-        $controller = new BooksController($this->service, $this->commandBus);
+        $controller = new BooksController($this->service, $this->commandBus, $this->serializer);
         $controller->readAction($id);
     }
 
@@ -64,7 +74,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ->with($id)
             ->will(self::throwException(new ObjectNotFoundException('Book', $id)));
 
-        $controller = new BooksController($this->service, $this->commandBus);
+        $controller = new BooksController($this->service, $this->commandBus, $this->serializer);
         $controller->readAction($id);
     }
 }
