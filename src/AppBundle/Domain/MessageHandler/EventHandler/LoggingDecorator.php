@@ -31,10 +31,10 @@ class LoggingDecorator implements EventHandler
     /**
      * @see \AppBundle\Service\EventHandler::handle()
      */
-    public function handle(Event $event)
+    public function on(Event $event)
     {
         $this->onBeforeHandle($event);
-        $this->innerEventHandler->handle($event);
+        $this->innerEventHandler->on($event);
         $this->onAfterHandle($event);
     }
 

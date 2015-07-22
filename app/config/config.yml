@@ -32,10 +32,13 @@ framework:
 
 sensio_framework_extra:
   view: { annotations: false }
+  request: { converters: true }
 
 fos_rest:
   param_fetcher_listener: true
   body_listener: false
+  body_converter:
+    enabled: true
   format_listener:
     enabled: true
     rules:

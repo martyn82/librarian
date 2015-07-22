@@ -16,13 +16,23 @@ class Book extends AggregateRoot
 
     /**
      * @param Uuid $id
+     * @param Author[] $authors
      * @param string $title
      * @return Book
+     * @throws \Exception
      */
-    public static function add(Uuid $id, $title)
+    public static function add(Uuid $id, $authors, $title)
     {
+        if (empty($authors)) {
+            throw new \Exception('Book requires at least one Author.');
+        }
+
+        if (empty($title)) {
+            throw new \Exception('Book requires Title to be not empty.');
+        }
+
         $instance = new self($id);
-        $instance->applyChange(new BookAdded($instance->getId(), $title));
+        $instance->applyChange(new BookAdded($instance->getId(), $authors, $title));
         return $instance;
     }
 

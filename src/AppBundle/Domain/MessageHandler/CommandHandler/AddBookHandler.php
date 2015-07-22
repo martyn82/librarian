@@ -37,7 +37,7 @@ class AddBookHandler implements CommandHandler
      */
     private function handleAddBook(AddBook $command)
     {
-        $book = Book::add($command->getId(), $command->getTitle());
+        $book = Book::add($command->getId(), $command->getAuthors(), $command->getTitle());
         $this->repository->store($book);
     }
 }

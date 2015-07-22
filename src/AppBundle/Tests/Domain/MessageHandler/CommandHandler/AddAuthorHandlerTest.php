@@ -4,6 +4,7 @@ namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddAuthorHandler;
+use AppBundle\Domain\Model\Author;
 use AppBundle\Domain\Model\Book;
 use AppBundle\EventStore\Repository;
 use AppBundle\EventStore\Uuid;
@@ -16,8 +17,12 @@ class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
         $firstName = 'foo';
         $lastName = 'bar';
 
+        $authors = [
+            Author::create('first', 'last')
+        ];
+
         $command = new AddAuthor($bookId, $firstName, $lastName, 0);
-        $book = Book::add($bookId, 'title');
+        $book = Book::add($bookId, $authors, 'title');
 
         $repository = $this->getMockBuilder(Repository::class)
             ->disableOriginalConstructor()

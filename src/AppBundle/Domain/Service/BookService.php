@@ -11,10 +11,12 @@ use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Storage\Storage;
 use AppBundle\EventStore\Uuid;
-use AppBundle\Message\Event;
+use AppBundle\MessageHandler\TypedEventHandler;
 
 class BookService implements AuthorAddedHandler, BookAddedHandler
 {
+    use TypedEventHandler;
+
     /**
      * @var Storage
      */
@@ -29,31 +31,22 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     }
 
     /**
-     * @param Event $event
-     * @throws \InvalidArgumentException
-     */
-    public function handle(Event $event)
-    {
-        $eventHandleMethod = 'handle' . $event->getEventName();
-
-        if (!method_exists($this, $eventHandleMethod) || $event->getEventName() == null) {
-            $eventClassName = get_class($event);
-            throw new \InvalidArgumentException("Unable to handle event '{$eventClassName}'.");
-        }
-
-        $this->{$eventHandleMethod}($event);
-    }
-
-    /**
      * @see \AppBundle\Domain\Service\BookAddedHandler::handleBookAdded()
      */
-    public function handleBookAdded(BookAdded $event)
+    public function onBookAdded(BookAdded $event)
     {
+        $authors = array_map(
+            function (\AppBundle\Domain\Model\Author $author) {
+                return new Author($author->getFirstName(), $author->getLastName());
+            },
+            $event->getAuthors()
+        );
+
         $this->storage->upsert(
             $event->getId()->getValue(),
             new Book(
                 $event->getId(),
-                new Authors(),
+                new Authors($authors),
                 $event->getTitle(),
                 $event->getVersion()
             )
@@ -63,7 +56,7 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     /**
      * @see \AppBundle\Domain\Service\AuthorAddedHandler::handleAuthorAdded()
      */
-    public function handleAuthorAdded(AuthorAdded $event)
+    public function onAuthorAdded(AuthorAdded $event)
     {
         $oldBook = $this->getBook($event->getId());
         $authors = clone $oldBook->getAuthors();

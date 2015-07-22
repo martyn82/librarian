@@ -10,5 +10,5 @@ interface BookAddedHandler extends EventHandler
     /**
      * @param BookAdded $event
      */
-    public function handleBookAdded(BookAdded $event);
+    public function onBookAdded(BookAdded $event);
 }

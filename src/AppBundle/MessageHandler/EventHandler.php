@@ -9,5 +9,5 @@ interface EventHandler
     /**
      * @param Event $event
      */
-    public function handle(Event $event);
+    public function on(Event $event);
 }

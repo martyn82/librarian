@@ -24,7 +24,7 @@ class LoggingDecoratorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $handler = new LoggingDecorator($logger, $inner);
-        $handler->handle($event);
+        $handler->on($event);
     }
 
     public function testHandlePropagatesToInnerHandler()
@@ -39,10 +39,10 @@ class LoggingDecoratorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $inner->expects(self::once())
-            ->method('handle')
+            ->method('on')
             ->with($event);
 
         $handler = new LoggingDecorator($logger, $inner);
-        $handler->handle($event);
+        $handler->on($event);
     }
 }

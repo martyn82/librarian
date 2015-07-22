@@ -17,7 +17,7 @@ class EventBusTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $handler->expects(self::once())
-            ->method('handle')
+            ->method('on')
             ->with($event);
 
         $eventBus = new EventBus(

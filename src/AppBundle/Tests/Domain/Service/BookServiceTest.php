@@ -21,7 +21,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $title = 'foo';
 
-        $event = new BookAdded($id, $title);
+        $event = new BookAdded($id, [], $title);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
@@ -32,7 +32,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->with($id, self::anything());
 
         $service = new BookService($storage);
-        $service->handle($event);
+        $service->on($event);
     }
 
     public function testHandlerForEventBookAdded()
@@ -40,7 +40,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $title = 'foo';
 
-        $event = new BookAdded($id, $title);
+        $event = new BookAdded($id, [], $title);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
@@ -51,7 +51,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->with($id, self::anything());
 
         $service = new BookService($storage);
-        $service->handleBookAdded($event);
+        $service->onBookAdded($event);
     }
 
     public function testHandleWithAuthorAddedPropagatesToCorrectHandler()
@@ -74,7 +74,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', EventStore::FIRST_VERSION)));
 
         $service = new BookService($storage);
-        $service->handle(new AuthorAdded($bookId, $firstName, $lastName));
+        $service->on(new AuthorAdded($bookId, $firstName, $lastName));
     }
 
     public function testHandlerForEventAuthorAdded()
@@ -97,7 +97,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', EventStore::FIRST_VERSION)));
 
         $service = new BookService($storage);
-        $service->handleAuthorAdded(new AuthorAdded($bookId, $firstName, $lastName));
+        $service->onAuthorAdded(new AuthorAdded($bookId, $firstName, $lastName));
     }
 
     public function testGetBookWithNonExistingIdThrowsException()
@@ -124,7 +124,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $service = new BookService($storage);
-        $service->handle($event);
+        $service->on($event);
     }
 
     public function testBookIsAvailableAfterBookAdded()
@@ -136,8 +136,8 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
         $storage = new MemoryStorage();
         $service = new BookService($storage);
-        $service->handle(new BookAdded($bookId, $title));
-        $service->handle(new AuthorAdded($bookId, $firstName, $lastName));
+        $service->on(new BookAdded($bookId, [], $title));
+        $service->on(new AuthorAdded($bookId, $firstName, $lastName));
 
         $book = $service->getBook($bookId);
 

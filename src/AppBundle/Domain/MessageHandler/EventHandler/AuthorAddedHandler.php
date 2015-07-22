@@ -10,5 +10,5 @@ interface AuthorAddedHandler extends EventHandler
     /**
      * @param AuthorAdded $event
      */
-    public function handleAuthorAdded(AuthorAdded $event);
+    public function onAuthorAdded(AuthorAdded $event);
 }

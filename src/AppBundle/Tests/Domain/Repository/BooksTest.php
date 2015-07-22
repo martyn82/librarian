@@ -4,6 +4,7 @@ namespace AppBundle\Tests\Domain\Repository;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\Model\Author;
 use AppBundle\Domain\Model\Book;
 use AppBundle\Domain\Repository\Books;
 use AppBundle\EventStore\EventStore;
@@ -16,7 +17,10 @@ class BooksTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::createNew();
         $title = 'foo';
-        $book = Book::add($id, $title);
+        $authors = [
+            Author::create('foo', 'bar')
+        ];
+        $book = Book::add($id, $authors, $title);
 
         $storage = $this->getMockBuilder(EventStore::class)
             ->disableOriginalConstructor()
@@ -35,15 +39,18 @@ class BooksTest extends \PHPUnit_Framework_TestCase
         $bookId = Uuid::createNew();
 
         $title = 'foo';
+        $authors = [
+            Author::create('foo', 'bar')
+        ];
         $authorFirstName = 'first';
         $authorLastName = 'last';
 
-        $expectedBook = Book::add($bookId, $title);
+        $expectedBook = Book::add($bookId, $authors, $title);
         $expectedBook->addAuthor($authorFirstName, $authorLastName);
 
         $events = new Events(
             [
-                new BookAdded($bookId, $title),
+                new BookAdded($bookId, $authors, $title),
                 new AuthorAdded($bookId, $authorFirstName, $authorLastName)
             ]
         );

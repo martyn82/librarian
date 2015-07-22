@@ -32,7 +32,7 @@ class EventBus
 
         foreach ($this->eventHandlerMap[$eventClassName] as $handler) {
             /* @var $handler EventHandler */
-            $handler->handle($event);
+            $handler->on($event);
         }
     }
 }

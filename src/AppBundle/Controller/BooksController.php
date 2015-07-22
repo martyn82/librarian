@@ -2,8 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Resource\Author as AuthorResource;
+use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
+use AppBundle\Domain\Model\Author as AuthorModel;
+use AppBundle\Domain\Model\Book as BookModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Uuid;
@@ -11,8 +15,7 @@ use AppBundle\MessageBus\CommandBus;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use JMS\DiExtraBundle\Annotation as DI;
-use JMS\Serializer\Serializer;
-use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -38,19 +41,16 @@ class BooksController extends FOSRestController
     /**
      * @DI\InjectParams({
      *  "bookService" = @DI\Inject("librarian.service.book"),
-     *  "commandBus" = @DI\Inject("librarian.commandbus"),
-     *  "serializer" = @DI\Inject("jms_serializer")
+     *  "commandBus" = @DI\Inject("librarian.commandbus")
      * })
      *
      * @param BookService $bookService
      * @param CommandBus $commandBus
-     * @param Serializer $serializer
      */
-    public function __construct(BookService $bookService, CommandBus $commandBus, Serializer $serializer)
+    public function __construct(BookService $bookService, CommandBus $commandBus)
     {
         $this->bookService = $bookService;
         $this->commandBus = $commandBus;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -72,7 +72,7 @@ class BooksController extends FOSRestController
      * @Rest\View()
      *
      * @param string $id
-     * @return Book
+     * @return BookResource
      * @throws HttpException
      */
     public function readAction($id)
@@ -88,47 +88,58 @@ class BooksController extends FOSRestController
      * @Rest\Post("/book",
      *  condition="request.headers.get('content-type') matches '/domain-model=add-book/i'"
      * )
+     * @ParamConverter("book",
+     *  class="AppBundle\Controller\Resource\Book",
+     *  converter="fos_rest.request_body"
+     * )
      * @Rest\View(statusCode=201)
      *
-     * @param Request $request
-     * @return Book
+     * @param BookResource $book
+     * @return BookResource
      * @throws HttpException
      */
-    public function addBookAction(Request $request)
+    public function addBookAction(BookResource $book)
     {
-        // request content is a resource, needs to be passed as argument
-        $params = $this->serializer->deserialize($request->getContent(), 'array', 'json');
+        $authors = array_map(
+            function (AuthorResource $author) {
+                return AuthorModel::create($author->getFirstName(), $author->getLastName());
+            },
+            $book->getAuthors()
+        );
 
         $id = Uuid::createNew();
-        $command = new AddBook($id, $params['title']);
+
+        $command = new AddBook($id, $authors, $book->getTitle());
         $this->commandBus->send($command);
 
         return $this->bookService->getBook($id);
     }
 
     /**
-     * @Rest\Put("/book/{id}",
+     * @Rest\Put("/book/{id}/author",
      *  condition="request.headers.get('content-type') matches '/domain-model=add-author/i'",
      *  requirements={"id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"},
      *  defaults={"id"=null}
      * )
+     * @ParamConverter("author",
+     *  class="AppBundle\Controller\Resource\Author",
+     *  converter="fos_rest.request_body"
+     * )
      * @Rest\View()
      *
      * @param string $id
-     * @param Request $request
-     * @return Book
+     * @param AuthorResource $author
+     * @return BookResource
      * @throws HttpException
      */
-    public function addAuthorAction($id, Request $request)
+    public function addAuthorAction($id, AuthorResource $author)
     {
-        // request content is a resource, needs to be passed as argument
-        $params = $this->serializer->deserialize($request->getContent(), 'array', 'json');
-
         $uuid = Uuid::createFromValue($id);
 
         // version needs to come from request
-        $book = $this->bookService->getBook($uuid);
-        $command = new AddAuthor($uuid, $params['firstName'], $params['lastName'], $book->getVersion());
+        $bookReadModel = $this->bookService->getBook($uuid);
+
+        $command = new AddAuthor($uuid, $author->getFirstName(), $author->getLastName(), $bookReadModel->getVersion());
         $this->commandBus->send($command);
 
         return $this->bookService->getBook($uuid);
