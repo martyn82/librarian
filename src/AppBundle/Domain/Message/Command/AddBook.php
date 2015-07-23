@@ -2,8 +2,6 @@
 
 namespace AppBundle\Domain\Message\Command;
 
-use AppBundle\Domain\Model\Author;
-use AppBundle\Domain\Model\BookView;
 use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Command;
 
@@ -15,7 +13,7 @@ final class AddBook implements Command
     private $id;
 
     /**
-     * @var Author[]
+     * @var AddAuthor[]
      */
     private $authors;
 
@@ -26,13 +24,18 @@ final class AddBook implements Command
 
     /**
      * @param Uuid $id
-     * @param Author[] $authors
+     * @param AddAuthor[] $authors
      * @param string $title
      */
     public function __construct(Uuid $id, array $authors, $title)
     {
         $this->id = $id;
-        $this->authors = $authors;
+        $this->authors = array_map(
+            function (AddAuthor $author) {
+                return $author;
+            },
+            $authors
+        );
         $this->title = (string) $title;
     }
 
@@ -45,7 +48,7 @@ final class AddBook implements Command
     }
 
     /**
-     * @return Author[]
+     * @return AddAuthor[]
      */
     public function getAuthors()
     {

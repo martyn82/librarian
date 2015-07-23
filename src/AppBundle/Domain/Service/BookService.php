@@ -31,12 +31,12 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     }
 
     /**
-     * @see \AppBundle\Domain\Service\BookAddedHandler::handleBookAdded()
+     * @param BookAdded $event
      */
     public function onBookAdded(BookAdded $event)
     {
         $authors = array_map(
-            function (\AppBundle\Domain\Model\Author $author) {
+            function (AuthorAdded $author) {
                 return new Author($author->getFirstName(), $author->getLastName());
             },
             $event->getAuthors()
@@ -54,7 +54,8 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     }
 
     /**
-     * @see \AppBundle\Domain\Service\AuthorAddedHandler::handleAuthorAdded()
+     * @param AuthorAdded $event
+     * @throws ObjectNotFoundException
      */
     public function onAuthorAdded(AuthorAdded $event)
     {

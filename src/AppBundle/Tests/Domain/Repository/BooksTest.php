@@ -17,9 +17,7 @@ class BooksTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::createNew();
         $title = 'foo';
-        $authors = [
-            Author::create('foo', 'bar')
-        ];
+        $authors = [];
         $book = Book::add($id, $authors, $title);
 
         $storage = $this->getMockBuilder(EventStore::class)
@@ -39,9 +37,7 @@ class BooksTest extends \PHPUnit_Framework_TestCase
         $bookId = Uuid::createNew();
 
         $title = 'foo';
-        $authors = [
-            Author::create('foo', 'bar')
-        ];
+        $authors = [];
         $authorFirstName = 'first';
         $authorLastName = 'last';
 

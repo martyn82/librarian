@@ -2,12 +2,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Controller\Resource\Author as AuthorResource;
 use AppBundle\Controller\Resource\Book as BookResource;
+use AppBundle\Controller\Resource\Book\Author as AuthorResource;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
-use AppBundle\Domain\Model\Author as AuthorModel;
-use AppBundle\Domain\Model\Book as BookModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Uuid;
@@ -15,7 +13,7 @@ use AppBundle\MessageBus\CommandBus;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use JMS\DiExtraBundle\Annotation as DI;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -100,14 +98,15 @@ class BooksController extends FOSRestController
      */
     public function addBookAction(BookResource $book)
     {
+        $id = Uuid::createNew();
+
         $authors = array_map(
-            function (AuthorResource $author) {
-                return AuthorModel::create($author->getFirstName(), $author->getLastName());
+            function (AuthorResource $author) use ($id) {
+                return new AddAuthor($id, $author->getFirstName(), $author->getLastName(), -1);
             },
             $book->getAuthors()
         );
 
-        $id = Uuid::createNew();
 
         $command = new AddBook($id, $authors, $book->getTitle());
         $this->commandBus->send($command);
@@ -122,7 +121,7 @@ class BooksController extends FOSRestController
      *  defaults={"id"=null}
      * )
      * @ParamConverter("author",
-     *  class="AppBundle\Controller\Resource\Author",
+     *  class="AppBundle\Controller\Resource\Book\Author",
      *  converter="fos_rest.request_body"
      * )
      * @Rest\View()

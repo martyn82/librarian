@@ -2,6 +2,7 @@
 
 namespace AppBundle\Domain\Model;
 
+use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\EventStore\AggregateRoot;
@@ -19,20 +20,21 @@ class Book extends AggregateRoot
      * @param Author[] $authors
      * @param string $title
      * @return Book
-     * @throws \Exception
      */
-    public static function add(Uuid $id, $authors, $title)
+    public static function add(Uuid $id, array $authors, $title)
     {
-        if (empty($authors)) {
-            throw new \Exception('Book requires at least one Author.');
-        }
-
-        if (empty($title)) {
-            throw new \Exception('Book requires Title to be not empty.');
-        }
-
         $instance = new self($id);
-        $instance->applyChange(new BookAdded($instance->getId(), $authors, $title));
+
+        $authorsAdded = array_map(
+            function (AddAuthor $author) use ($instance) {
+                $authorAdded = new AuthorAdded($instance->id, $author->getFirstName(), $author->getLastName());
+                $instance->applyAuthorAdded($authorAdded);
+                return $authorAdded;
+            },
+            $authors
+        );
+
+        $instance->applyChange(new BookAdded($instance->getId(), $authorsAdded, $title));
         return $instance;
     }
 
@@ -55,7 +57,7 @@ class Book extends AggregateRoot
     }
 
     /**
-     * @see \AppBundle\EventStore\AggregateRoot::getId()
+     * @return Uuid
      */
     final public function getId()
     {

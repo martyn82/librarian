@@ -14,12 +14,9 @@ class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
     public function testAddAuthorHandlerWillCallStoreOnRepository()
     {
         $bookId = Uuid::createNew();
+        $authors = [];
         $firstName = 'foo';
         $lastName = 'bar';
-
-        $authors = [
-            Author::create('first', 'last')
-        ];
 
         $command = new AddAuthor($bookId, $firstName, $lastName, 0);
         $book = Book::add($bookId, $authors, 'title');

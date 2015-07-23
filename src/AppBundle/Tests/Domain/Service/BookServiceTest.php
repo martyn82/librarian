@@ -11,7 +11,6 @@ use AppBundle\Domain\Storage\MemoryStorage;
 use AppBundle\Domain\Storage\Storage;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Uuid;
-use AppBundle\Message\Command;
 use AppBundle\Message\Event;
 
 class BookServiceTest extends \PHPUnit_Framework_TestCase
@@ -133,11 +132,13 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $title = 'foo';
         $firstName = 'bar';
         $lastName = 'baz';
+        $authors = [
+            new AuthorAdded($bookId, $firstName, $lastName)
+        ];
 
         $storage = new MemoryStorage();
         $service = new BookService($storage);
-        $service->on(new BookAdded($bookId, [], $title));
-        $service->on(new AuthorAdded($bookId, $firstName, $lastName));
+        $service->on(new BookAdded($bookId, $authors, $title));
 
         $book = $service->getBook($bookId);
 

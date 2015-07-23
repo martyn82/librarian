@@ -16,8 +16,8 @@ final class BookAdded extends Event
     private $id;
 
     /**
-     * @Serializer\Type("array<AppBundle\Domain\Model\Author>")
-     * @var Author[]
+     * @Serializer\Type("array<AppBundle\Domain\Model\AuthorAdded>")
+     * @var AuthorAdded[]
      */
     private $authors;
 
@@ -29,13 +29,18 @@ final class BookAdded extends Event
 
     /**
      * @param Uuid $id
-     * @param Author[] $authors
+     * @param AuthorAdded[] $authors
      * @param string $title
      */
     public function __construct(Uuid $id, array $authors, $title)
     {
         $this->id = $id;
-        $this->authors = $authors;
+        $this->authors = array_map(
+            function (AuthorAdded $author) {
+                return $author;
+            },
+            $authors
+        );
         $this->title = $title;
     }
 
@@ -48,7 +53,7 @@ final class BookAdded extends Event
     }
 
     /**
-     * @return Author[]
+     * @return AuthorAdded[]
      */
     public function getAuthors()
     {
