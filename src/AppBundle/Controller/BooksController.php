@@ -32,11 +32,6 @@ class BooksController extends FOSRestController
     private $commandBus;
 
     /**
-     * @var Serializer
-     */
-    private $serializer;
-
-    /**
      * @DI\InjectParams({
      *  "bookService" = @DI\Inject("librarian.service.book"),
      *  "commandBus" = @DI\Inject("librarian.commandbus")
@@ -55,7 +50,7 @@ class BooksController extends FOSRestController
      * @Rest\Get("/books")
      * @Rest\View()
      *
-     * @return array
+     * @return BookResource[]
      */
     public function indexAction()
     {
@@ -119,27 +114,29 @@ class BooksController extends FOSRestController
      *  requirements={"id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"},
      *  defaults={"id"=null}
      * )
+     * @ParamConverter("id",
+     *  class="AppBundle\EventStore/Uuid",
+     *  converter="fos_rest.request_param"
+     * )
      * @ParamConverter("author",
      *  class="AppBundle\Controller\Resource\Book\Author",
      *  converter="fos_rest.request_body"
      * )
      * @Rest\View()
      *
-     * @param string $id
+     * @param Uuid $id
      * @param AuthorResource $author
      * @return BookResource
      * @throws HttpException
      */
-    public function addAuthorAction($id, AuthorResource $author)
+    public function addAuthorAction(Uuid $id, AuthorResource $author)
     {
-        $uuid = Uuid::createFromValue($id);
-
         // version needs to come from request
-        $bookReadModel = $this->bookService->getBook($uuid);
+        $bookReadModel = $this->bookService->getBook($id);
 
-        $command = new AddAuthor($uuid, $author->getFirstName(), $author->getLastName(), $bookReadModel->getVersion());
+        $command = new AddAuthor($id, $author->getFirstName(), $author->getLastName(), $bookReadModel->getVersion());
         $this->commandBus->send($command);
 
-        return $this->bookService->getBook($uuid);
+        return $this->bookService->getBook($id);
     }
 }
