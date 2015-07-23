@@ -114,29 +114,27 @@ class BooksController extends FOSRestController
      *  requirements={"id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"},
      *  defaults={"id"=null}
      * )
-     * @ParamConverter("id",
-     *  class="AppBundle\EventStore/Uuid",
-     *  converter="fos_rest.request_param"
-     * )
      * @ParamConverter("author",
      *  class="AppBundle\Controller\Resource\Book\Author",
      *  converter="fos_rest.request_body"
      * )
      * @Rest\View()
      *
-     * @param Uuid $id
+     * @param string $id
      * @param AuthorResource $author
      * @return BookResource
      * @throws HttpException
      */
-    public function addAuthorAction(Uuid $id, AuthorResource $author)
+    public function addAuthorAction($id, AuthorResource $author)
     {
-        // version needs to come from request
-        $bookReadModel = $this->bookService->getBook($id);
+        $uuid = Uuid::createFromValue($id);
 
-        $command = new AddAuthor($id, $author->getFirstName(), $author->getLastName(), $bookReadModel->getVersion());
+        // version needs to come from request
+        $bookReadModel = $this->bookService->getBook($uuid);
+
+        $command = new AddAuthor($uuid, $author->getFirstName(), $author->getLastName(), $bookReadModel->getVersion());
         $this->commandBus->send($command);
 
-        return $this->bookService->getBook($id);
+        return $this->bookService->getBook($uuid);
     }
 }
