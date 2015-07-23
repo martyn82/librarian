@@ -13,7 +13,7 @@ use AppBundle\MessageBus\CommandBus;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use JMS\DiExtraBundle\Annotation as DI;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -106,7 +106,6 @@ class BooksController extends FOSRestController
             },
             $book->getAuthors()
         );
-
 
         $command = new AddBook($id, $authors, $book->getTitle());
         $this->commandBus->send($command);

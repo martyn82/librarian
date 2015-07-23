@@ -16,7 +16,7 @@ final class BookAdded extends Event
     private $id;
 
     /**
-     * @Serializer\Type("array<AppBundle\Domain\Model\AuthorAdded>")
+     * @Serializer\Type("array<AppBundle\Domain\Message\Event\AuthorAdded>")
      * @var AuthorAdded[]
      */
     private $authors;

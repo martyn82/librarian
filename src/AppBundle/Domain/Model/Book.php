@@ -17,7 +17,7 @@ class Book extends AggregateRoot
 
     /**
      * @param Uuid $id
-     * @param Author[] $authors
+     * @param AddAuthor[] $authors
      * @param string $title
      * @return Book
      */
