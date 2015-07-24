@@ -6,18 +6,23 @@ use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Controller\Resource\Book\Author as AuthorResource;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
+use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
+use AppBundle\EventStore\ConcurrencyException;
 use AppBundle\EventStore\Uuid;
 use AppBundle\MessageBus\CommandBus;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use JMS\DiExtraBundle\Annotation as DI;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 
 /**
- * @Rest\Route("/api")
+ * @Rest\Route("/api/books")
  */
 class BooksController extends FOSRestController
 {
@@ -47,51 +52,99 @@ class BooksController extends FOSRestController
     }
 
     /**
-     * @Rest\Get("/books")
+     * @Rest\Get("/")
      * @Rest\View()
      *
      * @return BookResource[]
      */
     public function indexAction()
     {
-        return $this->bookService->getAll();
+        return array_map(
+            function (Book $book) {
+                return BookResource::createFromReadModel($book);
+            },
+            (array)$this->bookService->getAll()
+        );
     }
 
     /**
-     * @Rest\Get("/book/{id}",
-     *  requirements={"id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"},
+     * @Cache(ETag="book.getId() ~ book.getVersion()")
+     *
+     * @Rest\Get("/{id}",
+     *  requirements={
+     *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
+     *  },
      *  defaults={"id"=null}
      * )
      * @Rest\View()
      *
-     * @param string $id
+     * @ParamConverter("book",
+     *  class="AppBundle\Domain\ReadModel\Book",
+     *  converter="param_converter"
+     * )
+     *
+     * @param Book $book
      * @return BookResource
      * @throws HttpException
      */
-    public function readAction($id)
+    public function readAction(Book $book)
     {
-        try {
-            return $this->bookService->getBook(Uuid::createFromValue($id));
-        } catch (ObjectNotFoundException $e) {
-            throw $this->createNotFoundException($e->getMessage(), $e);
-        }
+        return BookResource::createFromReadModel($book);
     }
 
     /**
-     * @Rest\Post("/book",
-     *  condition="request.headers.get('content-type') matches '/domain-model=add-book/i'"
+     * @Rest\Put("/{id}/author",
+     *  condition="request.headers.get('content-type') matches '/domain-model=add-author/i'",
+     *  requirements={
+     *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
+     *  },
+     *  defaults={"id"=null}
      * )
-     * @ParamConverter("book",
-     *  class="AppBundle\Controller\Resource\Book",
+     * @Rest\View()
+     *
+     * @ParamConverter("id",
+     *  class="AppBundle\EventStore\Uuid",
+     *  converter="param_converter"
+     * )
+     * @ParamConverter("author",
+     *  class="AppBundle\Controller\Resource\Book\Author",
      *  converter="fos_rest.request_body"
      * )
-     * @Rest\View(statusCode=201)
+     * @ParamConverter("version",
+     *  converter="param_converter"
+     * )
      *
-     * @param BookResource $book
+     * @param Uuid $id
+     * @param AuthorResource $author
+     * @param integer $version
      * @return BookResource
      * @throws HttpException
      */
-    public function addBookAction(BookResource $book)
+    public function addAuthorAction(Uuid $id, AuthorResource $author, $version)
+    {
+        $command = new AddAuthor($id, $author->getFirstName(), $author->getLastName(), $version);
+        $this->commandBus->send($command);
+
+        $updatedBook = $this->bookService->getBook($id);
+        return BookResource::createFromReadModel($updatedBook);
+    }
+
+    /**
+     * @Rest\Post("",
+     *  condition="request.headers.get('content-type') matches '/domain-model=add-book/i'"
+     * )
+     * @Rest\View(statusCode=201)
+     *
+     * @ParamConverter("bookResource",
+     *  class="AppBundle\Controller\Resource\Book",
+     *  converter="fos_rest.request_body"
+     * )
+     *
+     * @param BookResource $bookResource
+     * @return BookResource
+     * @throws HttpException
+     */
+    public function addBookAction(BookResource $bookResource)
     {
         $id = Uuid::createNew();
 
@@ -99,42 +152,13 @@ class BooksController extends FOSRestController
             function (AuthorResource $author) use ($id) {
                 return new AddAuthor($id, $author->getFirstName(), $author->getLastName(), -1);
             },
-            $book->getAuthors()
+            $bookResource->getAuthors()
         );
 
-        $command = new AddBook($id, $authors, $book->getTitle());
+        $command = new AddBook($id, $authors, $bookResource->getTitle());
         $this->commandBus->send($command);
 
-        return $this->bookService->getBook($id);
-    }
-
-    /**
-     * @Rest\Put("/book/{id}/author",
-     *  condition="request.headers.get('content-type') matches '/domain-model=add-author/i'",
-     *  requirements={"id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"},
-     *  defaults={"id"=null}
-     * )
-     * @ParamConverter("author",
-     *  class="AppBundle\Controller\Resource\Book\Author",
-     *  converter="fos_rest.request_body"
-     * )
-     * @Rest\View()
-     *
-     * @param string $id
-     * @param AuthorResource $author
-     * @return BookResource
-     * @throws HttpException
-     */
-    public function addAuthorAction($id, AuthorResource $author)
-    {
-        $uuid = Uuid::createFromValue($id);
-
-        // version needs to come from request
-        $bookReadModel = $this->bookService->getBook($uuid);
-
-        $command = new AddAuthor($uuid, $author->getFirstName(), $author->getLastName(), $bookReadModel->getVersion());
-        $this->commandBus->send($command);
-
-        return $this->bookService->getBook($uuid);
+        $book = $this->bookService->getBook($id);
+        return BookResource::createFromReadModel($book);
     }
 }

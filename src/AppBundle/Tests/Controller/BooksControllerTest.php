@@ -15,6 +15,9 @@ use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Uuid;
 use AppBundle\Message\Command;
 use AppBundle\MessageBus\CommandBus;
+use FOS\RestBundle\View\View;
+use FOS\RestBundle\View\ViewHandler;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BooksControllerTest extends \PHPUnit_Framework_TestCase
@@ -43,37 +46,27 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
     public function testIndexActionRetrievesAllBooks()
     {
         $this->service->expects(self::once())
-            ->method('getAll');
+            ->method('getAll')
+            ->will(self::returnValue(
+                [
+                    new Book(Uuid::createNew(), new Authors(), 'title', 0)
+                ]
+            ));
 
         $controller = new BooksController($this->service, $this->commandBus);
         $controller->indexAction();
     }
 
-    public function testReadActionRetrievesBookById()
+    public function testReadActionReturnsBookResource()
     {
         $id = Uuid::createNew();
-
-        $this->service->expects(self::once())
-            ->method('getBook')
-            ->with($id);
+        $book = new Book($id, new Authors(), '', 0);
 
         $controller = new BooksController($this->service, $this->commandBus);
-        $controller->readAction($id);
-    }
+        $resource = $controller->readAction($book);
 
-    public function testReadActionThrowsNotFoundExceptionIfNotFound()
-    {
-        self::setExpectedException(NotFoundHttpException::class);
-
-        $id = Uuid::createNew();
-
-        $this->service->expects(self::once())
-            ->method('getBook')
-            ->with($id)
-            ->will(self::throwException(new ObjectNotFoundException('Book', $id)));
-
-        $controller = new BooksController($this->service, $this->commandBus);
-        $controller->readAction($id);
+        self::assertInstanceOf(BookResource::class, $resource);
+        self::assertEquals($id, $resource->getId());
     }
 
     public function testAddBookActionSendsAddBookCommand()
@@ -88,6 +81,10 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
 
         $book = new Book(Uuid::createFromValue(null), new Authors([new Author('first', 'last')]), 'title', -1);
         $resource = BookResource::createFromReadModel($book);
+
+        $this->service->expects(self::once())
+            ->method('getBook')
+            ->will(self::returnValue($book));
 
         $controller = new BooksController($this->service, $this->commandBus);
         $controller->addBookAction($resource);
@@ -106,7 +103,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $book = new Book($id, new Authors(), 'title', -1);
 
-        $this->service->expects(self::exactly(2))
+        $this->service->expects(self::atLeastOnce())
             ->method('getBook')
             ->will(self::returnValue($book));
 
@@ -114,6 +111,6 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
         $resource = AuthorResource::createFromReadModel($author);
 
         $controller = new BooksController($this->service, $this->commandBus);
-        $controller->addAuthorAction($id, $resource);
+        $controller->addAuthorAction($id, $resource, -1);
     }
 }

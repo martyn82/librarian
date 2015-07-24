@@ -1,0 +1,107 @@
+services:
+  # DB
+  librarian.database.events:
+    class: Doctrine\MongoDB\Connection
+    arguments: ["%librarian.database.events.host%:%librarian.database.events.port%"]
+
+  librarian.database.events.books:
+    class: Doctrine\MongoDB\Collection
+    factory: ["@librarian.database.events", selectCollection]
+    arguments: [events, books]
+
+  librarian.client.elasticsearch:
+    class: Elasticsearch\Client
+    arguments: [{hosts: {host: "%librarian.database.documents.host%", port: "%librarian.database.documents.port%"}}]
+
+  # storage
+  librarian.storage.events.book.mongodb:
+    class: AppBundle\EventStore\Storage\MongoDbEventStorage
+    arguments:
+      - "@librarian.database.events.books"
+      - identity
+
+  librarian.storage.events.book.memory:
+    class: AppBundle\EventStore\Storage\MemoryEventStorage
+
+  librarian.storage.documents.book.elasticsearch:
+    class: AppBundle\Domain\Storage\ElasticSearchStorage
+    arguments:
+      - "@librarian.client.elasticsearch"
+      - AppBundle\Domain\ReadModel\Book
+      - books
+      - book
+
+  librarian.storage.documents.book.memory:
+    class: AppBundle\Domain\Storage\MemoryStorage
+
+  # event store
+  librarian.eventstore.classmap:
+    class: AppBundle\EventStore\EventClassMap
+    arguments:
+      -
+        - AppBundle\Domain\Message\Event\BookAdded
+        - AppBundle\Domain\Message\Event\AuthorAdded
+
+  librarian.eventstore.book:
+    class: AppBundle\EventStore\EventStore
+    arguments:
+      - "@librarian.eventbus"
+      - "@librarian.storage.events.book"
+      - "@jms_serializer"
+      - "@librarian.eventstore.classmap"
+
+  # aggregate repositories
+  librarian.repository.books:
+    class: AppBundle\Domain\Repository\Books
+    arguments: ["@librarian.eventstore.book"]
+
+  # message buses
+  librarian.commandbus:
+    class: AppBundle\MessageBus\CommandBus
+    arguments:
+      -
+        AppBundle\Domain\Message\Command\AddBook: "@librarian.commandhandler.add_book"
+        AppBundle\Domain\Message\Command\AddAuthor: "@librarian.commandhandler.add_author"
+
+  librarian.eventbus:
+    class: AppBundle\MessageBus\EventBus
+    arguments:
+      -
+        AppBundle\Domain\Message\Event\BookAdded: ["@librarian.eventhandler.book_added"]
+        AppBundle\Domain\Message\Event\AuthorAdded: ["@librarian.eventhandler.author_added"]
+
+  # command/event handlers
+  librarian.eventhandler.book_added.plain:
+    alias: librarian.service.book
+
+  librarian.eventhandler.book_added.logging:
+    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.eventhandler.book_added.plain"]
+
+  librarian.eventhandler.author_added.plain:
+    alias: librarian.service.book
+
+  librarian.eventhandler.author_added.logging:
+    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.eventhandler.author_added.plain"]
+
+  librarian.commandhandler.add_book.plain:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\AddBookHandler
+    arguments: ["@librarian.repository.books"]
+
+  librarian.commandhandler.add_book.logging:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.commandhandler.add_book.plain"]
+
+  librarian.commandhandler.add_author.plain:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\AddAuthorHandler
+    arguments: ["@librarian.repository.books"]
+
+  librarian.commandhandler.add_author.logging:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.commandhandler.add_author.plain"]
+
+  # aggregate services
+  librarian.service.book:
+    class: AppBundle\Domain\Service\BookService
+    arguments: ["@librarian.storage.documents.book"]
