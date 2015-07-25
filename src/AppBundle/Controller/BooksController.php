@@ -15,6 +15,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -48,18 +49,29 @@ class BooksController extends FOSRestController
     }
 
     /**
-     * @Rest\Get("/")
+     * @Rest\Get("")
      * @Rest\View()
      *
+     * @param Request $request
      * @return BookResource[]
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $query = $request->query;
+
+        $offset = (int)$query->get('offset', 0);
+        $query->remove('offset');
+
+        $limit = (int)$query->get('limit', 500);
+        $query->remove('limit');
+
+        $books = $this->bookService->getAll($query->all(), $offset, $limit);
+
         return array_map(
             function (BookReadModel $book) {
                 return BookResource::createFromReadModel($book);
             },
-            (array)$this->bookService->getAll()
+            $books
         );
     }
 
@@ -165,7 +177,7 @@ class BooksController extends FOSRestController
             $bookResource->getAuthors()
         );
 
-        $command = new AddBook($id, $authors, $bookResource->getTitle());
+        $command = new AddBook($id, $authors, $bookResource->getTitle(), $bookResource->getISBN());
         $this->commandBus->send($command);
 
         $book = $this->bookService->getBook($id);

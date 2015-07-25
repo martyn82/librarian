@@ -30,6 +30,12 @@ class Book
     private $title;
 
     /**
+     * @Serializer\Type("string")
+     * @var string
+     */
+    private $isbn;
+
+    /**
      * @param BookReadModel $book
      * @return Book
      */
@@ -45,7 +51,8 @@ class Book
         return new self(
             $book->getId()->getValue(),
             $authors,
-            $book->getTitle()
+            $book->getTitle(),
+            $book->getISBN()
         );
     }
 
@@ -53,12 +60,14 @@ class Book
      * @param string $id
      * @param Author[] $authors
      * @param string $title
+     * @param string $isbn
      */
-    private function __construct($id, array $authors, $title)
+    private function __construct($id, array $authors, $title, $isbn)
     {
         $this->id = $id;
         $this->authors = $authors;
         $this->title = $title;
+        $this->isbn = $isbn;
     }
 
     /**
@@ -83,5 +92,13 @@ class Book
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getISBN()
+    {
+        return $this->isbn;
     }
 }
