@@ -101,20 +101,36 @@ class ElasticSearchStorage implements Storage
     }
 
     /**
+     * @param array $filter
+     * @param int $offset
+     * @param int $limit
      * @return Document[]
      */
-    public function findAll()
+    public function findAll(array $filter = [], $offset = 0, $limit = 500)
     {
+        $query = [
+            'match_all' => []
+        ];
+
+        if (!empty($filter)) {
+            $query = [
+                'filtered' => [
+                    'filter' => [
+                        'term' => $filter
+                    ]
+                ]
+            ];
+        }
+
         $result = $this->client->search(
             [
                 'index' => $this->index,
                 'type' => $this->type,
                 'body' => [
-                    'query' => [
-                        'match_all' => []
-                    ]
+                    'query' => $query
                 ],
-                'size' => 500
+                'from' => $offset,
+                'size' => $limit
             ]
         );
 
@@ -130,5 +146,12 @@ class ElasticSearchStorage implements Storage
             },
             $result['hits']['hits']
         );
+    }
+
+    /**
+     */
+    public function clear()
+    {
+        $this->client->indices()->delete(['index' => $this->index]);
     }
 }

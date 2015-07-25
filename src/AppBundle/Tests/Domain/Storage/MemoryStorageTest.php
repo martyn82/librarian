@@ -64,4 +64,16 @@ class MemoryStorageTest extends \PHPUnit_Framework_TestCase
 
         self::assertEquals([$initialRecord], $storage->findAll());
     }
+
+    public function testClearWillClearInternalStorage()
+    {
+        $initialRecord = $this->getMockBuilder(Document::class)
+            ->getMock();
+
+        $storage = new MemoryStorage();
+        $storage->upsert(1, $initialRecord);
+        $storage->clear();
+
+        self::assertEquals([], $storage->findAll());
+    }
 }

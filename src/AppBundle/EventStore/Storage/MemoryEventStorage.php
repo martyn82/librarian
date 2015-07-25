@@ -12,7 +12,8 @@ class MemoryEventStorage implements EventStorage
     private $data = [];
 
     /**
-     * @see \AppBundle\EventStore\Storage\EventStorage::contains()
+     * @param string $identity
+     * @return bool
      */
     public function contains($identity)
     {
@@ -20,7 +21,8 @@ class MemoryEventStorage implements EventStorage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\EventStorage::append()
+     * @param EventDescriptor $event
+     * @return bool
      */
     public function append(EventDescriptor $event)
     {
@@ -33,7 +35,8 @@ class MemoryEventStorage implements EventStorage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\EventStorage::find()
+     * @param string $identity
+     * @return EventDescriptor[]
      */
     public function find($identity)
     {
@@ -47,5 +50,13 @@ class MemoryEventStorage implements EventStorage
             },
             $this->data[$identity]
         );
+    }
+
+    /**
+     * @return string[]
+     */
+    public function findIdentities()
+    {
+        return array_keys($this->data);
     }
 }

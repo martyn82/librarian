@@ -57,4 +57,11 @@ class MemoryEventStorageTest extends \PHPUnit_Framework_TestCase
         $storage = new MemoryEventStorage();
         self::assertEquals([], $storage->find('foo'));
     }
+
+    public function testFindIdentitiesWillReturnAllIds()
+    {
+        $storage = new MemoryEventStorage();
+        $storage->append(EventDescriptor::record('a', 'foo', 'bar', 1));
+        self::assertEquals(['a'], $storage->findIdentities());
+    }
 }

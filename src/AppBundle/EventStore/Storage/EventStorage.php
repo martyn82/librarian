@@ -23,4 +23,9 @@ interface EventStorage
      * @return EventDescriptor[]
      */
     public function find($identity);
+
+    /**
+     * @return string[]
+     */
+    public function findIdentities();
 }

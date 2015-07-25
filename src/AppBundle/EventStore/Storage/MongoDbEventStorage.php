@@ -28,7 +28,8 @@ class MongoDbEventStorage implements EventStorage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\EventStorage::contains()
+     * @param string $identity
+     * @return bool
      */
     public function contains($identity)
     {
@@ -36,7 +37,8 @@ class MongoDbEventStorage implements EventStorage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\EventStorage::find()
+     * @param string $identity
+     * @return EventDescriptor[]
      */
     public function find($identity)
     {
@@ -51,12 +53,21 @@ class MongoDbEventStorage implements EventStorage
     }
 
     /**
-     * @see \AppBundle\EventStore\Storage\EventStorage::append()
+     * @param EventDescriptor $event
+     * @return bool
      */
     public function append(EventDescriptor $event)
     {
         $eventData = $event->toArray();
         $result = $this->collection->insert($eventData);
         return $result !== false;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function findIdentities()
+    {
+        return $this->collection->distinct($this->identityField)->toArray();
     }
 }

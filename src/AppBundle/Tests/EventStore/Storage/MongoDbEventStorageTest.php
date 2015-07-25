@@ -5,6 +5,7 @@ namespace AppBundle\Tests\EventStore\Storage;
 use AppBundle\EventStore\EventDescriptor;
 use AppBundle\EventStore\EventStore;
 use AppBundle\EventStore\Storage\MongoDbEventStorage;
+use Doctrine\MongoDB\ArrayIterator;
 use Doctrine\MongoDB\Collection;
 use Doctrine\MongoDB\Cursor;
 
@@ -91,6 +92,19 @@ class MongoDbEventStorageTest extends \PHPUnit_Framework_TestCase
 
         $storage = new MongoDbEventStorage($collection, $identityField);
         $storage->append($event);
+    }
+
+    public function testFindIdentitiesWillReturnAllIds()
+    {
+        $collection = $this->getCollection();
+
+        $collection->expects(self::once())
+            ->method('distinct')
+            ->will(self::returnValue(new ArrayIterator(['a'])));
+
+        $storage = new MongoDbEventStorage($collection, 'identity');
+        $storage->append(EventDescriptor::record('a', 'foo', 'bar', 1));
+        self::assertEquals(['a'], $storage->findIdentities());
     }
 }
 

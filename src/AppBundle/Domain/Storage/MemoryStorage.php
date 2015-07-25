@@ -5,12 +5,13 @@ namespace AppBundle\Domain\Storage;
 class MemoryStorage implements Storage
 {
     /**
-     * @var array
+     * @var Document[]
      */
     private $data = [];
 
     /**
-     * @see \AppBundle\Domain\Storage\Storage::upsert()
+     * @param string $identity
+     * @param Document $document
      */
     public function upsert($identity, Document $document)
     {
@@ -18,7 +19,7 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @see \AppBundle\Domain\Storage\Storage::delete()
+     * @param string $identity
      */
     public function delete($identity)
     {
@@ -30,7 +31,8 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @see \AppBundle\Domain\Storage\Storage::find()
+     * @param string $identity
+     * @return Document
      */
     public function find($identity)
     {
@@ -42,10 +44,22 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @see \AppBundle\Domain\Storage\Storage::findAll()
+     * @param array $filter
+     * @param int $offset
+     * @param int $limit
+     * @return Document[]
      */
-    public function findAll()
+    public function findAll(array $filter = [], $offset = 0, $limit = 500)
     {
-        return array_values($this->data);
+        return array_values(
+            array_slice($this->data, $offset, $limit)
+        );
+    }
+
+    /**
+     */
+    public function clear()
+    {
+       $this->data = [];
     }
 }

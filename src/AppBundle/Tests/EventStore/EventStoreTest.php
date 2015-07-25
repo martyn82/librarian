@@ -276,6 +276,21 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
 
         $store->save($aggregateId, new Events([new SecondEvent()]), 1);
     }
+
+    public function testGetAggregateIdsCallsFindIdentitiesOnStorage()
+    {
+        $eventBus = $this->getEventBus();
+        $storage = $this->getStorage();
+        $serializer = $this->getSerializer();
+        $map = $this->getEventClassMap();
+
+        $storage->expects(self::once())
+            ->method('findIdentities')
+            ->will(self::returnValue(['id']));
+
+        $store = new EventStore($eventBus, $storage, $serializer, $map);
+        $store->getAggregateIds();
+    }
 }
 
 class FirstEvent extends Event
