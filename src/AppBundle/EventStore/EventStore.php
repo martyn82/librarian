@@ -150,4 +150,17 @@ class EventStore
 
         return new Events($events);
     }
+
+    /**
+     * @return Uuid[]
+     */
+    public function getAggregateIds()
+    {
+        return array_map(
+            function ($identity) {
+                return Uuid::createFromValue($identity);
+            },
+            $this->storage->findIdentities()
+        );
+    }
 }
