@@ -18,9 +18,10 @@ class AddBookHandlerTest extends \PHPUnit_Framework_TestCase
         $authors = [
             new AddAuthor($id, 'first', 'last', -1)
         ];
+        $isbn = 'isbn';
 
-        $command = new AddBook($id, $authors, $title);
-        $book = Book::add($command->getId(), $command->getAuthors(), $command->getTitle());
+        $command = new AddBook($id, $authors, $title, $isbn);
+        $book = Book::add($command->getId(), $command->getAuthors(), $command->getTitle(), $command->getISBN());
 
         $repository = $this->getMockBuilder(Repository::class)
             ->disableOriginalConstructor()

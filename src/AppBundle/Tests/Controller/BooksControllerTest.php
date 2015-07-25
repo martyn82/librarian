@@ -18,6 +18,7 @@ use AppBundle\MessageBus\CommandBus;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandler;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BooksControllerTest extends \PHPUnit_Framework_TestCase
@@ -49,18 +50,18 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ->method('getAll')
             ->will(self::returnValue(
                 [
-                    new Book(Uuid::createNew(), new Authors(), 'title', 0)
+                    new Book(Uuid::createNew(), new Authors(), 'title', 'isbn', 0)
                 ]
             ));
 
         $controller = new BooksController($this->service, $this->commandBus);
-        $controller->indexAction();
+        $controller->indexAction(Request::createFromGlobals());
     }
 
     public function testReadActionReturnsBookResource()
     {
         $id = Uuid::createNew();
-        $book = new Book($id, new Authors(), '', 0);
+        $book = new Book($id, new Authors(), '', '', 0);
 
         $controller = new BooksController($this->service, $this->commandBus);
         $resource = $controller->readAction($book);
@@ -79,7 +80,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
                 }
             ));
 
-        $book = new Book(Uuid::createFromValue(null), new Authors([new Author('first', 'last')]), 'title', -1);
+        $book = new Book(Uuid::createFromValue(null), new Authors([new Author('first', 'last')]), 'title', 'isbn', -1);
         $resource = BookResource::createFromReadModel($book);
 
         $this->service->expects(self::once())
@@ -101,7 +102,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ));
 
         $id = Uuid::createNew();
-        $book = new Book($id, new Authors(), 'title', -1);
+        $book = new Book($id, new Authors(), 'title', 'isbn', -1);
 
         $this->service->expects(self::atLeastOnce())
             ->method('getBook')

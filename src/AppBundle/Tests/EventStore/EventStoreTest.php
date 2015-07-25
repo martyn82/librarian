@@ -128,7 +128,7 @@ class EventStoreTest extends \PHPUnit_Framework_TestCase
         $serializer = $this->getSerializer();
         $classMap = $this->getEventClassMap();
 
-        $event = new BookAdded($id, [], 'foo');
+        $event = new BookAdded($id, [], 'foo', 'bar');
 
         $classMap->expects(self::any())
             ->method('getClassByEventName')

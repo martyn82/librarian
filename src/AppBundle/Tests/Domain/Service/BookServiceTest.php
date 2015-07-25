@@ -19,8 +19,9 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::createNew();
         $title = 'foo';
+        $isbn = 'bar';
 
-        $event = new BookAdded($id, [], $title);
+        $event = new BookAdded($id, [], $title, $isbn);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
@@ -38,8 +39,9 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::createNew();
         $title = 'foo';
+        $isbn = 'bar';
 
-        $event = new BookAdded($id, [], $title);
+        $event = new BookAdded($id, [], $title, $isbn);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
@@ -70,7 +72,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', EventStore::FIRST_VERSION)));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', EventStore::FIRST_VERSION)));
 
         $service = new BookService($storage);
         $service->on(new AuthorAdded($bookId, $firstName, $lastName));
@@ -93,7 +95,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', EventStore::FIRST_VERSION)));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', EventStore::FIRST_VERSION)));
 
         $service = new BookService($storage);
         $service->onAuthorAdded(new AuthorAdded($bookId, $firstName, $lastName));
@@ -130,6 +132,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
     {
         $bookId = Uuid::createNew();
         $title = 'foo';
+        $isbn = 'bar';
         $firstName = 'bar';
         $lastName = 'baz';
         $authors = [
@@ -138,7 +141,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
         $storage = new MemoryStorage();
         $service = new BookService($storage);
-        $service->on(new BookAdded($bookId, $authors, $title));
+        $service->on(new BookAdded($bookId, $authors, $title, $isbn));
 
         $book = $service->getBook($bookId);
 

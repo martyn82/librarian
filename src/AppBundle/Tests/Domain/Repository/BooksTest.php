@@ -17,8 +17,9 @@ class BooksTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::createNew();
         $title = 'foo';
+        $isbn = 'isbn';
         $authors = [];
-        $book = Book::add($id, $authors, $title);
+        $book = Book::add($id, $authors, $title, $isbn);
 
         $storage = $this->getMockBuilder(EventStore::class)
             ->disableOriginalConstructor()
@@ -37,16 +38,17 @@ class BooksTest extends \PHPUnit_Framework_TestCase
         $bookId = Uuid::createNew();
 
         $title = 'foo';
+        $isbn = 'isbn';
         $authors = [];
         $authorFirstName = 'first';
         $authorLastName = 'last';
 
-        $expectedBook = Book::add($bookId, $authors, $title);
+        $expectedBook = Book::add($bookId, $authors, $title, $isbn);
         $expectedBook->addAuthor($authorFirstName, $authorLastName);
 
         $events = new Events(
             [
-                new BookAdded($bookId, $authors, $title),
+                new BookAdded($bookId, $authors, $title, $isbn),
                 new AuthorAdded($bookId, $authorFirstName, $authorLastName)
             ]
         );

@@ -101,7 +101,7 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
     public function testApplyConverterOnBookAddsBook()
     {
         $id = Uuid::createNew();
-        $book = new BookReadModel($id, new Authors(), 'title', 1);
+        $book = new BookReadModel($id, new Authors(), 'title', 'isbn', 1);
 
         $request = Request::createFromGlobals();
         $request->attributes->set('id', $id);
@@ -154,7 +154,7 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::createNew();
         $version = 1;
-        $book = new BookReadModel($id, new Authors(), 'title', $version);
+        $book = new BookReadModel($id, new Authors(), 'title', 'isbn', $version);
 
         $request = Request::createFromGlobals();
         $etag = hash('sha256', $id->getValue() . $version);
@@ -203,7 +203,7 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
 
         $id = Uuid::createNew();
         $version = 1;
-        $book = new BookReadModel($id, new Authors(), 'title', $version);
+        $book = new BookReadModel($id, new Authors(), 'title', 'isbn', $version);
 
         $request = Request::createFromGlobals();
         $request->headers->set('if-none-match', 'foo');
