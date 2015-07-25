@@ -6,10 +6,8 @@ use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Controller\Resource\Book\Author as AuthorResource;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
-use AppBundle\Domain\ReadModel\Book;
+use AppBundle\Domain\ReadModel\Book as BookReadModel;
 use AppBundle\Domain\Service\BookService;
-use AppBundle\Domain\Service\ObjectNotFoundException;
-use AppBundle\EventStore\ConcurrencyException;
 use AppBundle\EventStore\Uuid;
 use AppBundle\MessageBus\CommandBus;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -17,9 +15,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 
 /**
  * @Rest\Route("/api/books")
@@ -60,7 +56,7 @@ class BooksController extends FOSRestController
     public function indexAction()
     {
         return array_map(
-            function (Book $book) {
+            function (BookReadModel $book) {
                 return BookResource::createFromReadModel($book);
             },
             (array)$this->bookService->getAll()
@@ -74,20 +70,29 @@ class BooksController extends FOSRestController
      *  requirements={
      *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
      *  },
-     *  defaults={"id"=null}
+     *  defaults={
+     *      "id"=null
+     *  }
      * )
      * @Rest\View()
      *
+     * @ParamConverter("id",
+     *  class="AppBundle\EventStore\Uuid",
+     *  converter="param_converter"
+     * )
      * @ParamConverter("book",
      *  class="AppBundle\Domain\ReadModel\Book",
+     *  options={
+     *      "id": "id"
+     *  },
      *  converter="param_converter"
      * )
      *
-     * @param Book $book
+     * @param BookReadModel $book
      * @return BookResource
      * @throws HttpException
      */
-    public function readAction(Book $book)
+    public function readAction(BookReadModel $book)
     {
         return BookResource::createFromReadModel($book);
     }
@@ -98,7 +103,9 @@ class BooksController extends FOSRestController
      *  requirements={
      *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
      *  },
-     *  defaults={"id"=null}
+     *  defaults={
+     *      "id"=null
+     *  }
      * )
      * @Rest\View()
      *
@@ -111,6 +118,9 @@ class BooksController extends FOSRestController
      *  converter="fos_rest.request_body"
      * )
      * @ParamConverter("version",
+     *  options={
+     *      "id": "id"
+     *  },
      *  converter="param_converter"
      * )
      *

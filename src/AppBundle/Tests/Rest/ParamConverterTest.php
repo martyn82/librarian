@@ -2,8 +2,9 @@
 
 namespace AppBundle\Tests\Rest;
 
+use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Domain\ReadModel\Authors;
-use AppBundle\Domain\ReadModel\Book;
+use AppBundle\Domain\ReadModel\Book as BookReadModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Uuid;
@@ -43,8 +44,12 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testParamConverterSupports($name)
     {
-        $this->configuration->expects(self::once())
+        $this->configuration->expects(self::any())
             ->method('getName')
+            ->will(self::returnValue($name));
+
+        $this->configuration->expects(self::any())
+            ->method('getClass')
             ->will(self::returnValue($name));
 
         $converter = new ParamConverter($this->service);
@@ -54,9 +59,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
     public function paramConverterNameProvider()
     {
         return [
-            ['id'],
             ['version'],
-            ['book']
+            [BookReadModel::class],
+            [Uuid::class],
+            [BookResource::class]
         ];
     }
 
@@ -95,15 +101,19 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
     public function testApplyConverterOnBookAddsBook()
     {
         $id = Uuid::createNew();
-        $book = new Book($id, new Authors(), 'title', 1);
+        $book = new BookReadModel($id, new Authors(), 'title', 1);
 
         $request = Request::createFromGlobals();
-        $request->attributes->set('id', $id->getValue());
+        $request->attributes->set('id', $id);
 
         $this->service->expects(self::once())
             ->method('getBook')
             ->with($id)
             ->will(self::returnValue($book));
+
+        $this->configuration->expects(self::once())
+            ->method('getOptions')
+            ->will(self::returnValue(['id' => 'id']));
 
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')
@@ -122,11 +132,15 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
 
         $request = Request::createFromGlobals();
-        $request->attributes->set('id', $id->getValue());
+        $request->attributes->set('id', $id);
 
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')
             ->will(self::returnValue('book'));
+
+        $this->configuration->expects(self::once())
+            ->method('getOptions')
+            ->will(self::returnValue(['id' => 'id']));
 
         $this->service->expects(self::once())
             ->method('getBook')
@@ -140,12 +154,12 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
     {
         $id = Uuid::createNew();
         $version = 1;
-        $book = new Book($id, new Authors(), 'title', $version);
+        $book = new BookReadModel($id, new Authors(), 'title', $version);
 
         $request = Request::createFromGlobals();
         $etag = hash('sha256', $id->getValue() . $version);
         $request->headers->set('if-none-match', $etag);
-        $request->attributes->set('id', $id->getValue());
+        $request->attributes->set('id', $id);
 
         $this->service->expects(self::once())
             ->method('getBook')
@@ -155,6 +169,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')
             ->will(self::returnValue('version'));
+
+        $this->configuration->expects(self::once())
+            ->method('getOptions')
+            ->will(self::returnValue(['id' => 'id']));
 
         $converter = new ParamConverter($this->service);
         $converter->apply($request, $this->configuration);
@@ -185,11 +203,11 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
 
         $id = Uuid::createNew();
         $version = 1;
-        $book = new Book($id, new Authors(), 'title', $version);
+        $book = new BookReadModel($id, new Authors(), 'title', $version);
 
         $request = Request::createFromGlobals();
         $request->headers->set('if-none-match', 'foo');
-        $request->attributes->set('id', $id->getValue());
+        $request->attributes->set('id', $id);
 
         $this->service->expects(self::once())
             ->method('getBook')
@@ -199,6 +217,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')
             ->will(self::returnValue('version'));
+
+        $this->configuration->expects(self::once())
+            ->method('getOptions')
+            ->will(self::returnValue(['id' => 'id']));
 
         $converter = new ParamConverter($this->service);
         $converter->apply($request, $this->configuration);

@@ -2,7 +2,8 @@
 
 namespace AppBundle\Rest;
 
-use AppBundle\Domain\ReadModel\Book;
+use AppBundle\Controller\Resource\Book as BookResource;
+use AppBundle\Domain\ReadModel\Book as BookReadModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
 use AppBundle\EventStore\Uuid;
@@ -18,10 +19,17 @@ class ParamConverter implements ParamConverterInterface
     /**
      * @var string[]
      */
-    private static $parameters = [
-        'book',
-        'id',
+    private static $supportedNames = [
         'version'
+    ];
+
+    /**
+     * @var string[]
+     */
+    private static $supportedClasses = [
+        BookReadModel::class,
+        BookResource::class,
+        Uuid::class
     ];
 
     /**
@@ -43,7 +51,8 @@ class ParamConverter implements ParamConverterInterface
      */
     public function supports(ParamConfiguration $configuration)
     {
-        return in_array($configuration->getName(), static::$parameters);
+        return in_array($configuration->getName(), static::$supportedNames)
+            || in_array($configuration->getClass(), static::$supportedClasses);
     }
 
     /**
@@ -53,7 +62,7 @@ class ParamConverter implements ParamConverterInterface
     public function apply(Request $request, ParamConfiguration $configuration)
     {
         $conversionMethod = $this->inflectConversionMethod($configuration);
-        $value = $this->{$conversionMethod}($request);
+        $value = $this->{$conversionMethod}($request, $configuration);
         $request->attributes->set($configuration->getName(), $value);
     }
 
@@ -70,26 +79,23 @@ class ParamConverter implements ParamConverterInterface
 
     /**
      * @param Request $request
+     * @param ParamConfiguration $configuration
      * @return Book
      * @throws NotFoundHttpException
      */
-    private function convertBook(Request $request)
+    private function convertBook(Request $request, ParamConfiguration $configuration)
     {
-        $uuid = $this->convertId($request);
-
-        try {
-            return $this->bookService->getBook($uuid);
-        } catch (ObjectNotFoundException $e) {
-            throw new NotFoundHttpException($e->getMessage(), $e);
-        }
+        $uuid = $request->attributes->get($configuration->getOptions()['id']);
+        return $this->getBook($uuid);
     }
 
     /**
      * @param Request $request
+     * @param ParamConfiguration $configuration
      * @return Uuid
      * @throws BadRequestHttpException
      */
-    private function convertId(Request $request)
+    private function convertId(Request $request, ParamConfiguration $configuration)
     {
         $id = $request->attributes->get('id');
 
@@ -102,20 +108,23 @@ class ParamConverter implements ParamConverterInterface
 
     /**
      * @param Request $request
+     * @param ParamConfiguration $configuration
      * @return integer
      * @throws BadRequestHttpException
      * @throws PreconditionFailedHttpException
      */
-    private function convertVersion(Request $request)
+    private function convertVersion(Request $request, ParamConfiguration $configuration)
     {
-        $eTags = $request->getETags();
+        $eTags = (array)$request->getETags();
+        $eTag = reset($eTags);
 
-        if (empty($eTags)) {
+        if (empty($eTag)) {
             throw new BadRequestHttpException("Expected version header.");
         }
 
-        $eTag = reset($eTags);
-        $book = $this->convertBook($request);
+        $id = $request->attributes->get($configuration->getOptions()['id']);
+        $book = $this->getBook($id);
+
         $bookTag = hash('sha256', $book->getId() . $book->getVersion());
 
         if ($eTag !== $bookTag) {
@@ -123,5 +132,19 @@ class ParamConverter implements ParamConverterInterface
         }
 
         return $book->getVersion();
+    }
+
+    /**
+     * @param Uuid $id
+     * @return BookReadModel
+     * @throws NotFoundHttpException
+     */
+    private function getBook(Uuid $id)
+    {
+        try {
+            return $this->bookService->getBook($id);
+        } catch (ObjectNotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage(), $e);
+        }
     }
 }
