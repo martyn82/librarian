@@ -28,11 +28,18 @@ final class BookAdded extends Event
     private $title;
 
     /**
+     * @Serializer\Type("string")
+     * @var string
+     */
+    private $isbn;
+
+    /**
      * @param Uuid $id
      * @param AuthorAdded[] $authors
      * @param string $title
+     * @param string $isbn
      */
-    public function __construct(Uuid $id, array $authors, $title)
+    public function __construct(Uuid $id, array $authors, $title, $isbn)
     {
         $this->id = $id;
         $this->authors = array_map(
@@ -42,6 +49,7 @@ final class BookAdded extends Event
             $authors
         );
         $this->title = $title;
+        $this->isbn = $isbn;
     }
 
     /**
@@ -66,5 +74,13 @@ final class BookAdded extends Event
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getISBN()
+    {
+        return $this->isbn;
     }
 }

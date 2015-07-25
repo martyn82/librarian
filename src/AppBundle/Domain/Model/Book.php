@@ -19,9 +19,10 @@ class Book extends AggregateRoot
      * @param Uuid $id
      * @param AddAuthor[] $authors
      * @param string $title
+     * @param string $isbn
      * @return Book
      */
-    public static function add(Uuid $id, array $authors, $title)
+    public static function add(Uuid $id, array $authors, $title, $isbn)
     {
         $instance = new self($id);
 
@@ -34,7 +35,7 @@ class Book extends AggregateRoot
             $authors
         );
 
-        $instance->applyChange(new BookAdded($instance->getId(), $authorsAdded, $title));
+        $instance->applyChange(new BookAdded($instance->getId(), $authorsAdded, $title, $isbn));
         return $instance;
     }
 

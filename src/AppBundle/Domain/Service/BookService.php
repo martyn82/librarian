@@ -48,6 +48,7 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
                 $event->getId(),
                 new Authors($authors),
                 $event->getTitle(),
+                $event->getISBN(),
                 $event->getVersion()
             )
         );
@@ -72,6 +73,7 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
                 $event->getId(),
                 $authors,
                 $oldBook->getTitle(),
+                $oldBook->getISBN(),
                 $event->getVersion()
             )
         );
@@ -94,10 +96,13 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     }
 
     /**
+     * @param array $filter
+     * @param int $offset
+     * @param int $limit
      * @return Book[]
      */
-    public function getAll()
+    public function getAll(array $filter = [], $offset = 0, $limit = 500)
     {
-       return $this->storage->findAll();
+       return (array)$this->storage->findAll($filter, $offset, $limit);
     }
 }
