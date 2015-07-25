@@ -77,9 +77,9 @@
     </target>
 
     <!-- Static analysis -->
-    <target name="static" description="Run static checks and analysis">
+    <target name="analyse" description="Run static checks and analysis">
         <phingcall target="lint" />
-        <phingcall target="analyse" />
+        <phingcall target="metrics" />
     </target>
 
     <target name="lint" description="Check for syntax errors">
@@ -134,7 +134,7 @@
         </exec>
     </target>
 
-    <target name="analyse" description="Run static code analysis" depends="sonarqube:status, test">
+    <target name="metrics" description="Run static code analysis" depends="sonarqube:status, test">
         <exec
             command="sonar-runner"
             checkreturn="true"
