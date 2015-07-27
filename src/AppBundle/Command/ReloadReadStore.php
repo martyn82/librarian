@@ -7,9 +7,9 @@ use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book as BookDocument;
+use AppBundle\EventSourcing\EventStore\EventStore;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\ReadStore\Storage;
-use AppBundle\EventSourcing\EventStore\EventStore;
 use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -90,7 +90,7 @@ class ReloadReadStore extends Command
 
     /**
      * @param BookReplay $book
-     * @param int $version
+     * @param integer $version
      * @return BookDocument
      */
     private function createDocumentFromAggregate(BookReplay $book, $version)

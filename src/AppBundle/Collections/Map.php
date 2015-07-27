@@ -12,13 +12,13 @@ interface Map
 
     /**
      * @param mixed $key
-     * @return bool
+     * @return boolean
      */
     public function containsKey($key);
 
     /**
      * @param mixed $value
-     * @return bool
+     * @return boolean
      */
     public function containsValue($value);
 
@@ -29,7 +29,7 @@ interface Map
     public function get($key);
 
     /**
-     * @return bool
+     * @return boolean
      */
     public function isEmpty();
 
@@ -52,7 +52,7 @@ interface Map
     public function remove($key);
 
     /**
-     * @return int
+     * @return integer
      */
     public function size();
 

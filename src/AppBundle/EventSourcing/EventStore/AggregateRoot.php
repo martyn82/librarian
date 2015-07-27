@@ -74,7 +74,7 @@ abstract class AggregateRoot
 
     /**
      * @param Event $event
-     * @param bool $isNew
+     * @param boolean $isNew
      */
     private function internalApplyChange(Event $event, $isNew)
     {

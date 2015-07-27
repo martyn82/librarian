@@ -29,7 +29,7 @@ class MongoDbEventStorage implements EventStorage
 
     /**
      * @param string $identity
-     * @return bool
+     * @return boolean
      */
     public function contains($identity)
     {
@@ -54,7 +54,7 @@ class MongoDbEventStorage implements EventStorage
 
     /**
      * @param EventDescriptor $event
-     * @return bool
+     * @return boolean
      */
     public function append(EventDescriptor $event)
     {

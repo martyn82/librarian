@@ -3,7 +3,6 @@
 namespace AppBundle\Tests\EventSourcing\EventStore\Storage;
 
 use AppBundle\EventSourcing\EventStore\EventDescriptor;
-use AppBundle\EventSourcing\EventStore\EventStore;
 use AppBundle\EventSourcing\EventStore\Storage\MongoDbEventStorage;
 use Doctrine\MongoDB\ArrayIterator;
 use Doctrine\MongoDB\Collection;
@@ -62,7 +61,7 @@ class MongoDbEventStorageTest extends \PHPUnit_Framework_TestCase
         $collection = $this->getCollection();
 
         $eventData = [
-            EventDescriptor::record($identity, 'foo', '[]', EventStore::FIRST_VERSION)->toArray()
+            EventDescriptor::record($identity, 'foo', '[]', -1)->toArray()
         ];
         $cursor = new FakeCursor($eventData);
 
@@ -82,7 +81,7 @@ class MongoDbEventStorageTest extends \PHPUnit_Framework_TestCase
     {
         $identity = 1;
         $identityField = 'identity';
-        $event = EventDescriptor::record($identity, 'foo', '[]', EventStore::FIRST_VERSION);
+        $event = EventDescriptor::record($identity, 'foo', '[]', -1);
 
         $collection = $this->getCollection();
 

@@ -8,7 +8,7 @@ abstract class Event
 {
     /**
      * @Serializer\Type("integer")
-     * @var int
+     * @var integer
      */
     private $version;
 
@@ -30,7 +30,7 @@ abstract class Event
     }
 
     /**
-     * @return int
+     * @return integer
      */
     final public function getVersion()
     {
@@ -38,7 +38,7 @@ abstract class Event
     }
 
     /**
-     * @param int $version
+     * @param integer $version
      */
     final public function setVersion($version)
     {

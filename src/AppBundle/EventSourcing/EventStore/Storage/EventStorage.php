@@ -8,13 +8,13 @@ interface EventStorage
 {
     /**
      * @param string $identity
-     * @return bool
+     * @return boolean
      */
     public function contains($identity);
 
     /**
      * @param EventDescriptor $event
-     * @return bool
+     * @return boolean
      */
     public function append(EventDescriptor $event);
 

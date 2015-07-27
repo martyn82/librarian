@@ -31,7 +31,7 @@ class Events implements \IteratorAggregate
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function size()
     {

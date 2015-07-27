@@ -70,7 +70,7 @@ class UnsupportedEvent extends Event {}
 class FakeAggregateRoot extends AggregateRoot
 {
     /**
-     * @var int
+     * @var integer
      */
     private $testEventApplyCount = 0;
 
@@ -112,7 +112,7 @@ class FakeAggregateRoot extends AggregateRoot
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getTestEventApplyCount()
     {

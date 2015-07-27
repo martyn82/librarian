@@ -102,8 +102,8 @@ class ElasticSearchStorage implements Storage
 
     /**
      * @param array $filter
-     * @param int $offset
-     * @param int $limit
+     * @param integer $offset
+     * @param integer $limit
      * @return Document[]
      */
     public function findAll(array $filter = [], $offset = 0, $limit = 500)

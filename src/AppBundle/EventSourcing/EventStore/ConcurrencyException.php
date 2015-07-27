@@ -10,11 +10,11 @@ class ConcurrencyException extends EventStoreException
     private static $messageTemplate = "Playhead was expected to be '%d' but was '%d'.";
 
     /**
-     * @param int $expectedPlayhead
-     * @param int $actualPlayhead
+     * @param integer $expectedPlayHead
+     * @param integer $actualPlayHead
      */
-    public function __construct($expectedPlayhead, $actualPlayhead)
+    public function __construct($expectedPlayHead, $actualPlayHead)
     {
-        parent::__construct(sprintf(static::$messageTemplate, $expectedPlayhead, $actualPlayhead));
+        parent::__construct(sprintf(static::$messageTemplate, $expectedPlayHead, $actualPlayHead));
     }
 }

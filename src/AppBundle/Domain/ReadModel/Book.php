@@ -2,8 +2,8 @@
 
 namespace AppBundle\Domain\ReadModel;
 
-use AppBundle\EventSourcing\ReadStore\Document;
 use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\ReadStore\Document;
 
 class Book extends Document
 {
@@ -13,7 +13,7 @@ class Book extends Document
     private $id;
 
     /**
-     * @var int
+     * @var integer
      */
     private $version;
 
@@ -37,7 +37,7 @@ class Book extends Document
      * @param Authors $authors
      * @param string $title
      * @param string $isbn
-     * @param int $version
+     * @param integer $version
      */
     public function __construct(Uuid $id, Authors $authors, $title, $isbn, $version)
     {
@@ -57,7 +57,7 @@ class Book extends Document
     }
 
     /**
-     * @return int
+     * @return integer
      */
     final public function getVersion()
     {

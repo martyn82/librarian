@@ -13,7 +13,7 @@ class MemoryEventStorage implements EventStorage
 
     /**
      * @param string $identity
-     * @return bool
+     * @return boolean
      */
     public function contains($identity)
     {
@@ -22,7 +22,7 @@ class MemoryEventStorage implements EventStorage
 
     /**
      * @param EventDescriptor $event
-     * @return bool
+     * @return boolean
      */
     public function append(EventDescriptor $event)
     {

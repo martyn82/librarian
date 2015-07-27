@@ -7,11 +7,10 @@ use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
-use AppBundle\EventSourcing\ReadStore\MemoryStorage;
-use AppBundle\EventSourcing\ReadStore\Storage;
-use AppBundle\EventSourcing\EventStore\EventStore;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\Message\Event;
+use AppBundle\EventSourcing\ReadStore\MemoryStorage;
+use AppBundle\EventSourcing\ReadStore\Storage;
 
 class BookServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,7 +71,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', EventStore::FIRST_VERSION)));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', -1)));
 
         $service = new BookService($storage);
         $service->on(new AuthorAdded($bookId, $firstName, $lastName));
@@ -95,7 +94,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', EventStore::FIRST_VERSION)));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', -1)));
 
         $service = new BookService($storage);
         $service->onAuthorAdded(new AuthorAdded($bookId, $firstName, $lastName));

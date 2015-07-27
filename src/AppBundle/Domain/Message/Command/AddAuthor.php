@@ -23,7 +23,7 @@ final class AddAuthor implements Command
     private $lastName;
 
     /**
-     * @var int
+     * @var integer
      */
     private $version;
 
@@ -31,7 +31,7 @@ final class AddAuthor implements Command
      * @param Uuid $id
      * @param string $firstName
      * @param string $lastName
-     * @param int $version
+     * @param integer $version
      */
     public function __construct(Uuid $id, $firstName, $lastName, $version)
     {
@@ -66,7 +66,7 @@ final class AddAuthor implements Command
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getVersion()
     {

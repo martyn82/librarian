@@ -15,9 +15,9 @@ final class EventDescriptor
     private $event;
 
     /**
-     * @var int
+     * @var integer
      */
-    private $playhead;
+    private $playHead;
 
     /**
      * @var string
@@ -33,17 +33,17 @@ final class EventDescriptor
      * @param string $identity
      * @param string $event
      * @param string $payload
-     * @param int $playhead
+     * @param integer $playHead
      * @return EventDescriptor
      */
-    public static function record($identity, $event, $payload, $playhead)
+    public static function record($identity, $event, $payload, $playHead)
     {
         return new self(
             $identity,
             $event,
             $payload,
             date('r'),
-            $playhead
+            $playHead
         );
     }
 
@@ -67,15 +67,15 @@ final class EventDescriptor
      * @param string $event
      * @param string $payload
      * @param string $recorded
-     * @param int $playhead
+     * @param integer $playHead
      */
-    private function __construct($identity, $event, $payload, $recorded, $playhead)
+    private function __construct($identity, $event, $payload, $recorded, $playHead)
     {
         $this->identity = (string) $identity;
         $this->event = (string) $event;
         $this->payload = (string) $payload;
         $this->recorded = (string) $recorded;
-        $this->playhead = (int) $playhead;
+        $this->playHead = (int) $playHead;
     }
 
     /**
@@ -103,11 +103,11 @@ final class EventDescriptor
     }
 
     /**
-     * @return int
+     * @return integer
      */
     public function getPlayhead()
     {
-        return $this->playhead;
+        return $this->playHead;
     }
 
     /**
@@ -118,7 +118,7 @@ final class EventDescriptor
         return [
             'identity' => $this->identity,
             'event' => $this->event,
-            'playhead' => $this->playhead,
+            'playhead' => $this->playHead,
             'payload' => $this->payload,
             'recorded' => $this->recorded
         ];

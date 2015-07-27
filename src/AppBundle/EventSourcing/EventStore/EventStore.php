@@ -13,11 +13,6 @@ use JMS\Serializer\Serializer;
 class EventStore
 {
     /**
-     * @var int
-     */
-    const FIRST_VERSION = -1;
-
-    /**
      * @var EventBus
      */
     private $eventBus;
@@ -60,36 +55,36 @@ class EventStore
     /**
      * @param Uuid $aggregateId
      * @param Events $events
-     * @param int $expectedPlayhead
+     * @param integer $expectedPlayHead
      * @throws ConcurrencyException
      */
-    public function save(Uuid $aggregateId, Events $events, $expectedPlayhead)
+    public function save(Uuid $aggregateId, Events $events, $expectedPlayHead)
     {
-        $expectedPlayhead = (int) $expectedPlayhead;
+        $expectedPlayHead = (int)$expectedPlayHead;
 
-        if (!$this->isValidPlayhead($aggregateId, $expectedPlayhead)) {
-            throw new ConcurrencyException($expectedPlayhead, $this->current->get($aggregateId->getValue()));
+        if (!$this->isValidPlayHead($aggregateId, $expectedPlayHead)) {
+            throw new ConcurrencyException($expectedPlayHead, $this->current->get($aggregateId->getValue()));
         }
 
-        $playhead = $expectedPlayhead;
+        $playHead = $expectedPlayHead;
 
         foreach ($events->getIterator() as $event) {
             /* @var $event Event */
-            $playhead++;
-            $event->setVersion($playhead);
+            $playHead++;
+            $event->setVersion($playHead);
 
             $this->saveEvent($aggregateId, $event);
-            $this->current->put($aggregateId->getValue(), $playhead);
+            $this->current->put($aggregateId->getValue(), $playHead);
             $this->eventBus->publish($event);
         }
     }
 
     /**
      * @param Uuid $aggregateId
-     * @param int $playhead
-     * @return bool
+     * @param integer $playHead
+     * @return boolean
      */
-    private function isValidPlayhead(Uuid $aggregateId, $playhead)
+    private function isValidPlayHead(Uuid $aggregateId, $playHead)
     {
         $eventDescriptors = $this->storage->find($aggregateId->getValue());
 
@@ -97,7 +92,7 @@ class EventStore
             $this->current->put($aggregateId->getValue(), end($eventDescriptors)->getPlayhead());
         }
 
-        if ($this->current->get($aggregateId->getValue()) != $playhead && $playhead != static::FIRST_VERSION) {
+        if ($this->current->get($aggregateId->getValue()) != $playHead && $playHead != -1) {
             return false;
         }
 

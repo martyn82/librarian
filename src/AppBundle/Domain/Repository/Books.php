@@ -40,10 +40,10 @@ class Books implements Repository
 
     /**
      * @param AggregateRoot $aggregate
-     * @param int $expectedPlayHead
+     * @param integer $expectedPlayHead
      * @throws ConcurrencyException
      */
-    public function store(AggregateRoot $aggregate, $expectedPlayHead = EventStore::FIRST_VERSION)
+    public function store(AggregateRoot $aggregate, $expectedPlayHead = -1)
     {
         $this->storage->save($aggregate->getId(), $aggregate->getUncommittedChanges(), $expectedPlayHead);
     }

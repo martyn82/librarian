@@ -40,7 +40,7 @@ class UuidTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $cycles
+     * @param integer $cycles
      */
     private function performUuidGenerationTest($cycles)
     {

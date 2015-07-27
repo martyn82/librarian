@@ -6,13 +6,13 @@ interface Collection
 {
     /**
      * @param mixed $element
-     * @return bool
+     * @return boolean
      */
     public function add($element);
 
     /**
      * @param Collection $elements
-     * @return bool
+     * @return boolean
      */
     public function addAll(Collection $elements);
 
@@ -22,18 +22,18 @@ interface Collection
 
     /**
      * @param mixed $element
-     * @return bool
+     * @return boolean
      */
     public function contains($element);
 
     /**
      * @param Collection $elements
-     * @return bool
+     * @return boolean
      */
     public function containsAll(Collection $elements);
 
     /**
-     * @return bool
+     * @return boolean
      */
     public function isEmpty();
 
@@ -44,24 +44,24 @@ interface Collection
 
     /**
      * @param mixed $element
-     * @return bool
+     * @return boolean
      */
     public function remove($element);
 
     /**
      * @param Collection $elements
-     * @return bool
+     * @return boolean
      */
     public function removeAll(Collection $elements);
 
     /**
      * @param Collection $elements
-     * @return bool
+     * @return boolean
      */
     public function retainAll(Collection $elements);
 
     /**
-     * @return int
+     * @return integer
      */
     public function size();
 

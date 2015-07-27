@@ -9,8 +9,8 @@ use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
-use AppBundle\EventSourcing\ReadStore\Storage;
 use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\ReadStore\Storage;
 
 class BookService implements AuthorAddedHandler, BookAddedHandler
 {
@@ -96,8 +96,8 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
 
     /**
      * @param array $filter
-     * @param int $offset
-     * @param int $limit
+     * @param integer $offset
+     * @param integer $limit
      * @return Book[]
      */
     public function getAll(array $filter = [], $offset = 0, $limit = 500)

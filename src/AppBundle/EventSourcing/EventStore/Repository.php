@@ -6,9 +6,9 @@ interface Repository
 {
     /**
      * @param AggregateRoot $aggregate
-     * @param int $expectedPlayhead
+     * @param integer $expectedPlayHead
      */
-    public function store(AggregateRoot $aggregate, $expectedPlayhead = EventStore::FIRST_VERSION);
+    public function store(AggregateRoot $aggregate, $expectedPlayHead = -1);
 
     /**
      * @param Uuid $id
