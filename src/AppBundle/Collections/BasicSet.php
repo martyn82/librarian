@@ -5,7 +5,7 @@ namespace AppBundle\Collections;
 class BasicSet extends BasicCollection implements Set
 {
     /**
-     * @see \AppBundle\Collections\Collection::add()
+     * @return boolean
      */
     public function add($element)
     {

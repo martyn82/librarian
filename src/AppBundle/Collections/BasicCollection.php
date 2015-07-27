@@ -10,7 +10,8 @@ class BasicCollection implements Collection
     protected $elements = [];
 
     /**
-     * @see \AppBundle\Collections\Collection::add()
+     * @param mixed $element
+     * @return boolean
      */
     public function add($element)
     {
@@ -19,7 +20,8 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::addAll()
+     * @param Collection $elements
+     * @return boolean
      */
     public function addAll(Collection $elements)
     {
@@ -33,7 +35,6 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::clear()
      */
     public function clear()
     {
@@ -41,7 +42,8 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::contains()
+     * @param mixed $element
+     * @return boolean
      */
     public function contains($element)
     {
@@ -50,7 +52,8 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::containsAll()
+     * @param Collection $elements
+     * @return boolean
      */
     public function containsAll(Collection $elements)
     {
@@ -59,7 +62,7 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::isEmpty()
+     * @return boolean
      */
     public function isEmpty()
     {
@@ -67,7 +70,7 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::getIterator()
+     * @return \Iterator
      */
     public function getIterator()
     {
@@ -75,7 +78,8 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::remove()
+     * @param mixed $element
+     * @return boolean
      */
     public function remove($element)
     {
@@ -91,7 +95,8 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::removeAll()
+     * @param Collection $elements
+     * @return boolean
      */
     public function removeAll(Collection $elements)
     {
@@ -105,7 +110,8 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::retainAll()
+     * @param Collection $elements
+     * @return boolean
      */
     public function retainAll(Collection $elements)
     {
@@ -118,7 +124,7 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::size()
+     * @return integer
      */
     public function size()
     {
@@ -126,7 +132,7 @@ class BasicCollection implements Collection
     }
 
     /**
-     * @see \AppBundle\Collections\Collection::toArray()
+     * @return array
      */
     public function toArray()
     {

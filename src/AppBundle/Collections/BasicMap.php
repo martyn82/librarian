@@ -20,7 +20,6 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::clear()
      */
     public function clear()
     {
@@ -28,7 +27,8 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::containsKey()
+     * @param mixed $key
+     * @return boolean
      */
     public function containsKey($key)
     {
@@ -43,7 +43,8 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::containsValue()
+     * @param mixed $value
+     * @return boolean
      */
     public function containsValue($value)
     {
@@ -58,7 +59,8 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::get()
+     * @param mixed $key
+     * @return mixed
      */
     public function get($key)
     {
@@ -73,7 +75,7 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::isEmpty()
+     * @return boolean
      */
     public function isEmpty()
     {
@@ -81,7 +83,9 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::put()
+     * @param mixed $key
+     * @param mixed $value
+     * @return mixed
      */
     public function put($key, $value)
     {
@@ -102,7 +106,7 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::putAll()
+     * @param Map $map
      */
     public function putAll(Map $map)
     {
@@ -113,7 +117,8 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::remove()
+     * @param mixed $key
+     * @return mixed
      */
     public function remove($key)
     {
@@ -130,7 +135,7 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::size()
+     * @return integer
      */
     public function size()
     {
@@ -138,7 +143,7 @@ class BasicMap implements Map
     }
 
     /**
-     * @see \AppBundle\Collections\Map::entrySet()
+     * @return EntrySet
      */
     public function entrySet()
     {
