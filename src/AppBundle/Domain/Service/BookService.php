@@ -10,12 +10,11 @@ use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Storage\Storage;
-use AppBundle\EventStore\Uuid;
-use AppBundle\MessageHandler\TypedEventHandler;
+use AppBundle\EventSourcing\EventStore\Uuid;
 
 class BookService implements AuthorAddedHandler, BookAddedHandler
 {
-    use TypedEventHandler;
+    use \AppBundle\EventSourcing\MessageHandler\TypedEventHandler;
 
     /**
      * @var Storage

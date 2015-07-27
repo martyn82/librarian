@@ -2,14 +2,13 @@
 
 namespace AppBundle\Tests\Domain\Repository;
 
+use AppBundle\Domain\Aggregate\Book;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
-use AppBundle\Domain\Model\Author;
-use AppBundle\Domain\Model\Book;
 use AppBundle\Domain\Repository\Books;
-use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Uuid;
-use AppBundle\Message\Events;
+use AppBundle\EventSourcing\EventStore\EventStore;
+use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\Message\Events;
 
 class BooksTest extends \PHPUnit_Framework_TestCase
 {

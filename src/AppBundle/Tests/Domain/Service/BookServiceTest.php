@@ -9,9 +9,9 @@ use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Storage\MemoryStorage;
 use AppBundle\Domain\Storage\Storage;
-use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Uuid;
-use AppBundle\Message\Event;
+use AppBundle\EventSourcing\EventStore\EventStore;
+use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\Message\Event;
 
 class BookServiceTest extends \PHPUnit_Framework_TestCase
 {

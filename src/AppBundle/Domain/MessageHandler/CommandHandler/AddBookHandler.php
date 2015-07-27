@@ -2,11 +2,11 @@
 
 namespace AppBundle\Domain\MessageHandler\CommandHandler;
 
+use AppBundle\Domain\Aggregate\Book;
 use AppBundle\Domain\Message\Command\AddBook;
-use AppBundle\Domain\Model\Book;
-use AppBundle\EventStore\Repository;
-use AppBundle\Message\Command;
-use AppBundle\MessageHandler\CommandHandler;
+use AppBundle\EventSourcing\EventStore\Repository;
+use AppBundle\EventSourcing\Message\Command;
+use AppBundle\EventSourcing\MessageHandler\CommandHandler;
 
 class AddBookHandler implements CommandHandler
 {

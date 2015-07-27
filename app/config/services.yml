@@ -3,7 +3,7 @@ imports:
 
 services:
   header_converter:
-    class: AppBundle\Rest\ParamConverter
+    class: AppBundle\Controller\Converter\ParamConverter
     arguments: [ "@librarian.service.book" ]
     tags:
       - { name: request.param_converter, priority: -2, converter: param_converter }

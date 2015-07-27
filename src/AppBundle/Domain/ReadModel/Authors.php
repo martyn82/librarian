@@ -4,7 +4,7 @@ namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\Collections\BasicSet;
 use AppBundle\Collections\Set;
-use AppBundle\Serializing\Serializable;
+use AppBundle\EventSourcing\Serializing\Serializable;
 
 class Authors implements \IteratorAggregate, Serializable
 {

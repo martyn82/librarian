@@ -3,8 +3,8 @@
 namespace AppBundle\Tests\Domain\MessageHandler\EventHandler;
 
 use AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator;
-use AppBundle\Message\Event;
-use AppBundle\MessageHandler\EventHandler;
+use AppBundle\EventSourcing\Message\Event;
+use AppBundle\EventSourcing\MessageHandler\EventHandler;
 use Psr\Log\LoggerInterface;
 
 class LoggingDecoratorTest extends \PHPUnit_Framework_TestCase

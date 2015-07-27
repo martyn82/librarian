@@ -2,8 +2,8 @@
 
 namespace AppBundle\Domain\MessageHandler\CommandHandler;
 
-use AppBundle\Message\Command;
-use AppBundle\MessageHandler\CommandHandler;
+use AppBundle\EventSourcing\Message\Command;
+use AppBundle\EventSourcing\MessageHandler\CommandHandler;
 use Psr\Log\LoggerInterface;
 
 class LoggingDecorator implements CommandHandler
@@ -29,7 +29,7 @@ class LoggingDecorator implements CommandHandler
     }
 
     /**
-     * @see \AppBundle\Service\CommandHandler::handle()
+     * @param Command $command
      */
     public function handle(Command $command)
     {

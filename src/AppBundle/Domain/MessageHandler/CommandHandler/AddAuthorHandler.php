@@ -3,10 +3,9 @@
 namespace AppBundle\Domain\MessageHandler\CommandHandler;
 
 use AppBundle\Domain\Message\Command\AddAuthor;
-use AppBundle\Domain\Model\Author;
-use AppBundle\EventStore\Repository;
-use AppBundle\Message\Command;
-use AppBundle\MessageHandler\CommandHandler;
+use AppBundle\EventSourcing\EventStore\Repository;
+use AppBundle\EventSourcing\Message\Command;
+use AppBundle\EventSourcing\MessageHandler\CommandHandler;
 
 class AddAuthorHandler implements CommandHandler
 {
@@ -24,7 +23,7 @@ class AddAuthorHandler implements CommandHandler
     }
 
     /**
-     * @see \AppBundle\MessageHandler\CommandHandler::handle()
+     * @param Command $command
      */
     public function handle(Command $command)
     {

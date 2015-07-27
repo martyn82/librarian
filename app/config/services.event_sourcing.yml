@@ -15,13 +15,13 @@ services:
 
   # storage
   librarian.storage.events.book.mongodb:
-    class: AppBundle\EventStore\Storage\MongoDbEventStorage
+    class: AppBundle\EventSourcing\EventStore\Storage\MongoDbEventStorage
     arguments:
       - "@librarian.database.events.books"
       - identity
 
   librarian.storage.events.book.memory:
-    class: AppBundle\EventStore\Storage\MemoryEventStorage
+    class: AppBundle\EventSourcing\EventStore\Storage\MemoryEventStorage
 
   librarian.storage.documents.book.elasticsearch:
     class: AppBundle\Domain\Storage\ElasticSearchStorage
@@ -36,14 +36,14 @@ services:
 
   # event store
   librarian.eventstore.classmap:
-    class: AppBundle\EventStore\EventClassMap
+    class: AppBundle\EventSourcing\EventStore\EventClassMap
     arguments:
       -
         - AppBundle\Domain\Message\Event\BookAdded
         - AppBundle\Domain\Message\Event\AuthorAdded
 
   librarian.eventstore.book:
-    class: AppBundle\EventStore\EventStore
+    class: AppBundle\EventSourcing\EventStore\EventStore
     arguments:
       - "@librarian.eventbus"
       - "@librarian.storage.events.book"
@@ -57,14 +57,14 @@ services:
 
   # message buses
   librarian.commandbus:
-    class: AppBundle\MessageBus\CommandBus
+    class: AppBundle\EventSourcing\MessageBus\CommandBus
     arguments:
       -
         AppBundle\Domain\Message\Command\AddBook: "@librarian.commandhandler.add_book"
         AppBundle\Domain\Message\Command\AddAuthor: "@librarian.commandhandler.add_author"
 
   librarian.eventbus:
-    class: AppBundle\MessageBus\EventBus
+    class: AppBundle\EventSourcing\MessageBus\EventBus
     arguments:
       -
         AppBundle\Domain\Message\Event\BookAdded: ["@librarian.eventhandler.book_added"]

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Domain\Message\Command;
 
-use AppBundle\EventStore\Uuid;
-use AppBundle\Message\Command;
+use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\Message\Command;
 
 final class AddBook implements Command
 {

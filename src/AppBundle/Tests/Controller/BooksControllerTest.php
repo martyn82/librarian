@@ -3,23 +3,18 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\Controller\BooksController;
-use AppBundle\Controller\Resource\Book\Author as AuthorResource;
 use AppBundle\Controller\Resource\Book as BookResource;
+use AppBundle\Controller\Resource\Book\Author as AuthorResource;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
 use AppBundle\Domain\Service\BookService;
-use AppBundle\Domain\Service\ObjectNotFoundException;
-use AppBundle\EventStore\Uuid;
-use AppBundle\Message\Command;
-use AppBundle\MessageBus\CommandBus;
-use FOS\RestBundle\View\View;
-use FOS\RestBundle\View\ViewHandler;
-use Symfony\Component\DependencyInjection\Container;
+use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\Message\Command;
+use AppBundle\EventSourcing\MessageBus\CommandBus;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BooksControllerTest extends \PHPUnit_Framework_TestCase
 {

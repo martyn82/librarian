@@ -5,7 +5,6 @@ namespace AppBundle\Controller\Resource;
 use AppBundle\Controller\Resource\Book\Author;
 use AppBundle\Domain\ReadModel\Author as AuthorReadModel;
 use AppBundle\Domain\ReadModel\Book as BookReadModel;
-use AppBundle\EventStore\Uuid;
 use JMS\Serializer\Annotation as Serializer;
 
 class Book

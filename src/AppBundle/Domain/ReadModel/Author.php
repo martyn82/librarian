@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\ReadModel;
 
-use AppBundle\Serializing\Serializable;
+use AppBundle\EventSourcing\Serializing\Serializable;
 
 class Author implements Serializable
 {

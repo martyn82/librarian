@@ -3,7 +3,7 @@
 namespace AppBundle\Domain\MessageHandler\EventHandler;
 
 use AppBundle\Domain\Message\Event\BookAdded;
-use AppBundle\MessageHandler\EventHandler;
+use AppBundle\EventSourcing\MessageHandler\EventHandler;
 
 interface BookAddedHandler extends EventHandler
 {

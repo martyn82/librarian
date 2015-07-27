@@ -2,12 +2,11 @@
 
 namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 
+use AppBundle\Domain\Aggregate\Book;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\MessageHandler\CommandHandler\AddAuthorHandler;
-use AppBundle\Domain\Model\Author;
-use AppBundle\Domain\Model\Book;
-use AppBundle\EventStore\Repository;
-use AppBundle\EventStore\Uuid;
+use AppBundle\EventSourcing\EventStore\Repository;
+use AppBundle\EventSourcing\EventStore\Uuid;
 
 class AddAuthorHandlerTest extends \PHPUnit_Framework_TestCase
 {

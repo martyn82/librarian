@@ -7,7 +7,6 @@ use AppBundle\Domain\Storage\ElasticSearchStorage;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Elasticsearch\Namespaces\IndicesNamespace;
-use Elasticsearch\Tests\Endpoints\Indices\Exists\IndicesTest;
 
 class ElasticSearchStorageTest extends \PHPUnit_Framework_TestCase
 {

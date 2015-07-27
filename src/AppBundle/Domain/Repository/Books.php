@@ -2,11 +2,11 @@
 
 namespace AppBundle\Domain\Repository;
 
-use AppBundle\Domain\Model\Book;
-use AppBundle\EventStore\AggregateRoot;
-use AppBundle\EventStore\EventStore;
-use AppBundle\EventStore\Repository;
-use AppBundle\EventStore\Uuid;
+use AppBundle\Domain\Aggregate\Book;
+use AppBundle\EventSourcing\EventStore\AggregateRoot;
+use AppBundle\EventSourcing\EventStore\EventStore;
+use AppBundle\EventSourcing\EventStore\Repository;
+use AppBundle\EventSourcing\EventStore\Uuid;
 
 class Books implements Repository
 {

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\Service;
 
-use AppBundle\EventStore\Uuid;
+use AppBundle\EventSourcing\EventStore\Uuid;
 
 class ObjectNotFoundException extends \Exception
 {

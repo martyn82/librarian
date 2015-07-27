@@ -3,7 +3,7 @@
 namespace AppBundle\Domain\MessageHandler\EventHandler;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
-use AppBundle\MessageHandler\EventHandler;
+use AppBundle\EventSourcing\MessageHandler\EventHandler;
 
 interface AuthorAddedHandler extends EventHandler
 {

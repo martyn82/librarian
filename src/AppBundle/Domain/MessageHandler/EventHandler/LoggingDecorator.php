@@ -2,8 +2,8 @@
 
 namespace AppBundle\Domain\MessageHandler\EventHandler;
 
-use AppBundle\Message\Event;
-use AppBundle\MessageHandler\EventHandler;
+use AppBundle\EventSourcing\Message\Event;
+use AppBundle\EventSourcing\MessageHandler\EventHandler;
 use Psr\Log\LoggerInterface;
 
 class LoggingDecorator implements EventHandler

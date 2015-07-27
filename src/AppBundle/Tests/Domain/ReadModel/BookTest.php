@@ -4,7 +4,7 @@ namespace AppBundle\Tests\Domain\ReadModel;
 
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
-use AppBundle\EventStore\Uuid;
+use AppBundle\EventSourcing\EventStore\Uuid;
 
 class BookTest extends \PHPUnit_Framework_TestCase
 {
