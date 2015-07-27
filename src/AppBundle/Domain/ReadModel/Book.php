@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\ReadModel;
 
-use AppBundle\Domain\Storage\Document;
+use AppBundle\EventSourcing\ReadStore\Document;
 use AppBundle\EventSourcing\EventStore\Uuid;
 
 class Book extends Document

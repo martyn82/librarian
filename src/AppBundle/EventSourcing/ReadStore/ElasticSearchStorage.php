@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Storage;
+namespace AppBundle\EventSourcing\ReadStore;
 
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;

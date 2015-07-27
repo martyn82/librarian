@@ -9,7 +9,7 @@ use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
-use AppBundle\Domain\Storage\Storage;
+use AppBundle\EventSourcing\ReadStore\Storage;
 use AppBundle\EventSourcing\EventStore\Uuid;
 
 class BookService implements AuthorAddedHandler, BookAddedHandler

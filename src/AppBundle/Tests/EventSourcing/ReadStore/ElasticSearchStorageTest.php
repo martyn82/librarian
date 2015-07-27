@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Tests\Domain\Storage;
+namespace AppBundle\Tests\EventSourcing\ReadStore;
 
-use AppBundle\Domain\Storage\Document;
-use AppBundle\Domain\Storage\ElasticSearchStorage;
+use AppBundle\EventSourcing\ReadStore\Document;
+use AppBundle\EventSourcing\ReadStore\ElasticSearchStorage;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Elasticsearch\Namespaces\IndicesNamespace;

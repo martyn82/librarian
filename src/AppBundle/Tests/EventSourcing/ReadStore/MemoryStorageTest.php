@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Tests\Domain\Storage;
+namespace AppBundle\Tests\EventSourcing\ReadStore;
 
-use AppBundle\Domain\Storage\Document;
-use AppBundle\Domain\Storage\MemoryStorage;
+use AppBundle\EventSourcing\ReadStore\Document;
+use AppBundle\EventSourcing\ReadStore\MemoryStorage;
 
 class MemoryStorageTest extends \PHPUnit_Framework_TestCase
 {
