@@ -38,11 +38,11 @@ class Book
      * @param BookReadModel $book
      * @return Book
      */
-    public static function createFromReadModel(BookReadModel $book)
+    public static function createFromDocument(BookReadModel $book)
     {
         $authors = array_map(
             function (AuthorReadModel $author) {
-                return Author::createFromReadModel($author);
+                return Author::createFromDocument($author);
             },
             iterator_to_array($book->getAuthors()->getIterator())
         );

@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Controller\Resource\Book\Author as AuthorResource;
+use AppBundle\Controller\View\ViewBuilder;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\ReadModel\Book as BookReadModel;
@@ -12,6 +13,7 @@ use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\MessageBus\CommandBus;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\View\View;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -24,6 +26,11 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class BooksController extends FOSRestController
 {
     /**
+     * @var ViewBuilder
+     */
+    private $viewBuilder;
+
+    /**
      * @var BookService
      */
     private $bookService;
@@ -35,15 +42,18 @@ class BooksController extends FOSRestController
 
     /**
      * @DI\InjectParams({
+     *  "viewBuilder" = @DI\Inject("view_builder"),
      *  "bookService" = @DI\Inject("librarian.service.book"),
      *  "commandBus" = @DI\Inject("librarian.commandbus")
      * })
      *
+     * @param ViewBuilder $viewBuilder
      * @param BookService $bookService
      * @param CommandBus $commandBus
      */
-    public function __construct(BookService $bookService, CommandBus $commandBus)
+    public function __construct(ViewBuilder $viewBuilder, BookService $bookService, CommandBus $commandBus)
     {
+        $this->viewBuilder = $viewBuilder;
         $this->bookService = $bookService;
         $this->commandBus = $commandBus;
     }
@@ -53,7 +63,7 @@ class BooksController extends FOSRestController
      * @Rest\View()
      *
      * @param Request $request
-     * @return BookResource[]
+     * @return View
      */
     public function indexAction(Request $request)
     {
@@ -66,18 +76,11 @@ class BooksController extends FOSRestController
         $query->remove('limit');
 
         $books = $this->bookService->getAll($query->all(), $offset, $limit);
-
-        return array_map(
-            function (BookReadModel $book) {
-                return BookResource::createFromReadModel($book);
-            },
-            $books
-        );
+        return $this->viewBuilder->setDocuments($books)
+            ->build();
     }
 
     /**
-     * @Cache(ETag="book.getId() ~ book.getVersion()")
-     *
      * @Rest\Get("/{id}",
      *  requirements={
      *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
@@ -101,12 +104,14 @@ class BooksController extends FOSRestController
      * )
      *
      * @param BookReadModel $book
-     * @return BookResource
+     * @return View
      * @throws HttpException
      */
     public function readAction(BookReadModel $book)
     {
-        return BookResource::createFromReadModel($book);
+        return $this->viewBuilder->setDocument($book)
+            ->setVersion($book)
+            ->build();
     }
 
     /**
@@ -139,7 +144,7 @@ class BooksController extends FOSRestController
      * @param Uuid $id
      * @param AuthorResource $author
      * @param integer $version
-     * @return BookResource
+     * @return View
      * @throws HttpException
      */
     public function addAuthorAction(Uuid $id, AuthorResource $author, $version)
@@ -148,7 +153,10 @@ class BooksController extends FOSRestController
         $this->commandBus->send($command);
 
         $updatedBook = $this->bookService->getBook($id);
-        return BookResource::createFromReadModel($updatedBook);
+        return $this->viewBuilder->setDocument($updatedBook)
+            ->setVersion($updatedBook)
+            ->setLocation('/api/books/' . $updatedBook->getId())
+            ->build();
     }
 
     /**
@@ -163,7 +171,7 @@ class BooksController extends FOSRestController
      * )
      *
      * @param BookResource $bookResource
-     * @return BookResource
+     * @return View
      * @throws HttpException
      */
     public function addBookAction(BookResource $bookResource)
@@ -181,6 +189,9 @@ class BooksController extends FOSRestController
         $this->commandBus->send($command);
 
         $book = $this->bookService->getBook($id);
-        return BookResource::createFromReadModel($book);
+        return $this->viewBuilder->setDocument($book)
+            ->setVersion($book)
+            ->setLocation('/api/books/' . $book->getId())
+            ->build();
     }
 }

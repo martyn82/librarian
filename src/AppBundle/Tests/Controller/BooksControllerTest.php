@@ -5,6 +5,7 @@ namespace AppBundle\Tests\Controller;
 use AppBundle\Controller\BooksController;
 use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Controller\Resource\Book\Author as AuthorResource;
+use AppBundle\Controller\View\ViewBuilder;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\ReadModel\Author;
@@ -28,6 +29,11 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
      */
     private $commandBus;
 
+    /**
+     * @var ViewBuilder
+     */
+    private $viewBuilder;
+
     protected function setUp()
     {
         $this->service = $this->getMockBuilder(BookService::class)
@@ -37,32 +43,34 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
         $this->commandBus = $this->getMockBuilder(CommandBus::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->viewBuilder = new ViewBuilder(BookResource::class);
     }
 
     public function testIndexActionRetrievesAllBooks()
     {
+        $documents = [
+            new Book(Uuid::createNew(), new Authors(), 'title', 'isbn', 0)
+        ];
+
         $this->service->expects(self::once())
             ->method('getAll')
-            ->will(self::returnValue(
-                [
-                    new Book(Uuid::createNew(), new Authors(), 'title', 'isbn', 0)
-                ]
-            ));
+            ->will(self::returnValue($documents));
 
-        $controller = new BooksController($this->service, $this->commandBus);
+        $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
         $controller->indexAction(Request::createFromGlobals());
     }
 
-    public function testReadActionReturnsBookResource()
+    public function testReadActionReturnsViewWithResource()
     {
         $id = Uuid::createNew();
         $book = new Book($id, new Authors(), '', '', 0);
 
-        $controller = new BooksController($this->service, $this->commandBus);
-        $resource = $controller->readAction($book);
+        $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
+        $view = $controller->readAction($book);
 
-        self::assertInstanceOf(BookResource::class, $resource);
-        self::assertEquals($id, $resource->getId());
+        self::assertInstanceOf(BookResource::class, $view->getData());
+        self::assertEquals($id, $view->getData()->getId());
     }
 
     public function testAddBookActionSendsAddBookCommand()
@@ -76,13 +84,13 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ));
 
         $book = new Book(Uuid::createFromValue(null), new Authors([new Author('first', 'last')]), 'title', 'isbn', -1);
-        $resource = BookResource::createFromReadModel($book);
+        $resource = BookResource::createFromDocument($book);
 
         $this->service->expects(self::once())
             ->method('getBook')
             ->will(self::returnValue($book));
 
-        $controller = new BooksController($this->service, $this->commandBus);
+        $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
         $controller->addBookAction($resource);
     }
 
@@ -104,9 +112,9 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue($book));
 
         $author = new Author('first', 'last');
-        $resource = AuthorResource::createFromReadModel($author);
+        $resource = AuthorResource::createFromDocument($author);
 
-        $controller = new BooksController($this->service, $this->commandBus);
+        $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
         $controller->addAuthorAction($id, $resource, -1);
     }
 }

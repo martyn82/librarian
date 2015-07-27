@@ -2,8 +2,12 @@ imports:
   - { resource: services.event_sourcing.yml }
 
 services:
-  header_converter:
+  param_converter:
     class: AppBundle\Controller\Converter\ParamConverter
     arguments: [ "@librarian.service.book" ]
     tags:
       - { name: request.param_converter, priority: -2, converter: param_converter }
+
+  view_builder:
+    class: AppBundle\Controller\View\ViewBuilder
+    arguments: [ AppBundle\Controller\Resource\Book ]

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Tests\EventSourcing\ReadStore;
 
+use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\ReadStore\Document;
 use AppBundle\EventSourcing\ReadStore\ElasticSearchStorage;
 use Elasticsearch\Client;
@@ -20,7 +21,7 @@ class ElasticSearchStorageTest extends \PHPUnit_Framework_TestCase
             ->method('index');
 
         $document = $this->getMockBuilder(Document::class)
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $storage = new ElasticSearchStorage($client, Document::class, 'foo', 'bar');
         $storage->upsert('1', $document);
@@ -147,7 +148,7 @@ class ElasticSearchStorageTest extends \PHPUnit_Framework_TestCase
         $indices->expects(self::once())
             ->method('delete');
 
-        $client->expects(self::once())
+        $client->expects(self::atLeastOnce())
             ->method('indices')
             ->will(self::returnValue($indices));
 
@@ -158,6 +159,16 @@ class ElasticSearchStorageTest extends \PHPUnit_Framework_TestCase
 
 class FakeDocument extends Document
 {
+    public function getVersion()
+    {
+        return 0;
+    }
+
+    public function getId()
+    {
+        return Uuid::createFromValue(1);
+    }
+
     public static function deserialize(array $data)
     {
         return new self();

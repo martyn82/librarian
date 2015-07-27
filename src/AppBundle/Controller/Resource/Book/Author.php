@@ -25,7 +25,7 @@ class Author
      * @param AuthorReadModel $author
      * @return Author
      */
-    public static function createFromReadModel(AuthorReadModel $author)
+    public static function createFromDocument(AuthorReadModel $author)
     {
         return new self($author->getFirstName(), $author->getLastName());
     }
