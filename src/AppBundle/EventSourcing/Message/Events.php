@@ -31,6 +31,14 @@ class Events implements \IteratorAggregate
     }
 
     /**
+     * @return int
+     */
+    public function size()
+    {
+        return count($this->events);
+    }
+
+    /**
      */
     public function clear()
     {

@@ -89,7 +89,7 @@ class BooksController extends FOSRestController
      * @Rest\View()
      *
      * @ParamConverter("id",
-     *  class="AppBundle\EventStore\Uuid",
+     *  class="AppBundle\EventSourcing\EventStore\Uuid",
      *  converter="param_converter"
      * )
      * @ParamConverter("book",
@@ -122,7 +122,7 @@ class BooksController extends FOSRestController
      * @Rest\View()
      *
      * @ParamConverter("id",
-     *  class="AppBundle\EventStore\Uuid",
+     *  class="AppBundle\EventSourcing\EventStore\Uuid",
      *  converter="param_converter"
      * )
      * @ParamConverter("author",

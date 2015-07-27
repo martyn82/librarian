@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Repository;
 
 use AppBundle\Domain\Aggregate\Book;
 use AppBundle\EventSourcing\EventStore\AggregateRoot;
+use AppBundle\EventSourcing\EventStore\ConcurrencyException;
 use AppBundle\EventSourcing\EventStore\EventStore;
 use AppBundle\EventSourcing\EventStore\Repository;
 use AppBundle\EventSourcing\EventStore\Uuid;
@@ -38,10 +39,12 @@ class Books implements Repository
     }
 
     /**
-     * @see \AppBundle\EventStore\Repository::store()
+     * @param AggregateRoot $aggregate
+     * @param int $expectedPlayHead
+     * @throws ConcurrencyException
      */
-    public function store(AggregateRoot $aggregate, $expectedPlayhead = EventStore::FIRST_VERSION)
+    public function store(AggregateRoot $aggregate, $expectedPlayHead = EventStore::FIRST_VERSION)
     {
-        $this->storage->save($aggregate->getId(), $aggregate->getUncommittedChanges(), $expectedPlayhead);
+        $this->storage->save($aggregate->getId(), $aggregate->getUncommittedChanges(), $expectedPlayHead);
     }
 }

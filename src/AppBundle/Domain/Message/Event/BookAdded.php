@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation as Serializer;
 final class BookAdded extends Event
 {
     /**
-     * @Serializer\Type("AppBundle\EventStore\Uuid")
+     * @Serializer\Type("AppBundle\EventSourcing\EventStore\Uuid")
      * @var Uuid
      */
     private $id;

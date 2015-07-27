@@ -152,6 +152,13 @@ class ElasticSearchStorage implements Storage
      */
     public function clear()
     {
-        $this->client->indices()->delete(['index' => $this->index]);
+        $indices = $this->client->indices();
+
+        try {
+            $indices->delete(['index' => $this->index]);
+        } catch (Missing404Exception $e) {
+        }
+
+        $indices->create(['index' => $this->index]);
     }
 }
