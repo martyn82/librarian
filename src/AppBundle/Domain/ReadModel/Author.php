@@ -2,9 +2,11 @@
 
 namespace AppBundle\Domain\ReadModel;
 
+use AppBundle\Compare\Comparable;
+use AppBundle\Compare\IncomparableException;
 use AppBundle\EventSourcing\Serializing\Serializable;
 
-class Author implements Serializable
+class Author implements Comparable, Serializable
 {
     /**
      * @var string
@@ -40,6 +42,22 @@ class Author implements Serializable
     public function getLastName()
     {
         return $this->lastName;
+    }
+
+    /**
+     * @param Comparable $other
+     * @return boolean
+     * @throws IncomparableException
+     */
+    public function equals(Comparable $other)
+    {
+        if (!($other instanceof Author)) {
+            throw new IncomparableException($this, $other);
+        }
+
+        $a = $this->serialize();
+        $b = $other->serialize();
+        return $a == $b;
     }
 
     /**

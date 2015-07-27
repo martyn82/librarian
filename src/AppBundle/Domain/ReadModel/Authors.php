@@ -4,6 +4,7 @@ namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\Collections\BasicSet;
 use AppBundle\Collections\Set;
+use AppBundle\Domain\Compare\AuthorComparator;
 use AppBundle\EventSourcing\Serializing\Serializable;
 
 class Authors implements \IteratorAggregate, Serializable
@@ -18,7 +19,9 @@ class Authors implements \IteratorAggregate, Serializable
      */
     public function __construct(array $elements = [])
     {
-        $this->innerSet = new BasicSet();
+        $this->innerSet = new BasicSet(
+            new AuthorComparator()
+        );
 
         array_walk(
             $elements,

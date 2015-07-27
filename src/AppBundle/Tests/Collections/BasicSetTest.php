@@ -3,12 +3,13 @@ namespace Collections;
 
 use AppBundle\Collections\BasicCollection;
 use AppBundle\Collections\BasicSet;
+use AppBundle\Compare\SimpleComparator;
 
 class AbstractSetTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddIsIdempotent()
     {
-        $set = new BasicSet();
+        $set = new BasicSet(new SimpleComparator());
         $result = $set->add('foo');
         self::assertTrue($result);
 
@@ -20,7 +21,7 @@ class AbstractSetTest extends \PHPUnit_Framework_TestCase
 
     public function testAddAllAddsUnique()
     {
-        $setA = new BasicSet();
+        $setA = new BasicSet(new SimpleComparator());
         $setA->add('foo');
 
         $collectionB = new BasicCollection();
@@ -31,11 +32,11 @@ class AbstractSetTest extends \PHPUnit_Framework_TestCase
 
     public function testRemoveAllYieldsAsymmetricDifference()
     {
-        $setA = new BasicSet();
+        $setA = new BasicSet(new SimpleComparator());
         $setA->add('foo');
         $setA->add('bar');
 
-        $setB = new BasicSet();
+        $setB = new BasicSet(new SimpleComparator());
         $setB->add('foo');
         $setB->add('baz');
 
@@ -48,11 +49,11 @@ class AbstractSetTest extends \PHPUnit_Framework_TestCase
 
     public function testAddAllYieldsUnion()
     {
-        $setA = new BasicSet();
+        $setA = new BasicSet(new SimpleComparator());
         $setA->add('foo');
         $setA->add('bar');
 
-        $setB = new BasicSet();
+        $setB = new BasicSet(new SimpleComparator());
         $setB->add('foo');
         $setB->add('baz');
 
