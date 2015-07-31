@@ -76,7 +76,8 @@ class BooksController extends FOSRestController
         $query->remove('limit');
 
         $books = $this->bookService->getAll($query->all(), $offset, $limit);
-        return $this->viewBuilder->setDocuments($books)
+        return $this->viewBuilder
+            ->setDocuments($books)
             ->build();
     }
 
@@ -109,8 +110,9 @@ class BooksController extends FOSRestController
      */
     public function readAction(BookReadModel $book)
     {
-        return $this->viewBuilder->setDocument($book)
-            ->setVersion($book)
+        return $this->viewBuilder
+            ->setDocument($book)
+            ->setVersion()
             ->build();
     }
 
@@ -153,8 +155,9 @@ class BooksController extends FOSRestController
         $this->commandBus->send($command);
 
         $updatedBook = $this->bookService->getBook($id);
-        return $this->viewBuilder->setDocument($updatedBook)
-            ->setVersion($updatedBook)
+        return $this->viewBuilder
+            ->setDocument($updatedBook)
+            ->setVersion()
             ->setLocation('/api/books/' . $updatedBook->getId())
             ->build();
     }
@@ -189,8 +192,9 @@ class BooksController extends FOSRestController
         $this->commandBus->send($command);
 
         $book = $this->bookService->getBook($id);
-        return $this->viewBuilder->setDocument($book)
-            ->setVersion($book)
+        return $this->viewBuilder
+            ->setDocument($book)
+            ->setVersion()
             ->setLocation('/api/books/' . $book->getId())
             ->build();
     }

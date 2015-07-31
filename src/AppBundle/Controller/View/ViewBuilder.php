@@ -18,36 +18,36 @@ class ViewBuilder
     private $resourceClass;
 
     /**
+     * @var Document
+     */
+    private $singleDocument;
+
+    /**
+     * @var Document[]
+     */
+    private $multiDocument;
+
+    /**
+     * @var boolean
+     */
+    private $setVersion;
+
+    /**
      * @param string $resourceClass
      */
     public function __construct($resourceClass)
     {
         $this->resourceClass = $resourceClass;
+        $this->setVersion = false;
         $this->view = View::create();
     }
 
     /**
-     * @param Document $document
      * @return ViewBuilder
      */
-    public function setDocument(Document $document)
+    public function setVersion()
     {
-        $resourceClass = $this->resourceClass;
-
-        $this->view->setData(
-            $resourceClass::createFromDocument($document)
-        );
-
-        return $this;
-    }
-
-    /**
-     * @param Document $document
-     * @return ViewBuilder
-     */
-    public function setVersion(Document $document)
-    {
-        $this->view->setHeader('ETag', hash('sha256', $document->getId() . $document->getVersion()));
+        $this->setVersion = true;
         return $this;
     }
 
@@ -65,7 +65,20 @@ class ViewBuilder
             $documents
         );
 
+        $this->singleDocument = null;
         $this->view->setData($resources);
+        return $this;
+    }
+
+    /**
+     * @param Document $document
+     * @return ViewBuilder
+     */
+    public function setDocument(Document $document)
+    {
+        $this->singleDocument = $document;
+        $resourceClass = $this->resourceClass;
+        $this->view->setData($resourceClass::createFromDocument($document));
         return $this;
     }
 
@@ -84,6 +97,13 @@ class ViewBuilder
      */
     public function build()
     {
+        if ($this->setVersion && $this->singleDocument != null) {
+            $this->view->setHeader(
+                'ETag',
+                hash('sha256', $this->singleDocument->getId() . $this->singleDocument->getVersion())
+            );
+        }
+
         return $this->view;
     }
 }
