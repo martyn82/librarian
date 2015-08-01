@@ -107,6 +107,7 @@ class ReloadReadStore extends Command
             new Authors($authors),
             $book->getTitle(),
             $book->getISBN(),
+            $book->isAvailable(),
             $version
         );
     }

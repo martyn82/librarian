@@ -5,6 +5,7 @@ namespace AppBundle\Tests\Command;
 use AppBundle\Command\ReloadReadStore;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\Message\Event\BookCheckedOut;
 use AppBundle\EventSourcing\EventStore\EventStore;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\Message\Events;
@@ -43,7 +44,8 @@ class ReloadReadStoreTest extends \PHPUnit_Framework_TestCase
                     return new Events(
                         [
                             new BookAdded($id, [new AuthorAdded($id, 'first', 'last')], 'title', 'isbn'),
-                            new AuthorAdded($id, 'first', 'last')
+                            new AuthorAdded($id, 'first', 'last'),
+                            new BookCheckedOut($id)
                         ]
                     );
                 }

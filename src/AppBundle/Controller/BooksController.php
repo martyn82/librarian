@@ -4,27 +4,37 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Controller\Resource\Book\Author as AuthorResource;
+use AppBundle\Controller\View\Page;
 use AppBundle\Controller\View\ViewBuilder;
+use AppBundle\Domain\Aggregate\BookUnavailableException;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
+use AppBundle\Domain\Message\Command\CheckOutBook;
 use AppBundle\Domain\ReadModel\Book as BookReadModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\MessageBus\CommandBus;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 
 /**
  * @Rest\Route("/api/books")
  */
 class BooksController extends FOSRestController
 {
+    /**
+     * @var string
+     */
+    const BASE_ROUTE = "/api/books";
+
     /**
      * @var ViewBuilder
      */
@@ -62,20 +72,37 @@ class BooksController extends FOSRestController
      * @Rest\Get("")
      * @Rest\View()
      *
-     * @param Request $request
+     * @Rest\QueryParam(
+     *  name="size",
+     *  key=null,
+     *  requirements="\d+",
+     *  default=500,
+     *  description="The number of items per page. (max: 500)",
+     *  strict=true,
+     *  array=false,
+     *  nullable=true
+     * )
+     * @Rest\QueryParam(
+     *  name="page",
+     *  key=null,
+     *  requirements="\d+",
+     *  default=1,
+     *  description="The page to fetch.",
+     *  strict=true,
+     *  array=false,
+     *  nullable=true
+     * )
+     *
+     * @param ParamFetcherInterface $params
      * @return View
      */
-    public function indexAction(Request $request)
+    public function indexAction(ParamFetcherInterface $params)
     {
-        $query = $request->query;
+        $page = (int)$params->get('page');
+        $size = (int)$params->get('size');
 
-        $offset = (int)$query->get('offset', 0);
-        $query->remove('offset');
+        $books = $this->bookService->getAll($page, $size);
 
-        $limit = (int)$query->get('limit', 500);
-        $query->remove('limit');
-
-        $books = $this->bookService->getAll($query->all(), $offset, $limit);
         return $this->viewBuilder
             ->setDocuments($books)
             ->build();
@@ -158,7 +185,7 @@ class BooksController extends FOSRestController
         return $this->viewBuilder
             ->setDocument($updatedBook)
             ->setVersion()
-            ->setLocation('/api/books/' . $updatedBook->getId())
+            ->setLocation(static::BASE_ROUTE . $updatedBook->getId())
             ->build();
     }
 
@@ -195,7 +222,46 @@ class BooksController extends FOSRestController
         return $this->viewBuilder
             ->setDocument($book)
             ->setVersion()
-            ->setLocation('/api/books/' . $book->getId())
+            ->setLocation(static::BASE_ROUTE . $book->getId())
             ->build();
+    }
+
+    /**
+     * @Rest\Post("/{id}",
+     *  condition="request.headers.get('content-type') matches '/domain-model=checkout/i'",
+     *  requirements={
+     *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
+     *  },
+     *  defaults={
+     *      "id"=null
+     *  }
+     * )
+     * @Rest\View(statusCode=204)
+     *
+     * @ParamConverter("id",
+     *  class="AppBundle\EventSourcing\EventStore\Uuid",
+     *  converter="param_converter"
+     * )
+     * @ParamConverter("version",
+     *  options={
+     *      "id": "id"
+     *  },
+     *  converter="param_converter"
+     * )
+     *
+     * @param Uuid $id
+     * @param integer $version
+     * @return View
+     * @throws HttpException
+     */
+    public function checkOutBookAction(Uuid $id, $version)
+    {
+        $command = new CheckOutBook($id, $version);
+
+        try {
+            $this->commandBus->send($command);
+        } catch (BookUnavailableException $e) {
+            throw new PreconditionFailedHttpException($e->getMessage(), $e);
+        }
     }
 }

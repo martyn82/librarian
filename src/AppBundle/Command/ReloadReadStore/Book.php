@@ -3,10 +3,12 @@
 namespace AppBundle\Command\ReloadReadStore;
 
 use AppBundle\Domain\Aggregate\Book as BookAggregate;
+use AppBundle\Domain\Descriptor\BookDescriptor;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\Message\Event\BookCheckedOut;
 
-class Book extends BookAggregate
+class Book extends BookAggregate implements BookDescriptor
 {
     /**
      * @var string
@@ -24,6 +26,11 @@ class Book extends BookAggregate
     private $authors;
 
     /**
+     * @var boolean
+     */
+    private $available;
+
+    /**
      * @param BookAdded $event
      */
     protected function applyBookAdded(BookAdded $event)
@@ -32,6 +39,7 @@ class Book extends BookAggregate
         $this->title = $event->getTitle();
         $this->isbn = $event->getISBN();
         $this->authors = $event->getAuthors();
+        $this->available = true;
     }
 
     /**
@@ -41,6 +49,15 @@ class Book extends BookAggregate
     {
         parent::applyAuthorAdded($event);
         $this->authors[] = $event;
+    }
+
+    /**
+     * @param BookCheckedOut $event
+     */
+    protected function applyBookCheckedOut(BookCheckedOut $event)
+    {
+        parent::applyBookCheckedOut($event);
+        $this->available = false;
     }
 
     /**
@@ -54,7 +71,7 @@ class Book extends BookAggregate
     /**
      * @return string
      */
-    public function getIsbn()
+    public function getISBN()
     {
         return $this->isbn;
     }
@@ -65,5 +82,13 @@ class Book extends BookAggregate
     public function getAuthors()
     {
         return $this->authors;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAvailable()
+    {
+        return $this->available;
     }
 }

@@ -44,12 +44,11 @@ class MemoryStorage implements Storage
     }
 
     /**
-     * @param array $filter
      * @param integer $offset
      * @param integer $limit
      * @return Document[]
      */
-    public function findAll(array $filter = [], $offset = 0, $limit = 500)
+    public function findAll($offset = 0, $limit = 500)
     {
         return array_values(
             array_slice($this->data, $offset, $limit)

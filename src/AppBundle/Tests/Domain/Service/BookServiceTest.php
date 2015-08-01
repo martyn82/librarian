@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Service;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\Message\Event\BookCheckedOut;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
@@ -71,7 +72,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', -1)));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', true, -1)));
 
         $service = new BookService($storage);
         $service->on(new AuthorAdded($bookId, $firstName, $lastName));
@@ -94,10 +95,31 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $storage->expects(self::once())
             ->method('find')
             ->with($bookId)
-            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', -1)));
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', true, -1)));
 
         $service = new BookService($storage);
         $service->onAuthorAdded(new AuthorAdded($bookId, $firstName, $lastName));
+    }
+
+    public function testHandlerForEventBookCheckedOut()
+    {
+        $bookId = Uuid::createNew();
+
+        $storage = $this->getMockBuilder(Storage::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $storage->expects(self::once())
+            ->method('upsert')
+            ->with($bookId, self::anything());
+
+        $storage->expects(self::once())
+            ->method('find')
+            ->with($bookId)
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', true, -1)));
+
+        $service = new BookService($storage);
+        $service->onBookCheckedOut(new BookCheckedOut($bookId));
     }
 
     public function testGetBookWithNonExistingIdThrowsException()

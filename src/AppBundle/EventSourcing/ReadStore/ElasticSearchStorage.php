@@ -101,26 +101,15 @@ class ElasticSearchStorage implements Storage
     }
 
     /**
-     * @param array $filter
      * @param integer $offset
      * @param integer $limit
      * @return Document[]
      */
-    public function findAll(array $filter = [], $offset = 0, $limit = 500)
+    public function findAll($offset = 0, $limit = 500)
     {
         $query = [
             'match_all' => []
         ];
-
-        if (!empty($filter)) {
-            $query = [
-                'filtered' => [
-                    'filter' => [
-                        'term' => $filter
-                    ]
-                ]
-            ];
-        }
 
         $result = $this->client->search(
             [

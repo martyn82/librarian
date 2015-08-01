@@ -23,11 +23,6 @@ class ViewBuilder
     private $singleDocument;
 
     /**
-     * @var Document[]
-     */
-    private $multiDocument;
-
-    /**
      * @var boolean
      */
     private $setVersion;

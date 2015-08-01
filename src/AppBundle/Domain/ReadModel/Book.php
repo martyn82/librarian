@@ -2,10 +2,11 @@
 
 namespace AppBundle\Domain\ReadModel;
 
+use AppBundle\Domain\Descriptor\BookDescriptor;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\ReadStore\Document;
 
-class Book extends Document
+class Book extends Document implements BookDescriptor
 {
     /**
      * @var Uuid
@@ -33,18 +34,25 @@ class Book extends Document
     private $isbn;
 
     /**
+     * @var boolean
+     */
+    private $available;
+
+    /**
      * @param Uuid $id
      * @param Authors $authors
      * @param string $title
      * @param string $isbn
+     * @param boolean $available
      * @param integer $version
      */
-    public function __construct(Uuid $id, Authors $authors, $title, $isbn, $version)
+    public function __construct(Uuid $id, Authors $authors, $title, $isbn, $available, $version)
     {
         $this->id = $id;
         $this->authors = $authors;
-        $this->title = $title;
-        $this->isbn = $isbn;
+        $this->title = (string) $title;
+        $this->isbn = (string) $isbn;
+        $this->available = (bool) $available;
         $this->version = (int) $version;
     }
 
@@ -89,6 +97,14 @@ class Book extends Document
     }
 
     /**
+     * @return boolean
+     */
+    public function isAvailable()
+    {
+        return $this->available;
+    }
+
+    /**
      * @return array
      */
     public function serialize()
@@ -98,7 +114,8 @@ class Book extends Document
             'version' => $this->getVersion(),
             'authors' => $this->getAuthors()->serialize(),
             'title' => $this->getTitle(),
-            'isbn' => $this->getISBN()
+            'isbn' => $this->getISBN(),
+            'available' => $this->isAvailable()
         ];
     }
 
@@ -112,6 +129,7 @@ class Book extends Document
         assert(array_key_exists('authors', $data));
         assert(array_key_exists('title', $data));
         assert(array_key_exists('isbn', $data));
+        assert(array_key_exists('available', $data));
         assert(array_key_exists('version', $data));
 
         return new self(
@@ -119,6 +137,7 @@ class Book extends Document
             Authors::deserialize($data['authors']),
             $data['title'],
             $data['isbn'],
+            $data['available'],
             $data['version']
         );
     }

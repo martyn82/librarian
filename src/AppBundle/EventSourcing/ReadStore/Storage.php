@@ -22,12 +22,11 @@ interface Storage
     public function find($identity);
 
     /**
-     * @param array $filter
      * @param integer $offset
      * @param integer $limit
      * @return Document[]
      */
-    public function findAll(array $filter = [], $offset = 0, $limit = 500);
+    public function findAll($offset = 0, $limit = 500);
 
     /**
      */

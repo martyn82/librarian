@@ -3,11 +3,12 @@
 namespace AppBundle\Controller\Resource;
 
 use AppBundle\Controller\Resource\Book\Author;
+use AppBundle\Domain\Descriptor\BookDescriptor;
 use AppBundle\Domain\ReadModel\Author as AuthorReadModel;
 use AppBundle\Domain\ReadModel\Book as BookReadModel;
 use JMS\Serializer\Annotation as Serializer;
 
-class Book
+class Book implements BookDescriptor
 {
     /**
      * @Serializer\SerializedName("_id")
@@ -35,6 +36,12 @@ class Book
     private $isbn;
 
     /**
+     * @Serializer\Type("boolean")
+     * @var boolean
+     */
+    private $available;
+
+    /**
      * @param BookReadModel $book
      * @return Book
      */
@@ -51,7 +58,8 @@ class Book
             $book->getId()->getValue(),
             $authors,
             $book->getTitle(),
-            $book->getISBN()
+            $book->getISBN(),
+            $book->isAvailable()
         );
     }
 
@@ -60,13 +68,15 @@ class Book
      * @param Author[] $authors
      * @param string $title
      * @param string $isbn
+     * @param boolean $available
      */
-    private function __construct($id, array $authors, $title, $isbn)
+    private function __construct($id, array $authors, $title, $isbn, $available)
     {
         $this->id = $id;
         $this->authors = $authors;
         $this->title = $title;
         $this->isbn = $isbn;
+        $this->available = $available;
     }
 
     /**
@@ -99,5 +109,13 @@ class Book
     public function getISBN()
     {
         return $this->isbn;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAvailable()
+    {
+        return $this->available;
     }
 }

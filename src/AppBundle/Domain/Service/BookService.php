@@ -4,17 +4,20 @@ namespace AppBundle\Domain\Service;
 
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\Message\Event\BookCheckedOut;
 use AppBundle\Domain\MessageHandler\EventHandler\AuthorAddedHandler;
 use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
+use AppBundle\Domain\MessageHandler\EventHandler\BookCheckedOutHandler;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
 use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\MessageHandler\TypedEventHandler;
 use AppBundle\EventSourcing\ReadStore\Storage;
 
-class BookService implements AuthorAddedHandler, BookAddedHandler
+class BookService implements AuthorAddedHandler, BookAddedHandler, BookCheckedOutHandler
 {
-    use \AppBundle\EventSourcing\MessageHandler\TypedEventHandler;
+    use TypedEventHandler;
 
     /**
      * @var Storage
@@ -48,6 +51,7 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
                 new Authors($authors),
                 $event->getTitle(),
                 $event->getISBN(),
+                true,
                 $event->getVersion()
             )
         );
@@ -59,8 +63,8 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
      */
     public function onAuthorAdded(AuthorAdded $event)
     {
-        $oldBook = $this->getBook($event->getId());
-        $authors = clone $oldBook->getAuthors();
+        $current = $this->getBook($event->getId());
+        $authors = clone $current->getAuthors();
 
         $authors->add(
             new Author($event->getFirstName(), $event->getLastName())
@@ -71,8 +75,29 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
             new Book(
                 $event->getId(),
                 $authors,
-                $oldBook->getTitle(),
-                $oldBook->getISBN(),
+                $current->getTitle(),
+                $current->getISBN(),
+                $current->isAvailable(),
+                $event->getVersion()
+            )
+        );
+    }
+
+    /**
+     * @param BookCheckedOut $event
+     */
+    public function onBookCheckedOut(BookCheckedOut $event)
+    {
+        $current = $this->getBook($event->getId());
+
+        $this->storage->upsert(
+            $event->getId()->getValue(),
+            new Book(
+                $event->getId(),
+                $current->getAuthors(),
+                $current->getTitle(),
+                $current->getISBN(),
+                false,
                 $event->getVersion()
             )
         );
@@ -95,13 +120,16 @@ class BookService implements AuthorAddedHandler, BookAddedHandler
     }
 
     /**
-     * @param array $filter
-     * @param integer $offset
-     * @param integer $limit
+     * @param integer $page
+     * @param integer $size
      * @return Book[]
      */
-    public function getAll(array $filter = [], $offset = 0, $limit = 500)
+    public function getAll($page = 1, $size = 500)
     {
-       return (array)$this->storage->findAll($filter, $offset, $limit);
+        $page = max((int)$page, 1);
+        $size = min((int)$size, 500);
+        $offset = ($page - 1) * $size;
+
+        return (array)$this->storage->findAll($offset, $size);
     }
 }

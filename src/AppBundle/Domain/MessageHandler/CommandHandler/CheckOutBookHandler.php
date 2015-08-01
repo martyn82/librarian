@@ -2,14 +2,12 @@
 
 namespace AppBundle\Domain\MessageHandler\CommandHandler;
 
-use AppBundle\Domain\Aggregate\Book;
-use AppBundle\Domain\Message\Command\AddBook;
+use AppBundle\Domain\Message\Command\CheckOutBook;
 use AppBundle\EventSourcing\EventStore\Repository;
-use AppBundle\EventSourcing\Message\Command;
 use AppBundle\EventSourcing\MessageHandler\CommandHandler;
 use AppBundle\EventSourcing\MessageHandler\TypedCommandHandler;
 
-class AddBookHandler implements CommandHandler
+class CheckOutBookHandler implements CommandHandler
 {
     use TypedCommandHandler;
 
@@ -27,11 +25,13 @@ class AddBookHandler implements CommandHandler
     }
 
     /**
-     * @param AddBook $command
+     * @param CheckOutBook $command
      */
-    private function handleAddBook(AddBook $command)
+    public function handleCheckoutBook(CheckOutBook $command)
     {
-        $book = Book::add($command->getId(), $command->getAuthors(), $command->getTitle(), $command->getISBN());
-        $this->repository->store($book);
+        /* @var $book \AppBundle\Domain\Aggregate\Book */
+        $book = $this->repository->findById($command->getId());
+        $book->checkout();
+        $this->repository->store($book, $command->getVersion());
     }
 }

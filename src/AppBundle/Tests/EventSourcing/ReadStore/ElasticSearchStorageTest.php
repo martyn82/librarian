@@ -82,45 +82,6 @@ class ElasticSearchStorageTest extends \PHPUnit_Framework_TestCase
         $storage->findAll();
     }
 
-    public function testFindAllWithFiltersCallsSearchWithFilters()
-    {
-        $client = $this->getMockBuilder(Client::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $index = 'foo';
-        $type = 'bar';
-        $filter = [
-            'baz' => 'boo'
-        ];
-        $offset = 10;
-        $limit = 10;
-
-        $queryStruct = [
-            'index' => $index,
-            'type' => $type,
-            'body' => [
-                'query' => [
-                    'filtered' => [
-                        'filter' => [
-                            'term' => $filter
-                        ]
-                    ]
-                ]
-            ],
-            'from' => $offset,
-            'size' => $limit
-        ];
-
-        $client->expects(self::once())
-            ->method('search')
-            ->with($queryStruct)
-            ->will(self::returnValue(['hits' => ['hits' => [['_source' => []]]]]));
-
-        $storage = new ElasticSearchStorage($client, FakeDocument::class, $index, $type);
-        $storage->findAll($filter, $offset, $limit);
-    }
-
     public function testFindAllReturnsEmptyArrayIfNotFound()
     {
         $client = $this->getMockBuilder(Client::class)

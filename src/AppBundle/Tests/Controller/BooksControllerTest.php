@@ -6,8 +6,10 @@ use AppBundle\Controller\BooksController;
 use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Controller\Resource\Book\Author as AuthorResource;
 use AppBundle\Controller\View\ViewBuilder;
+use AppBundle\Domain\Aggregate\BookUnavailableException;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
+use AppBundle\Domain\Message\Command\CheckOutBook;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
@@ -15,7 +17,10 @@ use AppBundle\Domain\Service\BookService;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\Message\Command;
 use AppBundle\EventSourcing\MessageBus\CommandBus;
+use FOS\RestBundle\Request\ParamFetcher;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 
 class BooksControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,21 +55,24 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
     public function testIndexActionRetrievesAllBooks()
     {
         $documents = [
-            new Book(Uuid::createNew(), new Authors(), 'title', 'isbn', 0)
+            new Book(Uuid::createNew(), new Authors(), 'title', 'isbn', true, 0)
         ];
 
         $this->service->expects(self::once())
             ->method('getAll')
             ->will(self::returnValue($documents));
 
+        $fetcher = $this->getMockBuilder(ParamFetcherInterface::class)
+            ->getMockForAbstractClass();
+
         $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
-        $controller->indexAction(Request::createFromGlobals());
+        $controller->indexAction($fetcher);
     }
 
     public function testReadActionReturnsViewWithResource()
     {
         $id = Uuid::createNew();
-        $book = new Book($id, new Authors(), '', '', 0);
+        $book = new Book($id, new Authors(), '', '', true, 0);
 
         $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
         $view = $controller->readAction($book);
@@ -83,7 +91,14 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
                 }
             ));
 
-        $book = new Book(Uuid::createFromValue(null), new Authors([new Author('first', 'last')]), 'title', 'isbn', -1);
+        $book = new Book(
+            Uuid::createFromValue(null),
+            new Authors([new Author('first', 'last')]),
+            'title',
+            'isbn',
+            true,
+            -1
+        );
         $resource = BookResource::createFromDocument($book);
 
         $this->service->expects(self::once())
@@ -105,7 +120,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ));
 
         $id = Uuid::createNew();
-        $book = new Book($id, new Authors(), 'title', 'isbn', -1);
+        $book = new Book($id, new Authors(), 'title', 'isbn', true, -1);
 
         $this->service->expects(self::atLeastOnce())
             ->method('getBook')
@@ -116,5 +131,34 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
 
         $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
         $controller->addAuthorAction($id, $resource, -1);
+    }
+
+    public function testCheckOutBookSendsCheckOutBookCommand()
+    {
+        $this->commandBus->expects(self::once())
+            ->method('send')
+            ->will(self::returnCallback(
+                function (Command $command) {
+                    self::assertInstanceOf(CheckOutBook::class, $command);
+                }
+            ));
+
+        $id = Uuid::createNew();
+
+        $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
+        $controller->checkOutBookAction($id, 0);
+    }
+
+    public function testCheckOutBookThrowsExceptionWhenBookUnavailable()
+    {
+        self::setExpectedException(PreconditionFailedHttpException::class);
+        $id = Uuid::createNew();
+
+        $this->commandBus->expects(self::once())
+            ->method('send')
+            ->will(self::throwException(new BookUnavailableException($id)));
+
+        $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
+        $controller->checkOutBookAction($id, 0);
     }
 }

@@ -5,6 +5,7 @@ namespace AppBundle\Domain\Aggregate;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
+use AppBundle\Domain\Message\Event\BookCheckedOut;
 use AppBundle\EventSourcing\EventStore\AggregateRoot;
 use AppBundle\EventSourcing\EventStore\Uuid;
 
@@ -14,6 +15,11 @@ class Book extends AggregateRoot
      * @var Uuid
      */
     private $id;
+
+    /**
+     * @var boolean
+     */
+    private $available;
 
     /**
      * @param Uuid $id
@@ -49,11 +55,24 @@ class Book extends AggregateRoot
     }
 
     /**
+     * @throws BookUnavailableException
+     */
+    public function checkout()
+    {
+        if (!$this->available) {
+            throw new BookUnavailableException($this->id);
+        }
+
+        $this->applyChange(new BookCheckedOut($this->id));
+    }
+
+    /**
      * @param Uuid $id
      */
     public function __construct(Uuid $id)
     {
         $this->id = $id;
+        $this->available = true;
         parent::__construct();
     }
 
@@ -76,7 +95,13 @@ class Book extends AggregateRoot
     /**
      * @param AuthorAdded $event
      */
-    protected function applyAuthorAdded(AuthorAdded $event)
+    protected function applyAuthorAdded(AuthorAdded $event) {}
+
+    /**
+     * @param BookCheckedOut $event
+     */
+    protected function applyBookCheckedOut(BookCheckedOut $event)
     {
+        $this->available = false;
     }
 }
