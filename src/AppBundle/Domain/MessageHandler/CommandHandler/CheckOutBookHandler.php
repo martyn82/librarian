@@ -26,6 +26,7 @@ class CheckOutBookHandler implements CommandHandler
 
     /**
      * @param CheckOutBook $command
+     * @throws \AppBundle\Domain\Aggregate\BookUnavailableException
      */
     public function handleCheckOutBook(CheckOutBook $command)
     {

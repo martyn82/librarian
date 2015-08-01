@@ -10,6 +10,7 @@ use AppBundle\Domain\Aggregate\BookUnavailableException;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\Message\Command\CheckOutBook;
+use AppBundle\Domain\Message\Command\ReturnBook;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
@@ -160,5 +161,21 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
 
         $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
         $controller->checkOutBookAction($id, 0);
+    }
+
+    public function testReturnBookSendsReturnBookCommand()
+    {
+        $this->commandBus->expects(self::once())
+            ->method('send')
+            ->will(self::returnCallback(
+                function (Command $command) {
+                    self::assertInstanceOf(ReturnBook::class, $command);
+                }
+            ));
+
+        $id = Uuid::createNew();
+
+        $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
+        $controller->returnBookAction($id, 0);
     }
 }

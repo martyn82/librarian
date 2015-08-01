@@ -10,6 +10,7 @@ use AppBundle\Domain\Aggregate\BookUnavailableException;
 use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\Message\Command\CheckOutBook;
+use AppBundle\Domain\Message\Command\ReturnBook;
 use AppBundle\Domain\ReadModel\Book as BookReadModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\EventSourcing\EventStore\Uuid;
@@ -227,7 +228,7 @@ class BooksController extends FOSRestController
     }
 
     /**
-     * @Rest\Post("/{id}",
+     * @Rest\Put("/{id}",
      *  condition="request.headers.get('content-type') matches '/domain-model=checkout/i'",
      *  requirements={
      *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
@@ -251,7 +252,6 @@ class BooksController extends FOSRestController
      *
      * @param Uuid $id
      * @param integer $version
-     * @return View
      * @throws HttpException
      */
     public function checkOutBookAction(Uuid $id, $version)
@@ -263,5 +263,37 @@ class BooksController extends FOSRestController
         } catch (BookUnavailableException $e) {
             throw new PreconditionFailedHttpException($e->getMessage(), $e);
         }
+    }
+
+    /**
+     * @Rest\Put("/{id}",
+     *  condition="request.headers.get('content-type') matches '/domain-model=return/i'",
+     *  requirements={
+     *      "id"="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}"
+     *  },
+     *  defaults={
+     *      "id"=null
+     *  }
+     * )
+     * @Rest\View(statusCode=204)
+     *
+     * @ParamConverter("id",
+     *  class="AppBundle\EventSourcing\EventStore\Uuid",
+     *  converter="param_converter"
+     * )
+     * @ParamConverter("version",
+     *  options={
+     *      "id": "id"
+     *  },
+     *  converter="param_converter"
+     * )
+     *
+     * @param Uuid $id
+     * @param integer $version
+     */
+    public function returnBookAction(Uuid $id, $version)
+    {
+        $command = new ReturnBook($id, $version);
+        $this->commandBus->send($command);
     }
 }
