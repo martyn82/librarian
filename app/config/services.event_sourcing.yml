@@ -42,6 +42,7 @@ services:
         - AppBundle\Domain\Message\Event\BookAdded
         - AppBundle\Domain\Message\Event\AuthorAdded
         - AppBundle\Domain\Message\Event\BookCheckedOut
+        - AppBundle\Domain\Message\Event\BookReturned
 
   librarian.eventstore.book:
     class: AppBundle\EventSourcing\EventStore\EventStore
@@ -64,6 +65,7 @@ services:
         AppBundle\Domain\Message\Command\AddBook: "@librarian.commandhandler.add_book"
         AppBundle\Domain\Message\Command\AddAuthor: "@librarian.commandhandler.add_author"
         AppBundle\Domain\Message\Command\CheckOutBook: "@librarian.commandhandler.checkout_book"
+        AppBundle\Domain\Message\Command\ReturnBook: "@librarian.commandhandler.return_book"
 
   librarian.eventbus:
     class: AppBundle\EventSourcing\MessageBus\EventBus
@@ -72,6 +74,7 @@ services:
         AppBundle\Domain\Message\Event\BookAdded: ["@librarian.eventhandler.book_added"]
         AppBundle\Domain\Message\Event\AuthorAdded: ["@librarian.eventhandler.author_added"]
         AppBundle\Domain\Message\Event\BookCheckedOut: ["@librarian.eventhandler.book_checkedout"]
+        AppBundle\Domain\Message\Event\BookReturned: ["@librarian.eventhandler.book_returned"]
 
   # command/event handlers
   librarian.eventhandler.book_added.plain:
@@ -94,6 +97,13 @@ services:
   librarian.eventhandler.book_checkedout.logging:
     class: AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator
     arguments: ["@logger", "@librarian.eventhandler.book_checkedout.plain"]
+
+  librarian.eventhandler.book_returned.plain:
+    alias: librarian.service.book
+
+  librarian.eventhandler.book_returned.logging:
+    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.eventhandler.book_returned.plain"]
 
   librarian.commandhandler.add_book.plain:
     class: AppBundle\Domain\MessageHandler\CommandHandler\AddBookHandler
@@ -118,6 +128,14 @@ services:
   librarian.commandhandler.checkout_book.logging:
     class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator
     arguments: ["@logger", "@librarian.commandhandler.checkout_book.plain"]
+
+  librarian.commandhandler.return_book.plain:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\ReturnBookHandler
+    arguments: ["@librarian.repository.books"]
+
+  librarian.commandhandler.return_book.logging:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.commandhandler.return_book.plain"]
 
   # aggregate services
   librarian.service.book:

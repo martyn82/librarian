@@ -6,6 +6,7 @@ use AppBundle\Domain\Message\Command\AddAuthor;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Message\Event\BookCheckedOut;
+use AppBundle\Domain\Message\Event\BookReturned;
 use AppBundle\EventSourcing\EventStore\AggregateRoot;
 use AppBundle\EventSourcing\EventStore\Uuid;
 
@@ -57,13 +58,22 @@ class Book extends AggregateRoot
     /**
      * @throws BookUnavailableException
      */
-    public function checkout()
+    public function checkOut()
     {
         if (!$this->available) {
             throw new BookUnavailableException($this->id);
         }
 
         $this->applyChange(new BookCheckedOut($this->id));
+    }
+
+    /**
+     */
+    public function checkIn()
+    {
+        if (!$this->available) {
+            $this->applyChange(new BookReturned($this->id));
+        }
     }
 
     /**
@@ -103,5 +113,13 @@ class Book extends AggregateRoot
     protected function applyBookCheckedOut(BookCheckedOut $event)
     {
         $this->available = false;
+    }
+
+    /**
+     * @param BookReturned $event
+     */
+    protected function applyBookReturned(BookReturned $event)
+    {
+        $this->available = true;
     }
 }

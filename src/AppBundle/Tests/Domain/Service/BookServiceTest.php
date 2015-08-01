@@ -5,6 +5,7 @@ namespace AppBundle\Domain\Service;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Message\Event\BookCheckedOut;
+use AppBundle\Domain\Message\Event\BookReturned;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
@@ -122,6 +123,27 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
         $service->onBookCheckedOut(new BookCheckedOut($bookId));
     }
 
+    public function testHandlerForBookReturned()
+    {
+        $bookId = Uuid::createNew();
+
+        $storage = $this->getMockBuilder(Storage::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $storage->expects(self::once())
+            ->method('upsert')
+            ->with($bookId, self::anything());
+
+        $storage->expects(self::once())
+            ->method('find')
+            ->with($bookId)
+            ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', true, -1)));
+
+        $service = new BookService($storage);
+        $service->onBookReturned(new BookReturned($bookId));
+    }
+
     public function testGetBookWithNonExistingIdThrowsException()
     {
         self::setExpectedException(ObjectNotFoundException::class);
@@ -168,6 +190,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
 
         self::assertEquals($bookId, $book->getId());
         self::assertEquals($title, $book->getTitle());
+        self::assertTrue($book->isAvailable());
 
         foreach ($book->getAuthors()->getIterator() as $author) {
             /* @var $author Author */

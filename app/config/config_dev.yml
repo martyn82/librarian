@@ -58,12 +58,16 @@ services:
     alias: librarian.commandhandler.add_author.logging
   librarian.commandhandler.checkout_book:
     alias: librarian.commandhandler.checkout_book.logging
+  librarian.commandhandler.return_book:
+    alias: librarian.commandhandler.return_book.logging
   librarian.eventhandler.book_added:
     alias: librarian.eventhandler.book_added.logging
   librarian.eventhandler.author_added:
     alias: librarian.eventhandler.author_added.logging
   librarian.eventhandler.book_checkedout:
-      alias: librarian.eventhandler.book_checkedout.logging
+    alias: librarian.eventhandler.book_checkedout.logging
+  librarian.eventhandler.book_returned:
+    alias: librarian.eventhandler.book_returned.logging
 
 parameters:
   librarian.database.events.host: 172.17.42.1

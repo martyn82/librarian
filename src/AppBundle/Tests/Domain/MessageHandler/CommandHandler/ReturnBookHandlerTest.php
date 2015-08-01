@@ -3,18 +3,18 @@
 namespace AppBundle\Tests\Domain\MessageHandler\CommandHandler;
 
 use AppBundle\Domain\Aggregate\Book;
-use AppBundle\Domain\Message\Command\CheckOutBook;
-use AppBundle\Domain\MessageHandler\CommandHandler\CheckOutBookHandler;
+use AppBundle\Domain\Message\Command\ReturnBook;
+use AppBundle\Domain\MessageHandler\CommandHandler\ReturnBookHandler;
 use AppBundle\EventSourcing\EventStore\Repository;
 use AppBundle\EventSourcing\EventStore\Uuid;
 
-class CheckOutBookHandlerTest extends \PHPUnit_Framework_TestCase
+class ReturnBookHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCheckOutBookHandlerWillCallStoreOnRepository()
+    public function testReturnBookHandlerWillCallStoreOnRepository()
     {
         $bookId = Uuid::createNew();
 
-        $command = new CheckOutBook($bookId, -1);
+        $command = new ReturnBook($bookId, 0);
         $book = Book::add($bookId, [], 'title', 'isbn');
 
         $repository = $this->getMockBuilder(Repository::class)
@@ -32,7 +32,7 @@ class CheckOutBookHandlerTest extends \PHPUnit_Framework_TestCase
                 self::assertEquals($book->getId(), $actual->getId());
             }));
 
-        $handler = new CheckOutBookHandler($repository);
+        $handler = new ReturnBookHandler($repository);
         $handler->handle($command);
     }
 }

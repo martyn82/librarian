@@ -2,12 +2,12 @@
 
 namespace AppBundle\Domain\MessageHandler\CommandHandler;
 
-use AppBundle\Domain\Message\Command\CheckOutBook;
+use AppBundle\Domain\Message\Command\ReturnBook;
 use AppBundle\EventSourcing\EventStore\Repository;
 use AppBundle\EventSourcing\MessageHandler\CommandHandler;
 use AppBundle\EventSourcing\MessageHandler\TypedCommandHandler;
 
-class CheckOutBookHandler implements CommandHandler
+class ReturnBookHandler implements CommandHandler
 {
     use TypedCommandHandler;
 
@@ -25,13 +25,13 @@ class CheckOutBookHandler implements CommandHandler
     }
 
     /**
-     * @param CheckOutBook $command
+     * @param ReturnBook $command
      */
-    public function handleCheckOutBook(CheckOutBook $command)
+    public function handleReturnBook(ReturnBook $command)
     {
         /* @var $book \AppBundle\Domain\Aggregate\Book */
         $book = $this->repository->findById($command->getId());
-        $book->checkOut();
+        $book->checkIn();
         $this->repository->store($book, $command->getVersion());
     }
 }

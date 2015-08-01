@@ -5,9 +5,11 @@ namespace AppBundle\Domain\Service;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Message\Event\BookCheckedOut;
+use AppBundle\Domain\Message\Event\BookReturned;
 use AppBundle\Domain\MessageHandler\EventHandler\AuthorAddedHandler;
 use AppBundle\Domain\MessageHandler\EventHandler\BookAddedHandler;
 use AppBundle\Domain\MessageHandler\EventHandler\BookCheckedOutHandler;
+use AppBundle\Domain\MessageHandler\EventHandler\BookReturnedHandler;
 use AppBundle\Domain\ReadModel\Author;
 use AppBundle\Domain\ReadModel\Authors;
 use AppBundle\Domain\ReadModel\Book;
@@ -15,7 +17,7 @@ use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\MessageHandler\TypedEventHandler;
 use AppBundle\EventSourcing\ReadStore\Storage;
 
-class BookService implements AuthorAddedHandler, BookAddedHandler, BookCheckedOutHandler
+class BookService implements AuthorAddedHandler, BookAddedHandler, BookCheckedOutHandler, BookReturnedHandler
 {
     use TypedEventHandler;
 
@@ -98,6 +100,26 @@ class BookService implements AuthorAddedHandler, BookAddedHandler, BookCheckedOu
                 $current->getTitle(),
                 $current->getISBN(),
                 false,
+                $event->getVersion()
+            )
+        );
+    }
+
+    /**
+     * @param BookReturned $event
+     */
+    public function onBookReturned(BookReturned $event)
+    {
+        $current = $this->getBook($event->getId());
+
+        $this->storage->upsert(
+            $event->getId()->getValue(),
+            new Book(
+                $event->getId(),
+                $current->getAuthors(),
+                $current->getTitle(),
+                $current->getISBN(),
+                true,
                 $event->getVersion()
             )
         );
