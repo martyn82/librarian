@@ -1,0 +1,21 @@
+{
+  "name": "librarian",
+  "description": "Librarian book library application.",
+  "type": "project",
+  "author": "Martijn Endenburg",
+  "license": "MIT",
+  "homepage": "https://github.com/martyn82/librarian",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martyn82/librarian.git"
+  },
+  "devDependencies": {
+    "bootstrap-sass": "~3.3",
+    "grunt": "~0.4",
+    "grunt-cli": "~0.1",
+    "grunt-contrib-copy": "~0.8",
+    "grunt-contrib-cssmin": "~0.13",
+    "grunt-contrib-watch": "~0.6",
+    "grunt-sass": "~1.0"
+  }
+}

@@ -9,7 +9,7 @@
     </target>
 
     <!-- Build task -->
-    <target name="build" description="Full build" depends="clean">
+    <target name="build" description="Full build" depends="clean, assets:build">
         <delete dir="${project.basedir}/app/cache/prod" quiet="true" />
         <mkdir dir="${project.basedir}/build/app" />
         <copy todir="${project.basedir}/build/app">
@@ -18,7 +18,7 @@
                 <include name="composer.*" />
                 <include name="src/.htaccess" />
                 <include name="src/AppBundle/**" />
-                <include name="web/*" />
+                <include name="web/**" />
 
                 <exclude name="app/cache/**" />
                 <exclude name="app/logs/**" />
@@ -74,6 +74,22 @@
     <target name="clean:test">
         <delete dir="${project.basedir}/report/test" quiet="true" />
         <mkdir dir="${project.basedir}/report/test" />
+    </target>
+
+    <!-- Assets tasks -->
+    <target name="assets:build" depends="assets:clean">
+        <exec
+            command="${project.basedir}/node_modules/.bin/grunt"
+            checkreturn="true"
+            passthru="true"
+        >
+            <arg value="build" />
+        </exec>
+    </target>
+
+    <target name="assets:clean">
+        <delete dir="${project.basedir}/web/bundles/app/css" quiet="true" />
+        <delete dir="${project.basedir}/web/bundles/app/images" quiet="true" />
     </target>
 
     <!-- Static analysis -->
