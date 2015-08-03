@@ -1,0 +1,11 @@
+{
+  "name": "librarian",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.4",
+    "angular-cookies": "~1.4",
+    "angular-route": "~1.4",
+    "bootstrap-sass": "~3.3"
+  }
+}

@@ -4,9 +4,10 @@ namespace AppBundle\Domain\ReadModel;
 
 use AppBundle\Compare\Comparable;
 use AppBundle\Compare\IncomparableException;
+use AppBundle\EventSourcing\ReadStore\ReadModel;
 use AppBundle\EventSourcing\Serializing\Serializable;
 
-class Author implements Comparable, Serializable
+class Author implements Comparable, ReadModel, Serializable
 {
     /**
      * @var string

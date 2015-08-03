@@ -5,10 +5,10 @@ namespace AppBundle\Controller\Resource;
 use AppBundle\Controller\Resource\Book\Author;
 use AppBundle\Domain\Descriptor\BookDescriptor;
 use AppBundle\Domain\ReadModel\Author as AuthorReadModel;
-use AppBundle\Domain\ReadModel\Book as BookReadModel;
+use AppBundle\EventSourcing\ReadStore\ReadModel;
 use JMS\Serializer\Annotation as Serializer;
 
-class Book implements BookDescriptor
+class Book implements Resource, BookDescriptor
 {
     /**
      * @Serializer\SerializedName("_id")
@@ -42,14 +42,14 @@ class Book implements BookDescriptor
     private $available;
 
     /**
-     * @param BookReadModel $book
+     * @param ReadModel $book
      * @return Book
      */
-    public static function createFromDocument(BookReadModel $book)
+    public static function createFromReadModel(ReadModel $book)
     {
         $authors = array_map(
             function (AuthorReadModel $author) {
-                return Author::createFromDocument($author);
+                return Author::createFromReadModel($author);
             },
             iterator_to_array($book->getAuthors()->getIterator())
         );

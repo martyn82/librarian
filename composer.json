@@ -38,6 +38,7 @@
         ],
         "post-install-cmd": [
             "echo 'Install NPM packages' ; npm install",
+            "echo 'Install Bower packages' ; ./node_modules/.bin/bower install",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
@@ -48,6 +49,7 @@
         ],
         "post-update-cmd": [
             "echo 'Update NPM packages' ; npm install",
+            "echo 'Update Bower packages' ; ./node_modules/.bin/bower install",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",

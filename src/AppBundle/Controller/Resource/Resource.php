@@ -2,13 +2,13 @@
 
 namespace AppBundle\Controller\Resource;
 
-use AppBundle\EventSourcing\ReadStore\Document;
+use AppBundle\EventSourcing\ReadStore\ReadModel;
 
-abstract class Resource
+interface Resource
 {
     /**
-     * @param Document $document
+     * @param ReadModel $document
      * @return Resource
      */
-    abstract public static function createFromDocument(Document $document);
+    public static function createFromReadModel(ReadModel $document);
 }

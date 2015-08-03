@@ -5,8 +5,9 @@ namespace AppBundle\Domain\ReadModel;
 use AppBundle\Domain\Descriptor\BookDescriptor;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\ReadStore\Document;
+use AppBundle\EventSourcing\ReadStore\ReadModel;
 
-class Book extends Document implements BookDescriptor
+class Book extends Document implements BookDescriptor, ReadModel
 {
     /**
      * @var Uuid

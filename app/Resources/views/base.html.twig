@@ -4,22 +4,21 @@
         <meta charset="UTF-8" />
         <title>{% block title %}Book Library{% endblock %}</title>
         <meta name="title" content="{{ block('title') }}" />
+        <meta name="robots" content="noindex,nofollow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('bundles/app/css/default.min.css') }}" />
         {% endblock %}
+        {% block javascripts %}
+            <script src="{{ asset('bundles/app/js/app.js') }}"></script>
+        {% endblock %}
+
+        <base href="/" />
     </head>
     <body>
-        <div class="container-fluid">
-            <div class="page-header">
-                <h1>Book Library</h1>
-            </div>
-        </div>
-        {% block body %}{% endblock %}
+        <div ng-view></div>
     </body>
 </html>

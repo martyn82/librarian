@@ -2,10 +2,11 @@
 
 namespace AppBundle\Controller\Resource\Book;
 
-use AppBundle\Domain\ReadModel\Author as AuthorReadModel;
+use AppBundle\Controller\Resource\Resource;
+use AppBundle\EventSourcing\ReadStore\ReadModel;
 use JMS\Serializer\Annotation as Serializer;
 
-class Author
+class Author implements Resource
 {
     /**
      * @Serializer\Type("string")
@@ -22,10 +23,10 @@ class Author
     private $lastName;
 
     /**
-     * @param AuthorReadModel $author
+     * @param ReadModel $author
      * @return Author
      */
-    public static function createFromDocument(AuthorReadModel $author)
+    public static function createFromReadModel(ReadModel $author)
     {
         return new self($author->getFirstName(), $author->getLastName());
     }

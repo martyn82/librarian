@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 
 /**
- * @Rest\Route("/api/books")
+ * @Rest\Route("/books")
  */
 class BooksController extends FOSRestController
 {

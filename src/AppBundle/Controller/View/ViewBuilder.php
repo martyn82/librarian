@@ -55,7 +55,7 @@ class ViewBuilder
         $resourceClass = $this->resourceClass;
         $resources = array_map(
             function (Document $document) use ($resourceClass) {
-                return $resourceClass::createFromDocument($document);
+                return $resourceClass::createFromReadModel($document);
             },
             $documents
         );
@@ -73,7 +73,7 @@ class ViewBuilder
     {
         $this->singleDocument = $document;
         $resourceClass = $this->resourceClass;
-        $this->view->setData($resourceClass::createFromDocument($document));
+        $this->view->setData($resourceClass::createFromReadModel($document));
         return $this;
     }
 

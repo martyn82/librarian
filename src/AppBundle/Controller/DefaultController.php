@@ -8,13 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultController extends Controller
 {
     /**
+     * @param string $page
      * @return Response
      */
-    public function appAction()
+    public function appAction($page = null)
     {
         return new Response(
             $this->renderView(
-                'default/home.html.twig'
+                'base.html.twig'
             )
         );
     }

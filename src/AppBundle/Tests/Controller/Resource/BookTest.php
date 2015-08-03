@@ -9,7 +9,7 @@ use AppBundle\EventSourcing\EventStore\Uuid;
 
 class BookTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCreateFromDocumentMapsDocumentToResource()
+    public function testCreateFromReadModelMapsDocumentToResource()
     {
         $id = Uuid::createNew();
         $authors = new Authors();
@@ -19,7 +19,7 @@ class BookTest extends \PHPUnit_Framework_TestCase
         $version = 1;
 
         $document = new BookDocument($id, $authors, $title, $isbn, $available, $version);
-        $resource = BookResource::createFromDocument($document);
+        $resource = BookResource::createFromReadModel($document);
 
         self::assertEquals($id, $resource->getId());
         self::assertEquals($title, $resource->getTitle());

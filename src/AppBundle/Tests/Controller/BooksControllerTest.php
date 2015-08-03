@@ -100,7 +100,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             true,
             -1
         );
-        $resource = BookResource::createFromDocument($book);
+        $resource = BookResource::createFromReadModel($book);
 
         $this->service->expects(self::once())
             ->method('getBook')
@@ -128,7 +128,7 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue($book));
 
         $author = new Author('first', 'last');
-        $resource = AuthorResource::createFromDocument($author);
+        $resource = AuthorResource::createFromReadModel($author);
 
         $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
         $controller->addAuthorAction($id, $resource, -1);

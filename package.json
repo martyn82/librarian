@@ -5,17 +5,27 @@
   "author": "Martijn Endenburg",
   "license": "MIT",
   "homepage": "https://github.com/martyn82/librarian",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/martyn82/librarian.git"
   },
   "devDependencies": {
-    "bootstrap-sass": "~3.3",
+    "bower": "~1.4",
     "grunt": "~0.4",
     "grunt-cli": "~0.1",
+    "grunt-contrib-clean": "~0.6",
+    "grunt-contrib-concat": "~0.5",
     "grunt-contrib-copy": "~0.8",
     "grunt-contrib-cssmin": "~0.13",
+    "grunt-contrib-uglify": "~0.9",
     "grunt-contrib-watch": "~0.6",
-    "grunt-sass": "~1.0"
+    "grunt-karma": "~0.12",
+    "grunt-sass": "~1.0",
+    "jshint": "~2.8",
+    "karma": "~0.13",
+    "karma-coverage": "~0.4",
+    "karma-phantomjs-launcher": "~0.2",
+    "karma-qunit": "~0.1"
   }
 }
