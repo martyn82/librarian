@@ -140,7 +140,11 @@ module.exports = function (grunt) {
                 browsers: ['PhantomJS'],
                 files: {
                     src: [
-                        'app/Resources/scripts/services/*.js'
+                        "vendor/bower_components/angular/angular.min.js",
+                        "vendor/bower_components/angular-cookies/angular-cookies.min.js",
+                        "vendor/bower_components/angular-route/angular-route.min.js",
+                        "vendor/bower_components/angular-mocks/angular-mocks.js",
+                        "app/Resources/scripts/services/*.js"
                     ]
                 },
                 frameworks: ['qunit']

@@ -50,11 +50,14 @@ var GitHubClient = function ($http, $cookies, gitHub, queryParser) {
                         }
 
                         self.setToken(params.access_token);
-                        self.getUser().then(function (user) {
-                            promise.success(user);
-                        }, function (error) {
-                            promise.failure(error);
-                        });
+                        self.getUser().then(
+                            function (user) {
+                                promise.success(user);
+                            },
+                            function (error) {
+                                promise.failure(error);
+                            }
+                        );
                     }, function (response) {
                         if (response.data == null) {
                             promise.failure({
@@ -132,8 +135,8 @@ var GitHubClient = function ($http, $cookies, gitHub, queryParser) {
                     }
                 };
 
-                this.$http(request)
-                    .then(function (response) {
+                this.$http(request).then(
+                    function (response) {
                         if (response.data == null) {
                             promise.failure({
                                 error: null,
@@ -141,6 +144,7 @@ var GitHubClient = function ($http, $cookies, gitHub, queryParser) {
                             });
                             return;
                         }
+
                         promise.success({
                             email: response.data.email,
                             name: response.data.name,
@@ -149,7 +153,8 @@ var GitHubClient = function ($http, $cookies, gitHub, queryParser) {
                                 organizations: response.data.organizations_url
                             }
                         });
-                    }, function (response) {
+                    },
+                    function (response) {
                         self.revoke();
                         promise.failure({
                             error: null,
