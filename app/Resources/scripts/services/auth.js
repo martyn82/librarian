@@ -37,7 +37,7 @@ var Auth = function ($cookies, $q, gitHubClient) {
             accessToken = storage.get(STORAGE_KEY);
         }
 
-        return accessToken;
+        return accessToken || '';
     };
 
     /**
@@ -74,7 +74,7 @@ var Auth = function ($cookies, $q, gitHubClient) {
      * @returns {Boolean}
      */
     this.authorized = function () {
-        return getToken() !== null;
+        return getToken() !== '';
     };
 
     /**

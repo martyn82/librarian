@@ -1,45 +1,43 @@
 /**
  * @param $http
+ * @param $q
  * @param librarian
  * @constructor
  */
-var LibrarianClient = function ($http, librarian) {
-    this.$http = $http;
+var LibrarianClient = function ($http, $q, librarian) {
+    var config = librarian;
+    var promise = $q;
 
     /**
+     * @param {Number} page
+     * @param {Number} size
      * @returns {{then: Function}}
      */
-    this.getAllBooks = function () {
-        var self = this;
-        var promise = {
-            success: function (books) {
-            },
-            failure: function (error) {
-            },
-            execute: function () {
-                var request = {
-                    method: 'GET',
-                    url: librarian.apiUrl + '/books'
-                };
+    this.getAllBooks = function (page, size) {
+        page = Math.max(page || 1, 1);
+        size = Math.max(size || 10, 1);
 
-                this.$http(request).then(
-                    function (response) {
-                        promise.success(response.data);
-                    },
-                    function (response) {
-                        promise.failure({});
-                    }
-                );
+        return $http.get(config.apiUrl + '/books?page=' + page + '&size=' + size).then(
+            function (response) {
+                return promise.resolve(response.data);
+            },
+            function (response) {
+                return promise.reject();
             }
-        };
+        );
+    };
 
-        return {
-            then: function (success, failure) {
-                promise.success = success;
-                promise.failure = failure;
-                promise.execute.call(self);
-            }
-        };
+    /**
+     * @param {String} query
+     * @param {String} filters
+     * @param {Number} page
+     * @param {Number} size
+     * @returns {{then: Function}}
+     */
+    this.searchBooks = function (query, filters, page, size) {
+        page = Math.max(page || 1, 1);
+        size = Math.max(size || 10, 1);
+        // /books?query=&title=&author=...&page=&size=
     };
 
     /**
@@ -47,35 +45,13 @@ var LibrarianClient = function ($http, librarian) {
      * @returns {{then: Function}}
      */
     this.getBook = function (bookId) {
-        var self = this;
-        var promise = {
-            success: function (book) {
+        return $http.get(config.apiUrl + '/book/' + bookId).then(
+            function (response) {
+                return promise.resolve(response.data);
             },
-            failure: function (error) {
-            },
-            execute: function () {
-                var request = {
-                    method: 'GET',
-                    url: librarian.apiUrl + '/books/' + bookId
-                };
-
-                this.$http(request).then(
-                    function (response) {
-                        promise.success(response.data);
-                    },
-                    function (response) {
-                        promise.failure({});
-                    }
-                );
+            function (response) {
+                return promise.reject();
             }
-        };
-
-        return {
-            then: function (success, failure) {
-                promise.success = success;
-                promise.failure = failure;
-                promise.execute.call(self);
-            }
-        };
+        );
     };
 };

@@ -7,6 +7,7 @@ var QueryParser = function () {
      * @returns {Object}
      */
     this.parse = function (queryString) {
+        queryString = queryString || '';
         var parameters = queryString.split('&');
         var params = {};
         for (var k in parameters) {

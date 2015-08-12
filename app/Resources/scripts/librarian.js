@@ -31,7 +31,7 @@ angular
     .service('queryParser', [QueryParser])
     .service('gitHubClient', ['$http', '$q', 'gitHub', 'queryParser', GitHubClient])
     .service('auth', ['$cookies', '$q', 'gitHubClient', Auth])
-    .service('librarianClient', ['$http', 'librarian', LibrarianClient])
+    .service('librarianClient', ['$http', '$q', 'librarian', LibrarianClient])
 
     .controller('HomeController', ['$scope', 'librarianClient', HomeController])
     .controller('LoginController', ['$scope', '$location', 'gitHub', LoginController])

@@ -3,6 +3,7 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="{{ path(routes.home) }}">Book Library</a>
         </div>
+
         <div class="navbar-collapse collapse">
             <form class="navbar-form navbar-left" role="search">
                 <div class="form-group">
@@ -11,9 +12,8 @@
                 </div>
             </form>
             <p class="navbar-text navbar-right">
-                Signed in as <a href="#" class="navbar-link">{{ user.name }}</a>
-                |
-                <a href="/logout" class="navbar-link">Sign out</a>
+                <span>Signed in as <a href="#" class="navbar-link">{{ user.name }}</a></span>
+                <span><a href="/logout" class="navbar-link">Sign out</a></span>
             </p>
         </div>
     </div>
@@ -27,6 +27,9 @@
         <ul class="list-group" ng-repeat="book in books">
             <li class="list-group-item">
                 <h4>{{ book.title }}</h4>
+                <ul ng-repeat="author in book.authors">
+                    <li>{{ author.first_name }} {{ author.last_name }}</li>
+                </ul>
                 <span ng-if="book.available">Available</span>
                 <span ng-if="!book.avaiable">Unavailable</span>
             </li>
