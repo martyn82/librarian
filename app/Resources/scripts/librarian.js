@@ -29,25 +29,26 @@ angular
     }])
 
     .service('queryParser', [QueryParser])
-    .service('gitHubClient', ['$http', '$cookies', 'gitHub', 'queryParser', GitHubClient])
+    .service('gitHubClient', ['$http', '$q', 'gitHub', 'queryParser', GitHubClient])
+    .service('auth', ['$cookies', '$q', 'gitHubClient', Auth])
     .service('librarianClient', ['$http', 'librarian', LibrarianClient])
 
     .controller('HomeController', ['$scope', 'librarianClient', HomeController])
     .controller('LoginController', ['$scope', '$location', 'gitHub', LoginController])
-    .controller('LogOutController', ['$rootScope', 'gitHubClient', LogOutController])
-    .controller('AuthController', ['$location', '$rootScope', 'gitHubClient', 'routes', AuthController])
+    .controller('LogOutController', ['$rootScope', 'auth', LogOutController])
+    .controller('AuthController', ['$location', '$rootScope', 'auth', 'routes', AuthController])
 
-    .run(['$rootScope', '$location', 'gitHubClient', 'routes', function ($rootScope, $location, gitHubClient, routes) {
+    .run(['$rootScope', '$location', 'auth', 'routes', function ($rootScope, $location, auth, routes) {
         $rootScope.$on('$routeChangeStart', function (event, next) {
             if (
-                !gitHubClient.authenticated()
+                !auth.authorized()
                 && next.$$route.originalPath != routes.login
                 && next.$$route.originalPath != routes.authenticate
                 && next.$$route.originalPath != routes.logout
             ) {
                 $location.path(routes.login);
-            } else if (gitHubClient.authenticated()) {
-                gitHubClient.getUser().then(
+            } else if (auth.authorized()) {
+                auth.getUser().then(
                     function (user) {
                         $rootScope.user = user;
                     }
@@ -55,12 +56,12 @@ angular
             }
         });
 
-        $rootScope.$on('userAuthenticated', function (event, user) {
+        $rootScope.$on('userSignedIn', function (_, user) {
             $rootScope.user = user;
             $location.path(routes.home);
         });
 
-        $rootScope.$on('userSignedOut', function (event) {
+        $rootScope.$on('userSignedOut', function () {
             $location.path(routes.login);
         });
     }])

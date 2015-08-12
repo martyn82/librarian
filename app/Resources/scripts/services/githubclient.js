@@ -1,55 +1,19 @@
 /**
  * @param $http
- * @param $cookies
  * @param $q
  * @param config
  * @param queryParser
  * @constructor
  */
-var GitHubClient = function ($http, $cookies, $q, config, queryParser) {
+var GitHubClient = function ($http, $q, config, queryParser) {
     var accessToken = null;
-    var storage = $cookies;
-    var storageKey = 'oauth_token';
     var promise = $q;
-
-    /**
-     * @param {String} token
-     */
-    var setToken = function (token) {
-        accessToken = token;
-        storage.put(storageKey, token);
-    };
-
-    /**
-     * @returns {String}
-     */
-    var getToken = function() {
-        if (accessToken == null) {
-            accessToken = storage.get(storageKey);
-        }
-
-        return accessToken;
-    };
-
-    /**
-     */
-    var revokeToken = function () {
-        storage.remove(storageKey);
-    };
-
-    /**
-     * @returns {Boolean}
-     */
-    this.authenticated = function () {
-        return getToken.call(this) != null;
-    };
 
     /**
      * @param {String} code
      * @returns {{then: Function}}
      */
     this.authenticate = function (code) {
-        var self = this;
         return $http.post(config.authUrl, {
                 client_id: config.clientId,
                 client_secret: config.secret,
@@ -66,8 +30,7 @@ var GitHubClient = function ($http, $cookies, $q, config, queryParser) {
                     });
                 }
 
-                setToken.call(self, params.access_token);
-                return self.getUser();
+                return promise.resolve(params.access_token);
             },
             function (response) {
                 var err = {
@@ -87,9 +50,10 @@ var GitHubClient = function ($http, $cookies, $q, config, queryParser) {
     };
 
     /**
+     * @param {String} accessToken
      * @returns {{then: Function}}
      */
-    this.getUser = function () {
+    this.getUser = function (accessToken) {
         var self = this;
         var request = {
             method: 'GET',
@@ -98,10 +62,6 @@ var GitHubClient = function ($http, $cookies, $q, config, queryParser) {
                 'Authorization': 'token ' + accessToken
             }
         };
-
-        if (getToken.call(self) == null) {
-            return promise.reject({});
-        }
 
         return $http(request).then(
             function (response) {
@@ -114,19 +74,11 @@ var GitHubClient = function ($http, $cookies, $q, config, queryParser) {
                     return promise.reject(err);
                 }
 
-                return promise.resolve({
-                    email: response.data.email,
-                    name: response.data.name,
-                    username: response.data.login,
-                    '_links': {
-                        organizations: response.data.organizations_url
-                    }
-                });
+                return promise.resolve(response.data);
             },
             function (response) {
-                self.revoke();
                 return promise.reject({
-                    error: 'revoked',
+                    error: null,
                     description: null
                 });
             }
@@ -134,8 +86,35 @@ var GitHubClient = function ($http, $cookies, $q, config, queryParser) {
     };
 
     /**
+     * @param {String} accessToken
+     * @returns {{then: Function}}
      */
-    this.revoke = function () {
-        revokeToken.call(this);
+    this.getOrganizations = function (accessToken) {
+        var request = {
+            method: 'GET',
+            url: config.apiUrl + '/user/orgs',
+            headers: {
+                'Authorization': 'token ' + accessToken
+            }
+        };
+
+        return $http(request).then(
+            function (response) {
+                if (response.data == null) {
+                    return promise.reject({
+                        error: 'nodata',
+                        description: null
+                    });
+                }
+
+                return promise.resolve(response.data);
+            },
+            function (response) {
+                return promise.reject({
+                    error: null,
+                    description: null
+                });
+            }
+        );
     };
 };

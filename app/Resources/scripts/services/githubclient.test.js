@@ -11,19 +11,8 @@ QUnit.module('GitHubClient', {
             apiUrl: 'https://api.example.org/v1'
         };
 
-        this.$cookies = {
-            get: function () {
-                return null;
-            },
-            put: function () {
-            },
-            remove: function () {
-            }
-        };
-
         this.client = new GitHubClient(
             serviceLocator.get('$http'),
-            this.$cookies,
             serviceLocator.get('$q'),
             this.gitHubConfig,
             new QueryParser()
@@ -46,31 +35,17 @@ QUnit.test('Authenticate will authenticate user.', function (assert) {
     var accessToken = 'foo';
 
     this.$httpBackend.expectPOST(this.gitHubConfig.authUrl, data);
-    this.$httpBackend.expectGET(this.gitHubConfig.apiUrl + '/user', {
-        'Authorization': 'token ' + accessToken,
-        'Accept': 'application/json, text/plain, */*'
-    });
-
     this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(200, 'access_token=' + accessToken);
-    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user').respond(200, {
-        name: 'foo',
-        email: 'bar@baz.com',
-        login: 'boo',
-        organizations_url: 'url://'
-    });
 
     this.client.authenticate(code).then(
-        function (user) {
-            assert.equal('foo', user.name);
-            assert.equal('bar@baz.com', user.email);
-            assert.equal('boo', user.username);
-            assert.equal('url://', user._links.organizations);
+        function (accessToken) {
+            assert.equal(accessToken, 'foo');
         },
-        function (error) {
+        function () {
         }
     );
 
-    this.$httpBackend.flush(2);
+    this.$httpBackend.flush();
 });
 
 QUnit.test('Authenticate parses error in response body.', function (assert) {
@@ -84,12 +59,12 @@ QUnit.test('Authenticate parses error in response body.', function (assert) {
     this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(200, 'error=foo&error_description=bar');
 
     this.client.authenticate(code).then(
-        function (user) {
+        function () {
             assert.ok(false, 'Did not expect to successfully return an erroneous response.');
         },
         function (error) {
-            assert.equal('foo', error.error);
-            assert.equal('bar', error.description);
+            assert.equal(error.error, 'foo');
+            assert.equal(error.description, 'bar');
         }
     );
 
@@ -107,59 +82,43 @@ QUnit.test('Authenticate parses error in error response body.', function (assert
     this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(401, 'error=foo&error_description=bar');
 
     this.client.authenticate(code).then(
-        function (user) {
+        function () {
             assert.ok(false, 'Did not expect to successfully return an erroneous response.');
         },
         function (error) {
-            assert.equal('foo', error.error);
-            assert.equal('bar', error.description);
+            assert.equal(error.error, 'foo');
+            assert.equal(error.description, 'bar');
         }
     );
 
     this.$httpBackend.flush();
 });
 
-QUnit.test('Authenticated returns whether user is authenticated', function (assert) {
+QUnit.test('Authenticate rejects promise on error.', function (assert) {
     var code = 'xyzuvw';
     var data = {
         client_id: this.gitHubConfig.clientId,
         client_secret: this.gitHubConfig.secret,
         code: code
     };
-    var accessToken = 'foo';
 
-    assert.notOk(this.client.authenticated());
-
-    this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(200, 'access_token=' + accessToken);
-    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user').respond(200, {
-        name: 'foo',
-        email: 'bar@baz.com',
-        login: 'boo',
-        organizations_url: 'url://'
-    });
+    this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(401);
 
     this.client.authenticate(code).then(
         function () {
+            assert.ok(false, 'Did not expect to successfully return an erroneous response.');
         },
         function () {
+            assert.ok(true);
         }
     );
 
-    this.$httpBackend.flush(2);
-
-    assert.ok(this.client.authenticated());
+    this.$httpBackend.flush();
 });
 
 QUnit.test('GetUser will get user information from github API', function (assert) {
-    var code = 'xyzuvw';
-    var data = {
-        client_id: this.gitHubConfig.clientId,
-        client_secret: this.gitHubConfig.secret,
-        code: code
-    };
     var accessToken = 'foo';
 
-    this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(200, 'access_token=' + accessToken);
     this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user').respond(200, {
         name: 'foo',
         email: 'bar@baz.com',
@@ -167,24 +126,11 @@ QUnit.test('GetUser will get user information from github API', function (assert
         organizations_url: 'url://'
     });
 
-    this.client.authenticate(code).then(
+    this.client.getUser(accessToken).then(
         function (user) {
-            assert.equal('foo', user.name);
-            assert.equal('bar@baz.com', user.email);
-            assert.equal('boo', user.username);
-            assert.equal('url://', user._links.organizations);
-        },
-        function () {
-        }
-    );
-
-    this.$httpBackend.flush(2);
-
-    this.client.getUser().then(
-        function (user) {
-            assert.equal('foo', user.name);
-            assert.equal('bar@baz.com', user.email);
-            assert.equal('boo', user.username);
+            assert.equal(user.name, 'foo');
+            assert.equal(user.email, 'bar@baz.com');
+            assert.equal(user.login, 'boo');
         },
         function () {
         }
@@ -194,39 +140,10 @@ QUnit.test('GetUser will get user information from github API', function (assert
 });
 
 QUnit.test('GetUser will reject promise if not authenticated', function (assert) {
+    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user').respond(401);
     assert.expect(1);
 
-    this.client.getUser().then(
-        function () {
-        },
-        function (error) {
-            assert.ok(true, 'Expected promise to be rejected.');
-        }
-    );
-});
-
-QUnit.test('GetUser will reject promise if response body empty', function (assert) {
-    var code = 'xyzuvw';
-    var data = {
-        client_id: this.gitHubConfig.clientId,
-        client_secret: this.gitHubConfig.secret,
-        code: code
-    };
-    var accessToken = 'foo';
-
-    this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(200, 'access_token=' + accessToken);
-    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user').respond(200, null);
-
-    this.client.authenticate(code).then(
-        function () {
-        },
-        function () {
-        }
-    );
-
-    this.$httpBackend.flush(2);
-
-    this.client.getUser().then(
+    this.client.getUser(null).then(
         function () {
         },
         function (error) {
@@ -237,32 +154,73 @@ QUnit.test('GetUser will reject promise if response body empty', function (asser
     this.$httpBackend.flush();
 });
 
-QUnit.test('GetUser will revoke access token if failed', function (assert) {
-    var code = 'xyzuvw';
-    var data = {
-        client_id: this.gitHubConfig.clientId,
-        client_secret: this.gitHubConfig.secret,
-        code: code
-    };
+QUnit.test('GetUser will reject promise if response body empty', function (assert) {
     var accessToken = 'foo';
 
-    this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(200, 'access_token=' + accessToken);
-    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user').respond(500, null);
+    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user').respond(200, null);
 
-    this.client.authenticate(code).then(
+    this.client.getUser(accessToken).then(
         function () {
+        },
+        function (error) {
+            assert.ok(true, 'Expected promise to be rejected.');
+        }
+    );
+
+    this.$httpBackend.flush();
+});
+
+QUnit.test('GetOrganizations will retrieve user organizations', function (assert) {
+    var accessToken = 'foo';
+
+    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user/orgs').respond(200, [
+        {
+            description: '',
+            login: 'Foo'
+        },
+        {
+            description: '',
+            login: 'Bar'
+        }
+    ]);
+
+    this.client.getOrganizations(accessToken).then(
+        function (organizations) {
+            assert.equal(organizations.length, 2);
+            assert.equal(organizations[0].login, 'Foo');
+            assert.equal(organizations[1].login, 'Bar');
         },
         function () {
         }
     );
 
-    this.$httpBackend.flush(2);
+    this.$httpBackend.flush();
+});
 
-    this.client.getUser().then(
+QUnit.test('GetOrganizations will reject promise if response is empty', function (assert) {
+    var accessToken = 'foo';
+
+    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user/orgs').respond(200, null);
+
+    this.client.getOrganizations().then(
         function () {
         },
         function (error) {
-            assert.equal('revoked', error.error);
+            assert.ok(true, 'Promise was expected to be rejected.');
+        }
+    );
+
+    this.$httpBackend.flush();
+});
+
+QUnit.test('GetOrganizations will reject promise on error', function (assert) {
+    this.$httpBackend.whenGET(this.gitHubConfig.apiUrl + '/user/orgs').respond(401,[]);
+
+    this.client.getOrganizations().then(
+        function () {
+        },
+        function (error) {
+            assert.ok(true, 'Promise was expected to be rejected.');
         }
     );
 

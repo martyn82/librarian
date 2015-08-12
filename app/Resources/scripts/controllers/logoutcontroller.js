@@ -1,9 +1,9 @@
 /**
  * @param $rootScope
- * @param gitHubClient
+ * @param auth
  */
-var LogOutController = function ($rootScope, gitHubClient) {
-    gitHubClient.revoke();
+var LogOutController = function ($rootScope, auth) {
+    auth.revokeAccess();
     delete $rootScope.user;
     $rootScope.$emit('userSignedOut');
 };
