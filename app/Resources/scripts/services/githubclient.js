@@ -23,7 +23,7 @@ var GitHubClient = function ($http, $q, config, queryParser) {
             function (response) {
                 var params = queryParser.parse(response.data);
 
-                if (params.error != undefined) {
+                if (params.error) {
                     return promise.reject({
                         error: params.error,
                         description: params.error_description
@@ -38,7 +38,7 @@ var GitHubClient = function ($http, $q, config, queryParser) {
                     description: null
                 };
 
-                if (response.data != null) {
+                if (response.data !== null) {
                     var params = queryParser.parse(response.data);
                     err.error = params.error;
                     err.description = params.error_description;
@@ -70,7 +70,7 @@ var GitHubClient = function ($http, $q, config, queryParser) {
                     description: null
                 };
 
-                if (response.data == null) {
+                if (response.data === null) {
                     return promise.reject(err);
                 }
 
@@ -100,7 +100,7 @@ var GitHubClient = function ($http, $q, config, queryParser) {
 
         return $http(request).then(
             function (response) {
-                if (response.data == null) {
+                if (response.data === null) {
                     return promise.reject({
                         error: 'nodata',
                         description: null

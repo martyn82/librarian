@@ -5,7 +5,7 @@
  * @constructor
  */
 var Auth = function ($cookies, $q, gitHubClient) {
-    const STORAGE_KEY = 'auth_access_token';
+    var STORAGE_KEY = 'auth_access_token';
 
     var storage = $cookies;
     var promise = $q;
@@ -33,7 +33,7 @@ var Auth = function ($cookies, $q, gitHubClient) {
      * @returns {String}
      */
     var getToken = function() {
-        if (accessToken == null) {
+        if (accessToken === null) {
             accessToken = storage.get(STORAGE_KEY);
         }
 
@@ -74,14 +74,14 @@ var Auth = function ($cookies, $q, gitHubClient) {
      * @returns {Boolean}
      */
     this.authorized = function () {
-        return getToken() != null;
+        return getToken() !== null;
     };
 
     /**
      * @returns {{then: Function}}
      */
     this.getUser = function () {
-        if (user != null) {
+        if (user !== null) {
             return promise.resolve(user);
         }
 
@@ -98,7 +98,7 @@ var Auth = function ($cookies, $q, gitHubClient) {
                     function (error) {
                         return promise.reject(error);
                     }
-                )
+                );
             },
             function (error) {
                 return promise.reject(error);
