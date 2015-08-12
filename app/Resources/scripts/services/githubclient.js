@@ -1,22 +1,47 @@
 /**
  * @param $http
  * @param $cookies
- * @param gitHub
+ * @param $q
+ * @param config
  * @param queryParser
  * @constructor
  */
-var GitHubClient = function ($http, $cookies, gitHub, queryParser) {
-    this.$http = $http;
-    this.storage = $cookies;
-    this.config = gitHub;
-    this.accessToken = null;
-    this.queryParser = queryParser;
+var GitHubClient = function ($http, $cookies, $q, config, queryParser) {
+    var accessToken = null;
+    var storage = $cookies;
+    var storageKey = 'oauth_token';
+    var promise = $q;
+
+    /**
+     * @param {String} token
+     */
+    var setToken = function (token) {
+        accessToken = token;
+        storage.put(storageKey, token);
+    };
+
+    /**
+     * @returns {String}
+     */
+    var getToken = function() {
+        if (accessToken == null) {
+            accessToken = storage.get(storageKey);
+        }
+
+        return accessToken;
+    };
+
+    /**
+     */
+    var revokeToken = function () {
+        storage.remove(storageKey);
+    };
 
     /**
      * @returns {Boolean}
      */
     this.authenticated = function () {
-        return this.getToken() != null;
+        return getToken.call(this) != null;
     };
 
     /**
@@ -25,90 +50,40 @@ var GitHubClient = function ($http, $cookies, gitHub, queryParser) {
      */
     this.authenticate = function (code) {
         var self = this;
-        var promise = {
-            success: function (user) {
-            },
-            failure: function (error) {
-            },
-            execute: function () {
-                this.$http.post(
-                    this.config.authUrl,
-                    {
-                        client_id: this.config.clientId,
-                        client_secret: this.config.secret,
-                        code: code
-                    })
-                    .then(function (response) {
-                        var params = self.queryParser.parse(response.data);
-
-                        if (params.error != undefined) {
-                            promise.failure({
-                                error: params.error,
-                                description: params.error_description
-                            });
-                            return;
-                        }
-
-                        self.setToken(params.access_token);
-                        self.getUser().then(
-                            function (user) {
-                                promise.success(user);
-                            },
-                            function (error) {
-                                promise.failure(error);
-                            }
-                        );
-                    }, function (response) {
-                        if (response.data == null) {
-                            promise.failure({
-                                error: null,
-                                description: null
-                            });
-                            return;
-                        }
-
-                        var params = self.queryParser.parse(response.data);
-                        promise.failure({
-                            error: params.error,
-                            description: params.error_description
-                        });
-                    })
-                ;
+        return $http.post(config.authUrl, {
+                client_id: config.clientId,
+                client_secret: config.secret,
+                code: code
             }
-        };
+        ).then(
+            function (response) {
+                var params = queryParser.parse(response.data);
 
-        return {
-            then: function (success, failure) {
-                promise.success = success;
-                promise.failure = failure;
-                promise.execute.call(self);
+                if (params.error != undefined) {
+                    return promise.reject({
+                        error: params.error,
+                        description: params.error_description
+                    });
+                }
+
+                setToken.call(self, params.access_token);
+                return self.getUser();
+            },
+            function (response) {
+                var err = {
+                    error: null,
+                    description: null
+                };
+
+                if (response.data != null) {
+                    var params = queryParser.parse(response.data);
+                    err.error = params.error;
+                    err.description = params.error_description;
+                }
+
+                return promise.reject(err);
             }
-        };
-    };
-
-    /**
-     * @param {String} token
-     */
-    this.setToken = function (token) {
-        this.accessToken = token;
-        this.storage.put('oauth_token', token);
-    };
-
-    /**
-     * @returns {String}
-     */
-    this.getToken = function() {
-        if (this.accessToken == null) {
-            this.accessToken = this.storage.get('oauth_token');
-        }
-
-        return this.accessToken;
-    };
-
-    /**
-     */
-    this.revokeToken = function () {
-        this.storage.remove('oauth_token');
+        );
     };
 
     /**
@@ -116,67 +91,51 @@ var GitHubClient = function ($http, $cookies, gitHub, queryParser) {
      */
     this.getUser = function () {
         var self = this;
-        var promise = {
-            success: function (user) {
-            },
-            failure: function (error) {
-            },
-            execute: function () {
-                if (self.getToken() == null) {
-                    promise.failure({});
-                    return;
-                }
+        var request = {
+            method: 'GET',
+            url: config.apiUrl + '/user',
+            headers: {
+                'Authorization': 'token ' + accessToken
+            }
+        };
 
-                var request = {
-                    method: 'GET',
-                    url: self.config.apiUrl + '/user',
-                    headers: {
-                        'Authorization': 'token ' + self.accessToken
-                    }
+        if (getToken.call(self) == null) {
+            return promise.reject({});
+        }
+
+        return $http(request).then(
+            function (response) {
+                var err = {
+                    error: null,
+                    description: null
                 };
 
-                this.$http(request).then(
-                    function (response) {
-                        if (response.data == null) {
-                            promise.failure({
-                                error: null,
-                                description: null
-                            });
-                            return;
-                        }
+                if (response.data == null) {
+                    return promise.reject(err);
+                }
 
-                        promise.success({
-                            email: response.data.email,
-                            name: response.data.name,
-                            username: response.data.login,
-                            '_links': {
-                                organizations: response.data.organizations_url
-                            }
-                        });
-                    },
-                    function (response) {
-                        self.revoke();
-                        promise.failure({
-                            error: null,
-                            description: null
-                        });
+                return promise.resolve({
+                    email: response.data.email,
+                    name: response.data.name,
+                    username: response.data.login,
+                    '_links': {
+                        organizations: response.data.organizations_url
                     }
-                );
+                });
+            },
+            function (response) {
+                self.revoke();
+                return promise.reject({
+                    error: 'revoked',
+                    description: null
+                });
             }
-        };
-
-        return {
-            then: function (success, failure) {
-                promise.success = success;
-                promise.failure = failure;
-                promise.execute.call(self);
-            }
-        };
+        );
     };
 
     /**
      */
     this.revoke = function () {
-        this.revokeToken();
+        revokeToken.call(this);
     };
 };

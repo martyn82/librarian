@@ -135,7 +135,7 @@ module.exports = function (grunt) {
                 runnerPort: 9100,
                 colors: true,
                 captureTimeout: 5000,
-                reportSlowerThan: 15,
+                reportSlowerThan: 30,
                 plugins: ['karma-*'],
                 browsers: ['PhantomJS'],
                 files: {

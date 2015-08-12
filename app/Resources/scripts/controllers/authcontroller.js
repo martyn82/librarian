@@ -8,10 +8,12 @@ var AuthController = function ($location, $rootScope, gitHubClient, routes) {
     var authRequestToken = $location.search().code;
     $location.search('code', null);
 
-    gitHubClient.authenticate(authRequestToken)
-        .then(function (user) {
+    gitHubClient.authenticate(authRequestToken).then(
+        function (user) {
             $rootScope.$emit('userAuthenticated', user);
-        }, function (error) {
+        },
+        function (error) {
             $location.path(routes.login);
-        });
+        }
+    );
 };
