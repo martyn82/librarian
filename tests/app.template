@@ -1,0 +1,6 @@
+<div id="html-context">
+</div>
+
+<script type="text/javascript">
+    startCucumberRun();
+</script>

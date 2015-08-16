@@ -179,6 +179,7 @@
     <!-- Test task -->
     <target name="test" description="Run tests" depends="clean:test">
         <phingcall target="test:unit" />
+        <phingcall target="test:features" />
     </target>
 
     <target name="test:unit" description="Run unit tests" depends="clean:test">
@@ -218,6 +219,38 @@
         >
             <arg value="karma:unit" />
         </exec>
+    </target>
+
+    <target name="test:features" description="Run feature tests">
+        <phingcall target="test:features:js" />
+    </target>
+
+    <target name="test:features:js" description="Run JavaScript feature tests">
+        <exec
+            command="DISPLAY=:0 ${project.basedir}/node_modules/.bin/webdriver-manager start"
+            checkreturn="true"
+            spawn="true"
+        />
+        <exec
+            command="sleep 3"
+            passthru="true"
+        />
+        <trycatch>
+            <try>
+                <exec
+                    command="${project.basedir}/node_modules/.bin/grunt protractor:features"
+                    checkreturn="true"
+                    passthru="true"
+                />
+            </try>
+            <finally>
+                <exec
+                    command="wget -O - -q -t 1 http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"
+                    checkreturn="false"
+                    passthru="true"
+                />
+            </finally>
+        </trycatch>
     </target>
 
     <!-- Run task -->

@@ -120,8 +120,17 @@ module.exports = function (grunt) {
         },
 
         karma: {
-            unit: {
+            options: {
                 singleRun: true,
+                port: 9876,
+                runnerPort: 9100,
+                colors: true,
+                captureTimeout: 5000,
+                browsers: ['PhantomJS'],
+                plugins: ['karma-*']
+            },
+            unit: {
+                frameworks: ['qunit'],
                 reporters: ['dots', 'coverage'],
                 coverageReporter: {
                     type: 'lcov',
@@ -131,13 +140,7 @@ module.exports = function (grunt) {
                 preprocessors: {
                     'app/Resources/scripts/**/!(*.test).js': ['coverage']
                 },
-                port: 9876,
-                runnerPort: 9100,
-                colors: true,
-                captureTimeout: 5000,
                 reportSlowerThan: 30,
-                plugins: ['karma-*'],
-                browsers: ['PhantomJS'],
                 files: {
                     src: [
                         "vendor/bower_components/angular/angular.min.js",
@@ -146,8 +149,20 @@ module.exports = function (grunt) {
                         "vendor/bower_components/angular-mocks/angular-mocks.js",
                         "app/Resources/scripts/services/*.js"
                     ]
-                },
-                frameworks: ['qunit']
+                }
+            }
+        },
+
+        protractor: {
+            options: {
+                configFile: 'protractor.conf.js',
+                keepAlive: true,
+                noColor: false,
+                args: {}
+            },
+            features: {
+                configFile: 'protractor.conf.js',
+                args: {}
             }
         }
     });
@@ -159,6 +174,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-protractor-runner');
     grunt.loadNpmTasks('grunt-sass');
 
     grunt.registerTask('default', ['build']);
