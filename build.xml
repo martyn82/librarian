@@ -168,7 +168,7 @@
         </exec>
     </target>
 
-    <target name="metrics" description="Run static code analysis" depends="sonarqube:status, test">
+    <target name="metrics" description="Run static code analysis" depends="sonarqube:status, test:unit">
         <exec
             command="sonar-runner"
             checkreturn="true"
