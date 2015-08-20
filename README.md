@@ -6,7 +6,13 @@ The use of the [librarian-vde](https://github.com/martyn82/librarian-vde) is rec
 ## Using SonarQube for analysis
 There is a Phing task for this in the build file `$ bin/phing analyse`
 
-However, when installing the SonarQube service as a docker container (you can do this by running `$ bin/phing sonarqube:start`) the installation of SonarQube does not yet support PHP.
+However, when installing the SonarQube service as a docker container (you can do this by running `$ bin/phing sonarqube:start`) the installation of SonarQube from the image provided is not fully completed yet.
 
-This means you have to browse to http://localhost:9000 (or replace 'localhost' with the IP of your VDE), and install the plugin manually. Then restart the docker container and it will work.
-To do this automatically is still under development by the maintainer of the SonarQube docker image (https://registry.hub.docker.com/_/sonarqube/).
+Completing the SonarQube installation is done by the following steps:
+0. Run the SonarQube container
+1. Browse to http://localhost:9000 (or replace 'localhost' by the IP of your VDE)
+2. Log in to SonarQube (default credentials), and browse to the Sonar Update Center
+3. Under Available Plugins find and install: PHP, JavaScript
+4. Stop and Start the container to activate the changes
+ 
+As an alternative final step, you can export the container to keep it in case of loss. `$ docker export <CONTAINER ID> > sonarqube.tar`
