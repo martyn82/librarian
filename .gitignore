@@ -37,6 +37,7 @@
 # Build data
 /build/
 /report/
+/containers/
 
 # Composer PHAR
 /composer.phar
