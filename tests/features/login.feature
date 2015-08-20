@@ -1,6 +1,6 @@
 Feature: Log in using GitHub
   As a User
-  In order to check out a Book
+  In order to use the WebSite
   I need to log in using GitHub
 
   Scenario: Log in using GitHub

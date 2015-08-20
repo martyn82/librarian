@@ -227,30 +227,10 @@
 
     <target name="test:features:js" description="Run JavaScript feature tests">
         <exec
-            command="DISPLAY=:0 ${project.basedir}/node_modules/.bin/webdriver-manager start"
+            command="${project.basedir}/node_modules/.bin/grunt protractor:features"
             checkreturn="true"
-            spawn="true"
-        />
-        <exec
-            command="sleep 3"
             passthru="true"
         />
-        <trycatch>
-            <try>
-                <exec
-                    command="${project.basedir}/node_modules/.bin/grunt protractor:features"
-                    checkreturn="true"
-                    passthru="true"
-                />
-            </try>
-            <finally>
-                <exec
-                    command="wget -O - -q -t 1 http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"
-                    checkreturn="false"
-                    passthru="true"
-                />
-            </finally>
-        </trycatch>
     </target>
 
     <!-- Run task -->
@@ -301,6 +281,22 @@
     </target>
 
     <!-- Utilities tasks -->
+    <target name="selenium:start" description="Start Selenium service">
+        <exec
+            command="DISPLAY=:0 ${project.basedir}/node_modules/.bin/webdriver-manager start --standalone"
+            checkreturn="true"
+            passthru="true"
+        />
+    </target>
+
+    <target name="selenium:stop" description="Stop Selenium service">
+        <exec
+            command="wget -O - -q -t 1 http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"
+            checkreturn="false"
+            passthru="true"
+        />
+    </target>
+
     <target name="sonarqube:start" description="Start SonarQube service">
         <exec command="docker ps -aq --filter=&quot;name=${container.sonarqube.name}&quot;" outputProperty="sonarqube.container.id" />
         <if>
