@@ -1,5 +1,6 @@
 angular
     .module('librarian')
+
     .constant('routes', {
         home: '/',
         login: '/login',

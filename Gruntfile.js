@@ -14,8 +14,9 @@ module.exports = function (grunt) {
                 app: {
                     src: [
                         "app/Resources/scripts/services/!(*\.test)*.js",
-                        "app/Resources/scripts/controllers/*.js",
-                        "app/Resources/scripts/librarian.js",
+                        "app/Resources/scripts/controllers/!(*\.test)*.js",
+                        "app/Resources/scripts/providers/!(*\.test)*.js",
+                        "app/Resources/scripts/!(*\.test)*.js",
                         "app/Resources/scripts/config/*.js"
                     ],
                     dest: "web/bundles/app/js/librarian.min.js"
@@ -147,7 +148,11 @@ module.exports = function (grunt) {
                         "vendor/bower_components/angular-cookies/angular-cookies.min.js",
                         "vendor/bower_components/angular-route/angular-route.min.js",
                         "vendor/bower_components/angular-mocks/angular-mocks.js",
-                        "app/Resources/scripts/services/*.js"
+                        "app/Resources/scripts/services/*.js",
+                        "app/Resources/scripts/controllers/*.js",
+                        "app/Resources/scripts/providers/*.js",
+                        "app/Resources/scripts/*.js",
+                        "app/Resources/scripts/config/*.js"
                     ]
                 }
             }

@@ -21,7 +21,7 @@ var LibrarianClient = function ($http, $q, librarian) {
             function (response) {
                 return promise.resolve(response.data);
             },
-            function (response) {
+            function () {
                 return promise.reject();
             }
         );
@@ -49,7 +49,7 @@ var LibrarianClient = function ($http, $q, librarian) {
             function (response) {
                 return promise.resolve(response.data);
             },
-            function (response) {
+            function () {
                 return promise.reject();
             }
         );

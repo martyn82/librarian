@@ -6,7 +6,6 @@
  * @constructor
  */
 var GitHubClient = function ($http, $q, config, queryParser) {
-    var accessToken = null;
     var promise = $q;
 
     /**
@@ -54,7 +53,6 @@ var GitHubClient = function ($http, $q, config, queryParser) {
      * @returns {{then: Function}}
      */
     this.getUser = function (accessToken) {
-        var self = this;
         var request = {
             method: 'GET',
             url: config.apiUrl + '/user',
@@ -76,7 +74,7 @@ var GitHubClient = function ($http, $q, config, queryParser) {
 
                 return promise.resolve(response.data);
             },
-            function (response) {
+            function () {
                 return promise.reject({
                     error: null,
                     description: null
@@ -109,7 +107,7 @@ var GitHubClient = function ($http, $q, config, queryParser) {
 
                 return promise.resolve(response.data);
             },
-            function (response) {
+            function () {
                 return promise.reject({
                     error: null,
                     description: null
