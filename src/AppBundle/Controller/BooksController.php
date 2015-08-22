@@ -20,9 +20,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View;
 use JMS\DiExtraBundle\Annotation as DI;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 
@@ -34,7 +32,7 @@ class BooksController extends FOSRestController
     /**
      * @var string
      */
-    const BASE_ROUTE = "/api/books";
+    const BASE_ROUTE = "/api/books/";
 
     /**
      * @var ViewBuilder
@@ -53,7 +51,7 @@ class BooksController extends FOSRestController
 
     /**
      * @DI\InjectParams({
-     *  "viewBuilder" = @DI\Inject("view_builder"),
+     *  "viewBuilder" = @DI\Inject("view_builder.book"),
      *  "bookService" = @DI\Inject("librarian.service.book"),
      *  "commandBus" = @DI\Inject("librarian.commandbus")
      * })
@@ -165,8 +163,9 @@ class BooksController extends FOSRestController
      *  converter="fos_rest.request_body"
      * )
      * @ParamConverter("version",
+     *  class="AppBundle\Domain\ReadModel\Book",
      *  options={
-     *      "id": "id"
+     *      "id": "id",
      *  },
      *  converter="param_converter"
      * )
@@ -244,6 +243,7 @@ class BooksController extends FOSRestController
      *  converter="param_converter"
      * )
      * @ParamConverter("version",
+     *  class="AppBundle\Domain\ReadModel\Book",
      *  options={
      *      "id": "id"
      *  },
@@ -282,6 +282,7 @@ class BooksController extends FOSRestController
      *  converter="param_converter"
      * )
      * @ParamConverter("version",
+     *  class="AppBundle\Domain\ReadModel\Book",
      *  options={
      *      "id": "id"
      *  },

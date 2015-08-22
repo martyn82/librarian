@@ -1,0 +1,60 @@
+services:
+  # storage
+  librarian.database.events.users:
+    class: Doctrine\MongoDB\Collection
+    factory: ["@librarian.database.events", selectCollection]
+    arguments: [events, users]
+
+  librarian.storage.events.user.mongodb:
+    class: AppBundle\EventSourcing\EventStore\Storage\MongoDbEventStorage
+    arguments:
+      - "@librarian.database.events.users"
+      - identity
+
+  librarian.storage.events.user.memory:
+    class: AppBundle\EventSourcing\EventStore\Storage\MemoryEventStorage
+
+  librarian.storage.documents.user.elasticsearch:
+    class: AppBundle\EventSourcing\ReadStore\ElasticSearchStorage
+    arguments:
+      - "@librarian.client.elasticsearch"
+      - AppBundle\Domain\ReadModel\User
+      - users
+      - user
+
+  librarian.storage.documents.user.memory:
+    class: AppBundle\EventSourcing\ReadStore\MemoryStorage
+
+  librarian.eventstore.user:
+    class: AppBundle\EventSourcing\EventStore\EventStore
+    arguments:
+      - "@librarian.eventbus"
+      - "@librarian.storage.events.user"
+      - "@jms_serializer"
+      - "@librarian.eventstore.classmap"
+
+  # aggregate repositories
+  librarian.repository.users:
+    class: AppBundle\Domain\Repository\Users
+    arguments: ["@librarian.eventstore.user"]
+
+  # command/event handlers
+  librarian.eventhandler.user_created.plain:
+    alias: librarian.service.user
+
+  librarian.eventhandler.user_created.logging:
+    class: AppBundle\Domain\MessageHandler\EventHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.eventhandler.user_created.plain"]
+
+  librarian.commandhandler.create_user.plain:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\CreateUserHandler
+    arguments: ["@librarian.repository.users"]
+
+  librarian.commandhandler.create_user.logging:
+    class: AppBundle\Domain\MessageHandler\CommandHandler\LoggingDecorator
+    arguments: ["@logger", "@librarian.commandhandler.create_user.plain"]
+
+  # aggregate services
+  librarian.service.user:
+    class: AppBundle\Domain\Service\UserService
+    arguments: ["@librarian.storage.documents.user"]

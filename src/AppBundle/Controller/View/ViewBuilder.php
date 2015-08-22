@@ -38,11 +38,17 @@ class ViewBuilder
     }
 
     /**
+     * @param Document $document [optional]
      * @return ViewBuilder
      */
-    public function setVersion()
+    public function setVersion(Document $document = null)
     {
         $this->setVersion = true;
+
+        if ($document != null) {
+            $this->singleDocument = $document;
+        }
+
         return $this;
     }
 
@@ -84,6 +90,16 @@ class ViewBuilder
     public function setLocation($location)
     {
         $this->view->setHeader('Location', $location);
+        return $this;
+    }
+
+    /**
+     * @param integer $statusCode
+     * @return ViewBuilder
+     */
+    public function setStatus($statusCode)
+    {
+        $this->view->setStatusCode($statusCode);
         return $this;
     }
 

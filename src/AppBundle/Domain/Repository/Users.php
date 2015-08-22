@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\Repository;
 
-use AppBundle\Domain\Aggregate\Book;
+use AppBundle\Domain\Aggregate\User;
 use AppBundle\EventSourcing\EventStore\AggregateNotFoundException;
 use AppBundle\EventSourcing\EventStore\AggregateRoot;
 use AppBundle\EventSourcing\EventStore\ConcurrencyException;
@@ -10,7 +10,7 @@ use AppBundle\EventSourcing\EventStore\EventStore;
 use AppBundle\EventSourcing\EventStore\Repository;
 use AppBundle\EventSourcing\EventStore\Uuid;
 
-class Books implements Repository
+class Users implements Repository
 {
     /**
      * @var EventStore
@@ -27,17 +27,17 @@ class Books implements Repository
 
     /**
      * @param Uuid $id
-     * @return AggregateRoot
+     * @return User
      * @throws AggregateNotFoundException
      */
     public function findById(Uuid $id)
     {
         $events = $this->storage->getEventsForAggregate($id);
 
-        $book = new Book($id);
-        $book->loadFromHistory($events);
+        $user = new User($id);
+        $user->loadFromHistory($events);
 
-        return $book;
+        return $user;
     }
 
     /**

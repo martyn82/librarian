@@ -1,13 +1,19 @@
 imports:
+  - { resource: services.book.yml }
+  - { resource: services.user.yml }
   - { resource: services.event_sourcing.yml }
 
 services:
   param_converter:
     class: AppBundle\Controller\Converter\ParamConverter
-    arguments: [ "@librarian.service.book" ]
+    arguments: [ "@librarian.service.book", "@librarian.service.user" ]
     tags:
       - { name: request.param_converter, priority: -2, converter: param_converter }
 
-  view_builder:
+  view_builder.book:
     class: AppBundle\Controller\View\ViewBuilder
     arguments: [ AppBundle\Controller\Resource\Book ]
+
+  view_builder.user:
+    class: AppBundle\Controller\View\ViewBuilder
+    arguments: [ AppBundle\Controller\Resource\User ]

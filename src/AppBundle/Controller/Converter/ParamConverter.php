@@ -3,10 +3,14 @@
 namespace AppBundle\Controller\Converter;
 
 use AppBundle\Controller\Resource\Book as BookResource;
+use AppBundle\Controller\Resource\User as UserResource;
 use AppBundle\Domain\ReadModel\Book as BookReadModel;
+use AppBundle\Domain\ReadModel\User as UserReadModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\Domain\Service\ObjectNotFoundException;
+use AppBundle\Domain\Service\UserService;
 use AppBundle\EventSourcing\EventStore\Uuid;
+use AppBundle\EventSourcing\ReadStore\ReadModel;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConfiguration;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,10 +31,17 @@ class ParamConverter implements ParamConverterInterface
      * @var string[]
      */
     private static $supportedClasses = [
+        Uuid::class,
         BookReadModel::class,
+        UserReadModel::class,
         BookResource::class,
-        Uuid::class
+        UserResource::class
     ];
+
+    /**
+     * @var UserService
+     */
+    private $userService;
 
     /**
      * @var BookService
@@ -39,10 +50,12 @@ class ParamConverter implements ParamConverterInterface
 
     /**
      * @param BookService $bookService
+     * @param UserService $userService
      */
-    public function __construct(BookService $bookService)
+    public function __construct(BookService $bookService, UserService $userService)
     {
         $this->bookService = $bookService;
+        $this->userService = $userService;
     }
 
     /**
@@ -73,20 +86,20 @@ class ParamConverter implements ParamConverterInterface
     private function inflectConversionMethod(ParamConfiguration $configuration)
     {
         $conversionMethod = 'convert' . ucfirst($configuration->getName());
-        assert(method_exists($this, $conversionMethod));
+        assert(method_exists($this, $conversionMethod), $conversionMethod);
         return $conversionMethod;
     }
 
     /**
-     * @param Request $request
      * @param ParamConfiguration $configuration
-     * @return Book
-     * @throws NotFoundHttpException
+     * @return string
      */
-    private function convertBook(Request $request, ParamConfiguration $configuration)
+    private function inflectRetrieverMethod(ParamConfiguration $configuration)
     {
-        $uuid = $request->attributes->get($configuration->getOptions()['id']);
-        return $this->getBook($uuid);
+        $parts = explode('\\', $configuration->getClass());
+        $retrieverMethod = 'get' . ucfirst(end($parts));
+        assert(method_exists($this, $retrieverMethod), $retrieverMethod);
+        return $retrieverMethod;
     }
 
     /**
@@ -95,7 +108,7 @@ class ParamConverter implements ParamConverterInterface
      * @return Uuid
      * @throws BadRequestHttpException
      */
-    private function convertId(Request $request, ParamConfiguration $configuration)
+    protected function convertId(Request $request, ParamConfiguration $configuration)
     {
         $id = $request->attributes->get('id');
 
@@ -109,11 +122,23 @@ class ParamConverter implements ParamConverterInterface
     /**
      * @param Request $request
      * @param ParamConfiguration $configuration
+     * @return UserReadModel
+     * @throws NotFoundHttpException
+     */
+    protected function convertUser(Request $request, ParamConfiguration $configuration)
+    {
+        $uuid = $request->attributes->get($configuration->getOptions()['id']);
+        return $this->getUser($uuid);
+    }
+
+    /**
+     * @param Request $request
+     * @param ParamConfiguration $configuration
      * @return integer
      * @throws BadRequestHttpException
      * @throws PreconditionFailedHttpException
      */
-    private function convertVersion(Request $request, ParamConfiguration $configuration)
+    protected function convertVersion(Request $request, ParamConfiguration $configuration)
     {
         $eTags = (array)$request->getETags();
         $eTag = reset($eTags);
@@ -123,15 +148,28 @@ class ParamConverter implements ParamConverterInterface
         }
 
         $id = $request->attributes->get($configuration->getOptions()['id']);
-        $book = $this->getBook($id);
+        $retrieverMethod = $this->inflectRetrieverMethod($configuration);
+        $entity = $this->{$retrieverMethod}($id);
 
-        $bookTag = hash('sha256', $book->getId() . $book->getVersion());
+        $tag = hash('sha256', $entity->getId() . $entity->getVersion());
 
-        if ($eTag !== $bookTag) {
+        if ($eTag !== $tag) {
             throw new PreconditionFailedHttpException("Expected version does not match actual version.");
         }
 
-        return $book->getVersion();
+        return $entity->getVersion();
+    }
+
+    /**
+     * @param Request $request
+     * @param ParamConfiguration $configuration
+     * @return BookReadModel
+     * @throws NotFoundHttpException
+     */
+    protected function convertBook(Request $request, ParamConfiguration $configuration)
+    {
+        $uuid = $request->attributes->get($configuration->getOptions()['id']);
+        return $this->getBook($uuid);
     }
 
     /**
@@ -143,6 +181,20 @@ class ParamConverter implements ParamConverterInterface
     {
         try {
             return $this->bookService->getBook($id);
+        } catch (ObjectNotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage(), $e);
+        }
+    }
+
+    /**
+     * @param Uuid $id
+     * @return UserReadModel
+     * @throws NotFoundHttpException
+     */
+    private function getUser(Uuid $id)
+    {
+        try {
+            return $this->userService->getUser($id);
         } catch (ObjectNotFoundException $e) {
             throw new NotFoundHttpException($e->getMessage(), $e);
         }

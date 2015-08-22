@@ -1,11 +1,11 @@
 home:
   path: /
-  defaults: { _controller: AppBundle:Default:app }
+  defaults: { _controller: AppBundle:App:app }
   methods: [ GET ]
 
 app:
   path: /{page}
-  defaults: { _controller: AppBundle:Default:app }
+  defaults: { _controller: AppBundle:App:app }
   methods: [ GET ]
 
 api_books:

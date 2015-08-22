@@ -111,30 +111,7 @@ class ElasticSearchStorage implements Storage
             'match_all' => []
         ];
 
-        $result = $this->client->search(
-            [
-                'index' => $this->index,
-                'type' => $this->type,
-                'body' => [
-                    'query' => $query
-                ],
-                'from' => $offset,
-                'size' => $limit
-            ]
-        );
-
-        if (!array_key_exists('hits', $result)) {
-            return [];
-        }
-
-        $documentClass = $this->documentClass;
-
-        return array_map(
-            function (array $hit) use ($documentClass) {
-                return $documentClass::deserialize($hit['_source']);
-            },
-            $result['hits']['hits']
-        );
+        return $this->query($query, $offset, $limit);
     }
 
     /**
@@ -154,5 +131,60 @@ class ElasticSearchStorage implements Storage
     private function createIndex()
     {
         $this->client->indices()->create(['index' => $this->index]);
+    }
+
+    /**
+     * @param array $criteria
+     * @param integer $offset
+     * @param integer $limit
+     * @return Document[]
+     */
+    public function findBy(array $criteria, $offset = 0, $limit = 500)
+    {
+        $query = [
+            'filtered' => [
+                'query' => [
+                    'match_all' => []
+                ],
+                'filter' => [
+                    'term' => $criteria
+                ]
+            ]
+        ];
+
+        return $this->query($query, $offset, $limit);
+    }
+
+    /**
+     * @param array $query
+     * @param integer $offset
+     * @param integer $limit
+     * @return Document[]
+     */
+    private function query(array $query, $offset, $limit)
+    {
+        $result = $this->client->search(
+            [
+                'index' => $this->index,
+                'type' => $this->type,
+                'body' => [
+                    'query' => $query
+                ],
+                'from' => $offset,
+                'size' => $limit
+            ]
+        );
+
+        if (!array_key_exists('hits', $result)) {
+            return [];
+        }
+
+        $documentClass = $this->documentClass;
+        return array_map(
+            function (array $hit) use ($documentClass) {
+                return $documentClass::deserialize($hit['_source']);
+            },
+            $result['hits']['hits']
+        );
     }
 }

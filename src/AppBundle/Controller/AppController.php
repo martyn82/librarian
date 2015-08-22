@@ -5,13 +5,12 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
-class DefaultController extends Controller
+class AppController extends Controller
 {
     /**
-     * @param string $page
      * @return Response
      */
-    public function appAction($page = null)
+    public function appAction()
     {
         return new Response(
             $this->renderView(

@@ -76,4 +76,88 @@ class MemoryStorageTest extends \PHPUnit_Framework_TestCase
 
         self::assertEquals([], $storage->findAll());
     }
+
+    public function testFindByCriteriaReturnsOnlyMatchingDocuments()
+    {
+        $record1 = $this->getMockBuilder(MemoryFakeDocument::class)
+            ->getMock();
+
+        $record1->expects(self::any())
+            ->method('getFoo')
+            ->will(self::returnValue('foo'));
+
+        $record1->expects(self::any())
+            ->method('getBar')
+            ->will(self::returnValue('bar'));
+
+        $record2 = $this->getMockBuilder(MemoryFakeDocument::class)
+            ->getMock();
+
+        $record2->expects(self::any())
+            ->method('getFoo')
+            ->will(self::returnValue('foo'));
+
+        $record2->expects(self::any())
+            ->method('getBar')
+            ->will(self::returnValue('baz'));
+
+        $storage = new MemoryStorage();
+        $storage->upsert(1, $record1);
+        $storage->upsert(2, $record2);
+
+        $matches = $storage->findBy(['foo' => 'foo', 'bar' => 'bar']);
+        self::assertCount(1, $matches);
+    }
+}
+
+class MemoryFakeDocument extends Document
+{
+    /**
+     * @return string
+     */
+    final public function getId()
+    {
+        return '1';
+    }
+
+    /**
+     * @return integer
+     */
+    final public function getVersion()
+    {
+        return 0;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFoo()
+    {
+        return 'foo';
+    }
+
+    /**
+     * @return string
+     */
+    public function getBar()
+    {
+        return 'bar';
+    }
+
+    /**
+     * @param array $data
+     * @return FakeDocument
+     */
+    public static function deserialize(array $data)
+    {
+        return new self();
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return [];
+    }
 }

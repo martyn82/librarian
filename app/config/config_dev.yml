@@ -52,6 +52,12 @@ services:
     alias: librarian.storage.events.book.memory
   librarian.storage.documents.book:
     alias: librarian.storage.documents.book.memory
+
+  librarian.storage.events.user:
+    alias: librarian.storage.events.user.mongodb
+  librarian.storage.documents.user:
+    alias: librarian.storage.documents.user.elasticsearch
+
   librarian.commandhandler.add_book:
     alias: librarian.commandhandler.add_book.logging
   librarian.commandhandler.add_author:
@@ -60,6 +66,10 @@ services:
     alias: librarian.commandhandler.checkout_book.logging
   librarian.commandhandler.return_book:
     alias: librarian.commandhandler.return_book.logging
+
+  librarian.commandhandler.create_user:
+    alias: librarian.commandhandler.create_user.logging
+
   librarian.eventhandler.book_added:
     alias: librarian.eventhandler.book_added.logging
   librarian.eventhandler.author_added:
@@ -68,6 +78,9 @@ services:
     alias: librarian.eventhandler.book_checkedout.logging
   librarian.eventhandler.book_returned:
     alias: librarian.eventhandler.book_returned.logging
+
+  librarian.eventhandler.user_created:
+    alias: librarian.eventhandler.user_created.logging
 
 parameters:
   librarian.database.events.host: 172.17.42.1

@@ -31,4 +31,12 @@ interface Storage
     /**
      */
     public function clear();
+
+    /**
+     * @param array $criteria
+     * @param integer $offset
+     * @param integer $limit
+     * @return Document[]
+     */
+    public function findBy(array $criteria, $offset = 0, $limit = 500);
 }
