@@ -74,13 +74,13 @@ class UsersController
      * )
      * @Rest\View()
      *
-     * @param ParamFetcherInterface $paramFetcher
+     * @param ParamFetcherInterface $params
      * @return View
      * @throws HttpException
      */
-    public function getByUserNameAction(ParamFetcherInterface $paramFetcher)
+    public function getByUserNameAction(ParamFetcherInterface $params)
     {
-        $userName = $paramFetcher->get('user_name');
+        $userName = $params->get('user_name');
         $user = $this->userService->getUserByUserName($userName);
 
         if ($user == null) {
