@@ -16,7 +16,8 @@ class UsersTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $userName = 'foo';
         $emailAddress = 'bar';
-        $user = User::create($id, $userName, $emailAddress);
+        $fullName = 'baz boo';
+        $user = User::create($id, $userName, $emailAddress, $fullName);
 
         $storage = $this->getMockBuilder(EventStore::class)
             ->disableOriginalConstructor()
@@ -36,12 +37,13 @@ class UsersTest extends \PHPUnit_Framework_TestCase
 
         $userName = 'foo';
         $emailAddress = 'bar';
+        $fullName = 'baz boo';
 
-        $expectedUser = User::create($userId, $userName, $emailAddress);
+        $expectedUser = User::create($userId, $userName, $emailAddress, $fullName);
 
         $events = new Events(
             [
-                new UserCreated($userId, $userName, $emailAddress),
+                new UserCreated($userId, $userName, $emailAddress, $fullName),
             ]
         );
 

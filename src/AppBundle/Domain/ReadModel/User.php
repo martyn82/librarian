@@ -30,16 +30,23 @@ class User extends Document implements ReadModel, UserDescriptor
     private $emailAddress;
 
     /**
+     * @var string
+     */
+    private $fullName;
+
+    /**
      * @param Uuid $id
      * @param string $userName
      * @param string $emailAddress
+     * @param string $fullName
      * @param integer $version
      */
-    public function __construct(Uuid $id, $userName, $emailAddress, $version)
+    public function __construct(Uuid $id, $userName, $emailAddress, $fullName, $version)
     {
         $this->id = $id;
         $this->userName = (string) $userName;
         $this->emailAddress = (string) $emailAddress;
+        $this->fullName = (string) $fullName;
         $this->version = (int) $version;
     }
 
@@ -76,6 +83,14 @@ class User extends Document implements ReadModel, UserDescriptor
     }
 
     /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->fullName;
+    }
+
+    /**
      * @return array
      */
     public function serialize()
@@ -84,7 +99,8 @@ class User extends Document implements ReadModel, UserDescriptor
             'id' => $this->getId()->serialize(),
             'version' => $this->getVersion(),
             'userName' => $this->getUserName(),
-            'emailAddress' => $this->getEmailAddress()
+            'emailAddress' => $this->getEmailAddress(),
+            'fullName' => $this->getFullName()
         ];
     }
 
@@ -97,12 +113,14 @@ class User extends Document implements ReadModel, UserDescriptor
         assert(array_key_exists('id', $data));
         assert(array_key_exists('userName', $data));
         assert(array_key_exists('emailAddress', $data));
+        assert(array_key_exists('fullName', $data));
         assert(array_key_exists('version', $data));
 
         return new self(
             Uuid::deserialize($data['id']),
             $data['userName'],
             $data['emailAddress'],
+            $data['fullName'],
             $data['version']
         );
     }

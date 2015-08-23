@@ -15,9 +15,15 @@ class CreateUserHandlerTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $userName = 'foo';
         $emailAddress = 'bar';
+        $fullName = 'baz boo';
 
-        $command = new CreateUser($id, $userName, $emailAddress);
-        $user = User::create($command->getId(), $command->getUserName(), $command->getEmailAddress());
+        $command = new CreateUser($id, $userName, $emailAddress, $fullName);
+        $user = User::create(
+            $command->getId(),
+            $command->getUserName(),
+            $command->getEmailAddress(),
+            $command->getFullName()
+        );
 
         $repository = $this->getMockBuilder(Repository::class)
             ->disableOriginalConstructor()

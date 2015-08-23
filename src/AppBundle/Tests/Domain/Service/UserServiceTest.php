@@ -15,8 +15,9 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $userName = 'foo';
         $emailAddress = 'bar';
+        $fullName = 'baz boo';
 
-        $event = new UserCreated($id, $userName, $emailAddress);
+        $event = new UserCreated($id, $userName, $emailAddress, $fullName);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
@@ -35,8 +36,9 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $userName = 'foo';
         $emailAddress = 'bar';
+        $fullName = 'baz boo';
 
-        $event = new UserCreated($id, $userName, $emailAddress);
+        $event = new UserCreated($id, $userName, $emailAddress, $fullName);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
@@ -80,7 +82,7 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetUserWithExistingIdReturnsUser()
     {
         $id = Uuid::createNew();
-        $user = new User($id, 'foo', 'bar', 0);
+        $user = new User($id, 'foo', 'bar', 'name', 0);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()
@@ -102,7 +104,7 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetUserByEmailAddressReturnsFoundUser()
     {
         $id = Uuid::createNew();
-        $user = new User($id, 'user', 'foo', 0);
+        $user = new User($id, 'user', 'foo', 'name', 0);
 
         $storage = $this->getMockBuilder(Storage::class)
             ->disableOriginalConstructor()

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Tests\Command;
 
-use AppBundle\Command\ReloadReadStore;
+use AppBundle\Command\ReloadBookReadStore;
 use AppBundle\Domain\Message\Event\AuthorAdded;
 use AppBundle\Domain\Message\Event\BookAdded;
 use AppBundle\Domain\Message\Event\BookCheckedOut;
@@ -13,7 +13,7 @@ use AppBundle\EventSourcing\ReadStore\Storage;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ReloadReadStoreTest extends \PHPUnit_Framework_TestCase
+class ReloadBookReadStoreTest extends \PHPUnit_Framework_TestCase
 {
     public function testExecuteRetrievesIdentitiesFromEventStoreAndInsertsDocumentsIntoReadStore()
     {
@@ -60,7 +60,7 @@ class ReloadReadStoreTest extends \PHPUnit_Framework_TestCase
         $out = $this->getMockBuilder(OutputInterface::class)
             ->getMockForAbstractClass();
 
-        $reload = new ReloadReadStore($eventStore, $readStore);
+        $reload = new ReloadBookReadStore($eventStore, $readStore);
         $reload->run($in, $out);
     }
 }

@@ -23,15 +23,22 @@ final class CreateUser implements Command
     private $emailAddress;
 
     /**
+     * @var string
+     */
+    private $fullName;
+
+    /**
      * @param Uuid $id
      * @param string $userName
      * @param string $emailAddress
+     * @param string $fullName
      */
-    public function __construct(Uuid $id, $userName, $emailAddress)
+    public function __construct(Uuid $id, $userName, $emailAddress, $fullName)
     {
         $this->id = $id;
         $this->userName = $userName;
         $this->emailAddress = $emailAddress;
+        $this->fullName = $fullName;
     }
 
     /**
@@ -48,6 +55,14 @@ final class CreateUser implements Command
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->fullName;
     }
 
     /**

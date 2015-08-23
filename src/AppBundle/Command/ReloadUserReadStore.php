@@ -2,11 +2,8 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Command\ReloadReadStore\Book as BookReplay;
-use AppBundle\Domain\Message\Event\AuthorAdded;
-use AppBundle\Domain\ReadModel\Author;
-use AppBundle\Domain\ReadModel\Authors;
-use AppBundle\Domain\ReadModel\Book as BookDocument;
+use AppBundle\Command\ReloadReadStore\User as UserReplay;
+use AppBundle\Domain\ReadModel\User as UserDocument;
 use AppBundle\EventSourcing\EventStore\EventStore;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\ReadStore\Storage;
@@ -16,10 +13,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @DI\Service("commands.reload_read_store")
+ * @DI\Service("commands.reload_read_store.user")
  * @DI\Tag("console.command")
  */
-class ReloadReadStore extends Command
+class ReloadUserReadStore extends Command
 {
     /**
      * @var EventStore
@@ -33,8 +30,8 @@ class ReloadReadStore extends Command
 
     /**
      * @DI\InjectParams({
-     *  "events" = @DI\Inject("librarian.eventstore.book"),
-     *  "documents" = @DI\Inject("librarian.storage.documents.book")
+     *  "events" = @DI\Inject("librarian.eventstore.user"),
+     *  "documents" = @DI\Inject("librarian.storage.documents.user")
      * })
      *
      * @param EventStore $events
@@ -52,7 +49,7 @@ class ReloadReadStore extends Command
      */
     protected function configure()
     {
-        $this->setName('readstore:reload')
+        $this->setName('readstore:reload:user')
             ->setDescription('Reload the read store from event store.');
     }
 
@@ -76,7 +73,7 @@ class ReloadReadStore extends Command
             /* @var $id Uuid */
             $eventStream = $this->events->getEventsForAggregate($id);
 
-            $aggregate = new BookReplay($id);
+            $aggregate = new UserReplay($id);
             $aggregate->loadFromHistory($eventStream);
 
             $document = $this->createDocumentFromAggregate($aggregate, $eventStream->size());
@@ -89,25 +86,17 @@ class ReloadReadStore extends Command
     }
 
     /**
-     * @param BookReplay $book
+     * @param UserReplay $user
      * @param integer $version
-     * @return BookDocument
+     * @return UserDocument
      */
-    private function createDocumentFromAggregate(BookReplay $book, $version)
+    private function createDocumentFromAggregate(UserReplay $user, $version)
     {
-        $authors = array_map(
-            function (AuthorAdded $event) {
-                return new Author($event->getFirstName(), $event->getLastName());
-            },
-            $book->getAuthors()
-        );
-
-        return new BookDocument(
-            $book->getId(),
-            new Authors($authors),
-            $book->getTitle(),
-            $book->getISBN(),
-            $book->isAvailable(),
+        return new UserDocument(
+            $user->getId(),
+            $user->getUserName(),
+            $user->getEmailAddress(),
+            $user->getFullName(),
             $version
         );
     }

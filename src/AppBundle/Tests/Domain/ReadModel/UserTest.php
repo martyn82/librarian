@@ -10,7 +10,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     public function testSerialization()
     {
         $id = Uuid::createNew();
-        $user = new User($id, 'foo', 'bar', 1);
+        $user = new User($id, 'foo', 'bar', 'name', 1);
         $serialized = $user->serialize();
         $deserialized = User::deserialize($serialized);
 

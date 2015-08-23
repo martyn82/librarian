@@ -13,4 +13,9 @@ interface UserDescriptor
      * @return string
      */
     public function getEmailAddress();
+
+    /**
+     * @return string
+     */
+    public function getFullName();
 }

@@ -30,7 +30,12 @@ class CreateUserHandler implements CommandHandler
      */
     public function handleCreateUser(CreateUser $command)
     {
-        $user = User::create($command->getId(), $command->getUserName(), $command->getEmailAddress());
+        $user = User::create(
+            $command->getId(),
+            $command->getUserName(),
+            $command->getEmailAddress(),
+            $command->getFullName()
+        );
         $this->repository->store($user);
     }
 }

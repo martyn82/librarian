@@ -30,23 +30,32 @@ class User implements Resource, UserDescriptor
     private $emailAddress;
 
     /**
+     * @Serializer\SerializedName("full_name")
+     * @Serializer\Type("string")
+     * @var string
+     */
+    private $fullName;
+
+    /**
      * @param ReadModel $user
      */
     public static function createFromReadModel(ReadModel $user)
     {
-        return new self($user->getId(), $user->getUserName(), $user->getEmailAddress());
+        return new self($user->getId(), $user->getUserName(), $user->getEmailAddress(), $user->getFullName());
     }
 
     /**
      * @param string $id
      * @param string $userName
      * @param string $emailAddress
+     * @param string $fullName
      */
-    private function __construct($id, $userName, $emailAddress)
+    private function __construct($id, $userName, $emailAddress, $fullName)
     {
         $this->id = $id;
         $this->userName = $userName;
         $this->emailAddress = $emailAddress;
+        $this->fullName = $fullName;
     }
 
     /**
@@ -71,5 +80,13 @@ class User implements Resource, UserDescriptor
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->fullName;
     }
 }

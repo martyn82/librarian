@@ -276,7 +276,7 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
     public function testApplyConverterOnUserCreatesUser()
     {
         $id = Uuid::createNew();
-        $user = new UserReadModel($id, 'user', 'email', 1);
+        $user = new UserReadModel($id, 'user', 'email', 'name', 1);
 
         $request = Request::createFromGlobals();
         $request->attributes->set('id', $id);

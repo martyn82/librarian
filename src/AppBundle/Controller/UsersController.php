@@ -9,11 +9,13 @@ use AppBundle\Domain\ReadModel\User as UserReadModel;
 use AppBundle\Domain\Service\UserService;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\MessageBus\CommandBus;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use JMS\DiExtraBundle\Annotation as DI;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @Rest\Route("users")
@@ -56,6 +58,40 @@ class UsersController
         $this->viewBuilder = $viewBuilder;
         $this->userService = $userService;
         $this->commandBus = $commandBus;
+    }
+
+    /**
+     * @Rest\Get("/")
+     * @Rest\QueryParam(
+     *  name="user_name",
+     *  key=null,
+     *  requirements=".+",
+     *  default=null,
+     *  description="The user name of the user to get.",
+     *  strict=true,
+     *  array=false,
+     *  nullable=false
+     * )
+     * @Rest\View()
+     *
+     * @param ParamFetcherInterface $paramFetcher
+     * @return View
+     * @throws HttpException
+     */
+    public function getByUserNameAction(ParamFetcherInterface $paramFetcher)
+    {
+        $userName = $paramFetcher->get('user_name');
+        $user = $this->userService->getUserByUserName($userName);
+
+        if ($user == null) {
+            throw new NotFoundHttpException("User with user name '{$userName}' not found.");
+        }
+
+        return $this->viewBuilder
+            ->setDocument($user)
+            ->setVersion()
+            ->setLocation(static::BASE_ROUTE . $user->getId())
+            ->build();
     }
 
     /**
@@ -121,7 +157,12 @@ class UsersController
         }
 
         $id = Uuid::createNew();
-        $command = new CreateUser($id, $userResource->getUserName(), $userResource->getEmailAddress());
+        $command = new CreateUser(
+            $id,
+            $userResource->getUserName(),
+            $userResource->getEmailAddress(),
+            $userResource->getFullName()
+        );
         $this->commandBus->send($command);
 
         $user = $this->userService->getUser($id);

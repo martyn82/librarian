@@ -117,7 +117,7 @@ var Auth = function ($cookies, $q, gitHubClient, users, config) {
                             });
                         }
 
-                        return users.create(githubUser.login, githubUser.email).then(
+                        return users.create(githubUser.login, githubUser.email, githubUser.name).then(
                             function (user) {
                                 setUser(user);
                                 return promise.resolve(user);

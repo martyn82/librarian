@@ -37,6 +37,7 @@ class UserService implements UserCreatedHandler
                 $event->getId(),
                 $event->getUserName(),
                 $event->getEmailAddress(),
+                $event->getFullName(),
                 $event->getVersion()
             )
         );

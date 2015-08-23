@@ -11,6 +11,8 @@ use AppBundle\Domain\Service\UserService;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\Message\Command;
 use AppBundle\EventSourcing\MessageBus\CommandBus;
+use FOS\RestBundle\Request\ParamFetcherInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,7 +47,7 @@ class UsersControllerTest extends \PHPUnit_Framework_TestCase
     public function testReadActionReturnsViewWithResource()
     {
         $id = Uuid::createNew();
-        $user = new User($id, 'user', 'email', 0);
+        $user = new User($id, 'user', 'email', 'name', 0);
 
         $controller = new UsersController($this->viewBuilder, $this->service, $this->commandBus);
         $view = $controller->readAction($user);
@@ -57,7 +59,7 @@ class UsersControllerTest extends \PHPUnit_Framework_TestCase
     public function testCreateActionReturnsNoContentIfUserAlreadyExists()
     {
         $id = Uuid::createNew();
-        $user = new User($id, 'user', 'email', 0);
+        $user = new User($id, 'user', 'email', 'name', 0);
 
         $resource = $this->getMockBuilder(UserResource::class)
             ->disableOriginalConstructor()
@@ -81,7 +83,7 @@ class UsersControllerTest extends \PHPUnit_Framework_TestCase
     public function testCreateActionCreatesUserIfNotExists()
     {
         $id = Uuid::createNew();
-        $user = new User($id, 'user', 'email', 0);
+        $user = new User($id, 'user', 'email', 'name', 0);
         $resource = UserResource::createFromReadModel($user);
 
         $this->commandBus->expects(self::once())
@@ -98,5 +100,53 @@ class UsersControllerTest extends \PHPUnit_Framework_TestCase
         $view = $controller->createAction($resource);
 
         self::assertEquals(201, $view->getStatusCode());
+    }
+
+    public function testGetByUserNameActionRetrievesUserByUserName()
+    {
+        $id = Uuid::createNew();
+        $user = new User($id, 'user', 'email', 'name', 0);
+
+        $this->service->expects(self::once())
+            ->method('getUserByUserName')
+            ->with('user')
+            ->will(self::returnValue($user));
+
+        $fetcher = $this->getMockBuilder(ParamFetcherInterface::class)
+            ->getMockForAbstractClass();
+
+        $fetcher->expects(self::once())
+            ->method('get')
+            ->with('user_name')
+            ->will(self::returnValue('user'));
+
+        $controller = new UsersController($this->viewBuilder, $this->service, $this->commandBus);
+        $view = $controller->getByUserNameAction($fetcher);
+
+        self::assertEquals(200, $view->getStatusCode());
+    }
+
+    public function testGetByUserNameActionThrowsNotFoundExceptionIfNotFound()
+    {
+        self::setExpectedException(NotFoundHttpException::class);
+
+        $id = Uuid::createNew();
+        $user = new User($id, 'user', 'email', 'name', 0);
+
+        $this->service->expects(self::once())
+            ->method('getUserByUserName')
+            ->with('user')
+            ->will(self::returnValue(null));
+
+        $fetcher = $this->getMockBuilder(ParamFetcherInterface::class)
+            ->getMockForAbstractClass();
+
+        $fetcher->expects(self::once())
+            ->method('get')
+            ->with('user_name')
+            ->will(self::returnValue('user'));
+
+        $controller = new UsersController($this->viewBuilder, $this->service, $this->commandBus);
+        $view = $controller->getByUserNameAction($fetcher);
     }
 }

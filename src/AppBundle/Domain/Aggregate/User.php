@@ -17,12 +17,13 @@ class User extends AggregateRoot
      * @param Uuid $id
      * @param string $userName
      * @param string $emailAddress
+     * @param string $fullName
      * @return User
      */
-    public static function create(Uuid $id, $userName, $emailAddress)
+    public static function create(Uuid $id, $userName, $emailAddress, $fullName)
     {
         $instance = new self($id);
-        $instance->applyChange(new UserCreated($id, $userName, $emailAddress));
+        $instance->applyChange(new UserCreated($id, $userName, $emailAddress, $fullName));
         return $instance;
     }
 
