@@ -72,10 +72,8 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['version'],
-            [BookReadModel::class],
             [Uuid::class],
             [BookResource::class],
-            [UserReadModel::class],
             [UserResource::class]
         ];
     }
@@ -90,6 +88,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')
             ->will(self::returnValue('id'));
+
+        $this->configuration->expects(self::atLeastOnce())
+            ->method('getClass')
+            ->will(self::returnValue(Uuid::class));
 
         $converter = new ParamConverter($this->bookService, $this->userService);
         $converter->apply($request, $this->configuration);
@@ -107,6 +109,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')
             ->will(self::returnValue('id'));
+
+        $this->configuration->expects(self::atLeastOnce())
+            ->method('getClass')
+            ->will(self::returnValue(Uuid::class));
 
         $converter = new ParamConverter($this->bookService, $this->userService);
         $converter->apply($request, $this->configuration);
@@ -133,6 +139,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
             ->method('getName')
             ->will(self::returnValue('book'));
 
+        $this->configuration->expects(self::atLeastOnce())
+            ->method('getClass')
+            ->will(self::returnValue(BookResource::class));
+
         $converter = new ParamConverter($this->bookService, $this->userService);
         $converter->apply($request, $this->configuration);
 
@@ -156,6 +166,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
             ->method('getOptions')
             ->will(self::returnValue(['id' => 'id']));
 
+        $this->configuration->expects(self::atLeastOnce())
+            ->method('getClass')
+            ->will(self::returnValue(BookResource::class));
+
         $this->bookService->expects(self::once())
             ->method('getBook')
             ->will(self::throwException(new ObjectNotFoundException('Book', $id)));
@@ -176,6 +190,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')
             ->will(self::returnValue('user'));
+
+        $this->configuration->expects(self::atLeastOnce())
+            ->method('getClass')
+            ->will(self::returnValue(UserResource::class));
 
         $this->configuration->expects(self::once())
             ->method('getOptions')
@@ -289,6 +307,10 @@ class ParamConverterTest extends \PHPUnit_Framework_TestCase
         $this->configuration->expects(self::once())
             ->method('getOptions')
             ->will(self::returnValue(['id' => 'id']));
+
+        $this->configuration->expects(self::atLeastOnce())
+            ->method('getClass')
+            ->will(self::returnValue(UserResource::class));
 
         $this->configuration->expects(self::atLeastOnce())
             ->method('getName')

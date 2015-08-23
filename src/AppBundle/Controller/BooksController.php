@@ -11,6 +11,7 @@ use AppBundle\Domain\Message\Command\AddBook;
 use AppBundle\Domain\Message\Command\CheckOutBook;
 use AppBundle\Domain\Message\Command\ReturnBook;
 use AppBundle\Domain\ReadModel\Book as BookReadModel;
+use AppBundle\Domain\ReadModel\User as UserReadModel;
 use AppBundle\Domain\Service\BookService;
 use AppBundle\EventSourcing\EventStore\Uuid;
 use AppBundle\EventSourcing\MessageBus\CommandBus;
@@ -248,14 +249,26 @@ class BooksController extends FOSRestController
      *  },
      *  converter="param_converter"
      * )
+     * @Rest\QueryParam(
+     *  name="user_id",
+     *  key=null,
+     *  requirements="[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}",
+     *  default=null,
+     *  description="The user ID of the user that checks out the book.",
+     *  strict=true,
+     *  array=false,
+     *  nullable=false
+     * )
      *
      * @param Uuid $id
      * @param integer $version
+     * @param ParamFetcherInterface $params
      * @throws HttpException
      */
-    public function checkOutBookAction(Uuid $id, $version)
+    public function checkOutBookAction(Uuid $id, $version, ParamFetcherInterface $params)
     {
-        $command = new CheckOutBook($id, $version);
+        $userId = Uuid::createFromValue($params->get('user_id'));
+        $command = new CheckOutBook($id, $userId, $version);
 
         try {
             $this->commandBus->send($command);

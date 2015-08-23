@@ -32,8 +32,6 @@ class ParamConverter implements ParamConverterInterface
      */
     private static $supportedClasses = [
         Uuid::class,
-        BookReadModel::class,
-        UserReadModel::class,
         BookResource::class,
         UserResource::class
     ];
@@ -85,7 +83,14 @@ class ParamConverter implements ParamConverterInterface
      */
     private function inflectConversionMethod(ParamConfiguration $configuration)
     {
-        $conversionMethod = 'convert' . ucfirst($configuration->getName());
+        if ($configuration->getName() == 'version') {
+            $name = 'version';
+        } else {
+            $parts = explode('\\', $configuration->getClass());
+            $name = end($parts);
+        }
+
+        $conversionMethod = 'convert' . ucfirst($name);
         assert(method_exists($this, $conversionMethod), $conversionMethod);
         return $conversionMethod;
     }
@@ -108,15 +113,15 @@ class ParamConverter implements ParamConverterInterface
      * @return Uuid
      * @throws BadRequestHttpException
      */
-    protected function convertId(Request $request, ParamConfiguration $configuration)
+    protected function convertUuid(Request $request, ParamConfiguration $configuration)
     {
-        $id = $request->attributes->get('id');
+        $uuid = $request->attributes->get($configuration->getName());
 
-        if (empty($id)) {
-            throw new BadRequestHttpException("ID must not be empty.");
+        if (empty($uuid)) {
+            throw new BadRequestHttpException("Uuid value of '{$configuration->getName()}' must not be empty.");
         }
 
-        return Uuid::createFromValue($id);
+        return Uuid::createFromValue($uuid);
     }
 
     /**

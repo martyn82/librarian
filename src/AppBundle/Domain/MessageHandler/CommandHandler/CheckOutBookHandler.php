@@ -32,7 +32,7 @@ class CheckOutBookHandler implements CommandHandler
     {
         /* @var $book \AppBundle\Domain\Aggregate\Book */
         $book = $this->repository->findById($command->getId());
-        $book->checkOut();
+        $book->checkOut($command->getUserId());
         $this->repository->store($book, $command->getVersion());
     }
 }

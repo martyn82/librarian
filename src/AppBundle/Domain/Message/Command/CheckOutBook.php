@@ -13,17 +13,24 @@ final class CheckOutBook implements Command
     private $id;
 
     /**
+     * @var Uuid
+     */
+    private $userId;
+
+    /**
      * @var integer
      */
     private $version;
 
     /**
      * @param Uuid $id
+     * @param Uuid $userId
      * @param integer $version
      */
-    public function __construct(Uuid $id, $version)
+    public function __construct(Uuid $id, Uuid $userId, $version)
     {
         $this->id = $id;
+        $this->userId = $userId;
         $this->version = (int) $version;
     }
 
@@ -33,6 +40,14 @@ final class CheckOutBook implements Command
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return Uuid
+     */
+    public function getUserId()
+    {
+        return $this->userId;
     }
 
     /**

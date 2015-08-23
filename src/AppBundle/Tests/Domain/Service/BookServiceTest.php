@@ -120,7 +120,7 @@ class BookServiceTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue(new Book($bookId, new Authors(), 'foo', 'bar', true, -1)));
 
         $service = new BookService($storage);
-        $service->onBookCheckedOut(new BookCheckedOut($bookId));
+        $service->onBookCheckedOut(new BookCheckedOut($bookId, Uuid::createNew()));
     }
 
     public function testHandlerForBookReturned()

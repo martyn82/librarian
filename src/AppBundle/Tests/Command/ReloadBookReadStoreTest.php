@@ -45,7 +45,7 @@ class ReloadBookReadStoreTest extends \PHPUnit_Framework_TestCase
                         [
                             new BookAdded($id, [new AuthorAdded($id, 'first', 'last')], 'title', 'isbn'),
                             new AuthorAdded($id, 'first', 'last'),
-                            new BookCheckedOut($id)
+                            new BookCheckedOut($id, Uuid::createNew())
                         ]
                     );
                 }

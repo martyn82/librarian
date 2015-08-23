@@ -16,10 +16,10 @@ class BookTest extends \PHPUnit_Framework_TestCase
         $id = Uuid::createNew();
         $book = new Book($id);
 
-        $book->checkOut();
+        $book->checkOut(Uuid::createNew());
 
         self::setExpectedException(BookUnavailableException::class);
-        $book->checkOut();
+        $book->checkOut(Uuid::createNew());
     }
 
     public function testCheckInMakesBookAvailable()
@@ -27,7 +27,7 @@ class BookTest extends \PHPUnit_Framework_TestCase
         $id = UUid::createNew();
         $book = new Book($id);
 
-        $book->checkOut();
+        $book->checkOut(Uuid::createNew());
         $book->checkIn();
 
         $events = $book->getUncommittedChanges()

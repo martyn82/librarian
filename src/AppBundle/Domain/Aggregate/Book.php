@@ -56,15 +56,16 @@ class Book extends AggregateRoot
     }
 
     /**
+     * @param Uuid $userId
      * @throws BookUnavailableException
      */
-    public function checkOut()
+    public function checkOut(Uuid $userId)
     {
         if (!$this->available) {
             throw new BookUnavailableException($this->id);
         }
 
-        $this->applyChange(new BookCheckedOut($this->id));
+        $this->applyChange(new BookCheckedOut($this->id, $userId));
     }
 
     /**

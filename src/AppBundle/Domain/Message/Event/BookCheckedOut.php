@@ -15,11 +15,19 @@ final class BookCheckedOut extends Event
     private $id;
 
     /**
-     * @param Uuid $id
+     * @Serializer\Type("AppBundle\EventSourcing\EventStore\Uuid")
+     * @var Uuid
      */
-    public function __construct(Uuid $id)
+    private $userId;
+
+    /**
+     * @param Uuid $id
+     * @param Uuid $userId
+     */
+    public function __construct(Uuid $id, Uuid $userId)
     {
         $this->id = $id;
+        $this->userId = $userId;
     }
 
     /**
@@ -28,5 +36,13 @@ final class BookCheckedOut extends Event
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return Uuid
+     */
+    public function getUserId()
+    {
+        return $this->userId;
     }
 }

@@ -146,8 +146,16 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
 
         $id = Uuid::createNew();
 
+        $paramFetcher = $this->getMockBuilder(ParamFetcherInterface::class)
+            ->getMockForAbstractClass();
+
+        $paramFetcher->expects(self::once())
+            ->method('get')
+            ->with('user_id')
+            ->will(self::returnValue(Uuid::createNew()));
+
         $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
-        $controller->checkOutBookAction($id, 0);
+        $controller->checkOutBookAction($id, 0, $paramFetcher);
     }
 
     public function testCheckOutBookThrowsExceptionWhenBookUnavailable()
@@ -159,8 +167,16 @@ class BooksControllerTest extends \PHPUnit_Framework_TestCase
             ->method('send')
             ->will(self::throwException(new BookUnavailableException($id)));
 
+        $paramFetcher = $this->getMockBuilder(ParamFetcherInterface::class)
+            ->getMockForAbstractClass();
+
+        $paramFetcher->expects(self::once())
+            ->method('get')
+            ->with('user_id')
+            ->will(self::returnValue(Uuid::createNew()));
+
         $controller = new BooksController($this->viewBuilder, $this->service, $this->commandBus);
-        $controller->checkOutBookAction($id, 0);
+        $controller->checkOutBookAction($id, 0, $paramFetcher);
     }
 
     public function testReturnBookSendsReturnBookCommand()

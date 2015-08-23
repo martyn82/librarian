@@ -13,8 +13,9 @@ class CheckOutBookHandlerTest extends \PHPUnit_Framework_TestCase
     public function testCheckOutBookHandlerWillCallStoreOnRepository()
     {
         $bookId = Uuid::createNew();
+        $userId = Uuid::createNew();
 
-        $command = new CheckOutBook($bookId, -1);
+        $command = new CheckOutBook($bookId, $userId, -1);
         $book = Book::add($bookId, [], 'title', 'isbn');
 
         $repository = $this->getMockBuilder(Repository::class)
