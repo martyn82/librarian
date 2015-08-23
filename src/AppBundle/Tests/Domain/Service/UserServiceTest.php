@@ -110,11 +110,11 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
 
         $storage->expects(self::once())
             ->method('findBy')
-            ->with(['emailAddress' => 'foo'], 0, 1)
+            ->with(['userName' => 'user'], 0, 1)
             ->will(self::returnValue([$user]));
 
         $service = new UserService($storage);
-        $actualUser = $service->getUserByEmailAddress('foo');
+        $actualUser = $service->getUserByUserName('user');
 
         self::assertInstanceOf(User::class, $actualUser);
         self::assertEquals($user->getId(), $actualUser->getId());
@@ -126,7 +126,7 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass();
 
         $service = new UserService($storage);
-        $actual = $service->getUserByEmailAddress('foo');
+        $actual = $service->getUserByUserName('foo');
 
         self::assertNull($actual);
     }

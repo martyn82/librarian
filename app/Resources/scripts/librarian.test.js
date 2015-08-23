@@ -16,6 +16,13 @@ QUnit.module('Librarian', {
             }
         };
 
+        var $q = this.$q;
+        this.users = {
+            getByUserName: function () {
+                return $q.resolve({});
+            }
+        };
+
         this.routes = {
             home: 'home',
             login: 'login',
@@ -24,10 +31,10 @@ QUnit.module('Librarian', {
         };
 
         this.user = {
-            login: 'foo'
+            userName: 'foo'
         };
 
-        Librarian(this.$rootScope, this.$location, this.auth, this.routes);
+        Librarian(this.$rootScope, this.$location, this.auth, this.users, this.routes);
     }
 });
 
@@ -97,6 +104,10 @@ QUnit.test('Authorized access will set user to scope if not already present', fu
         return $q.resolve(user);
     };
 
+    this.users.getByUserName = function () {
+        return $q.resolve(user);
+    };
+
     this.$rootScope.$emit('$routeChangeStart', null);
 
     var $rootScope = this.$rootScope;
@@ -106,6 +117,34 @@ QUnit.test('Authorized access will set user to scope if not already present', fu
         assert.equal($rootScope.user, user);
         done();
     }, 100);
+});
+
+QUnit.test('Authorized access but unable to retrieve user will redirect to login page', function (assert) {
+    assert.expect(1);
+
+    this.auth.authorized = function () {
+        return true;
+    };
+
+    var $q = this.$q;
+    var user = this.user;
+    this.auth.getUser = function () {
+        return $q.resolve(user);
+    };
+
+    this.users.getByUserName = function () {
+        return $q.reject();
+    };
+
+    var done = assert.async();
+    var routes = this.routes;
+
+    this.$location.path = function (route) {
+        assert.equal(route, routes.login);
+        done();
+    };
+
+    this.$rootScope.$emit('$routeChangeStart', null);
 });
 
 QUnit.test('Unauthorized access to login page just goes to login page.', function (assert) {

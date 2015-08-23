@@ -2,9 +2,11 @@
  * @param $cookies
  * @param $q
  * @param gitHubClient
+ * @param users
+ * @param config
  * @constructor
  */
-var Auth = function ($cookies, $q, gitHubClient) {
+var Auth = function ($cookies, $q, gitHubClient, users, config) {
     var STORAGE_KEY = 'auth_access_token';
 
     var storage = $cookies;
@@ -12,7 +14,22 @@ var Auth = function ($cookies, $q, gitHubClient) {
     var client = gitHubClient;
 
     var accessToken = null;
-    var user = null;
+    var currentUser = null;
+    var allowedCompanies = config.allowedUserCompanies;
+
+    /**
+     * @param githubUser
+     * @returns {boolean}
+     */
+    var isAllowed = function (githubUser) {
+        for (var i in githubUser.organizations) {
+            if (allowedCompanies.indexOf(githubUser.organizations[i].login) > -1) {
+                return true;
+            }
+        }
+
+        return false;
+    };
 
     /**
      * @param {String} token
@@ -26,7 +43,7 @@ var Auth = function ($cookies, $q, gitHubClient) {
      * @param userValue
      */
     var setUser = function (userValue) {
-        user = userValue;
+        currentUser = userValue;
     };
 
     /**
@@ -81,19 +98,36 @@ var Auth = function ($cookies, $q, gitHubClient) {
      * @returns {{then: Function}}
      */
     this.getUser = function () {
-        if (user !== null) {
-            return promise.resolve(user);
+        if (currentUser !== null) {
+            return promise.resolve(currentUser);
         }
 
         var accessToken = getToken();
 
         return client.getUser(accessToken).then(
-            function (user) {
+            function (githubUser) {
                 return client.getOrganizations(accessToken).then(
                     function (organizations) {
-                        user.organizations = organizations;
-                        setUser(user);
-                        return promise.resolve(user);
+                        githubUser.organizations = organizations;
+
+                        if (!isAllowed(githubUser)) {
+                            return promise.reject({
+                                error: 'unauthorized',
+                                description: 'User is not allowed.'
+                            });
+                        }
+
+                        return users.create(githubUser.login, githubUser.email).then(
+                            function (user) {
+                                setUser(user);
+                                return promise.resolve(user);
+                            },
+                            function () {
+                                return promise.reject({
+                                    error: 'create_failed'
+                                });
+                            }
+                        );
                     },
                     function (error) {
                         return promise.reject(error);

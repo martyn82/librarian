@@ -59,12 +59,12 @@ class UserService implements UserCreatedHandler
     }
 
     /**
-     * @param string $emailAddress
+     * @param string $userName
      * @return User
      */
-    public function getUserByEmailAddress($emailAddress)
+    public function getUserByUserName($userName)
     {
-        $users = $this->storage->findBy(['emailAddress' => $emailAddress], 0, 1);
+        $users = $this->storage->findBy(['userName' => $userName], 0, 1);
 
         if (count($users) == 0) {
             return null;

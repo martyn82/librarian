@@ -2,9 +2,10 @@
  * @param $rootScope
  * @param $location
  * @param auth
+ * @param users
  * @param routes
  */
-var Librarian = function ($rootScope, $location, auth, routes) {
+var Librarian = function ($rootScope, $location, auth, users, routes) {
     $rootScope.$on('$routeChangeStart', function (_, next) {
         if (
             !auth.authorized()
@@ -19,7 +20,14 @@ var Librarian = function ($rootScope, $location, auth, routes) {
         if (auth.authorized() && !$rootScope.user) {
             auth.getUser().then(
                 function (user) {
-                    $rootScope.user = user;
+                    users.getByUserName(user.login).then(
+                        function (user) {
+                            $rootScope.user = user;
+                        },
+                        function () {
+                            $location.path(routes.login);
+                        }
+                    );
                 }
             );
         }

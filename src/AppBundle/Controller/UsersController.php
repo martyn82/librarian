@@ -110,7 +110,7 @@ class UsersController
      */
     public function createAction(UserResource $userResource)
     {
-        $user = $this->userService->getUserByEmailAddress($userResource->getEmailAddress());
+        $user = $this->userService->getUserByUserName($userResource->getUserName());
 
         if ($user != null) {
             return $this->viewBuilder

@@ -102,7 +102,7 @@ QUnit.test('Authenticate rejects promise on error.', function (assert) {
         code: code
     };
 
-    this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(401);
+    this.$httpBackend.whenPOST(this.gitHubConfig.authUrl, data).respond(401, null);
 
     this.client.authenticate(code).then(
         function () {
@@ -125,6 +125,8 @@ QUnit.test('GetUser will get user information from github API', function (assert
         login: 'boo',
         organizations_url: 'url://'
     });
+
+    assert.expect(3);
 
     this.client.getUser(accessToken).then(
         function (user) {

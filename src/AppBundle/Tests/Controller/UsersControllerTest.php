@@ -64,12 +64,12 @@ class UsersControllerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $resource->expects(self::atLeastOnce())
-            ->method('getEmailAddress')
-            ->will(self::returnValue('email'));
+            ->method('getUserName')
+            ->will(self::returnValue('user'));
 
         $this->service->expects(self::once())
-            ->method('getUserByEmailAddress')
-            ->with('email')
+            ->method('getUserByUserName')
+            ->with('user')
             ->will(self::returnValue($user));
 
         $controller = new UsersController($this->viewBuilder, $this->service, $this->commandBus);

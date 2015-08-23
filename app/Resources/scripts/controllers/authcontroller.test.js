@@ -23,74 +23,51 @@ QUnit.module('AuthController', {
             }
         };
 
-        this.routes = {};
-        this.config = {
-            allowedUserCompanies: [
-                'FooInc'
-            ]
+        this.users = {
+            create: function () {
+                return $q.resolve({});
+            }
         };
+
+        this.routes = {};
     }
 });
 
-QUnit.test('Authentication is done for users in allowed companies list.', function (assert) {
+QUnit.test('Authentication authorizes user.', function (assert) {
+    var expectedAuthToken = '1234';
+    var expectedUser = {
+        userName: 'foo',
+        emailAddress: 'bar'
+    };
     var $q = this.$q;
-    this.auth.authorize = function () {
-        return $q.resolve({
-            organizations: [
-                {
-                    login: 'FooInc'
-                }
-            ]
-        });
+
+    this.auth.authorize = function (code) {
+        assert.equal(code, expectedAuthToken);
+        return $q.resolve(expectedUser);
+    };
+
+    this.$location.search = function () {
+        return {
+            code: expectedAuthToken
+        };
     };
 
     var done = assert.async();
 
-    this.$rootScope.$on('userSignedIn', function () {
-        assert.ok(true, 'Expected userSignedIn event to be fired.');
+    this.$rootScope.$on('userSignedIn', function (_, user) {
+        assert.equal(user.userName, expectedUser.userName);
+        assert.equal(user.emailAddress, expectedUser.emailAddress);
         done();
     });
+
+    assert.expect(3);
 
     AuthController(
         this.$location,
         this.$rootScope,
         this.auth,
-        this.routes,
-        this.config
+        this.routes
     );
-});
-
-QUnit.test('Authentication is not done for users outside allowed companies list.', function (assert) {
-    var $q = this.$q;
-    this.auth.authorize = function () {
-        return $q.resolve({
-            organizations: [
-                {
-                    login: 'BarInc'
-                }
-            ]
-        });
-    };
-
-    var done = assert.async();
-
-    this.$rootScope.$on('userSignedIn', function () {
-        assert.ok(false, 'Expected userSignedIn event NOT to be fired.');
-        done();
-    });
-
-    AuthController(
-        this.$location,
-        this.$rootScope,
-        this.auth,
-        this.routes,
-        this.config
-    );
-
-    setTimeout(function () {
-        assert.ok(true, 'Expected authentication to fail.');
-        done();
-    });
 });
 
 QUnit.test('Redirect to login page if authentication fails.', function (assert) {
@@ -101,6 +78,8 @@ QUnit.test('Redirect to login page if authentication fails.', function (assert) 
     var done = assert.async();
     var routes = this.routes;
 
+    assert.expect(1);
+
     this.$location.path = function (route) {
         assert.equal(route, routes.login);
         done();
@@ -110,7 +89,6 @@ QUnit.test('Redirect to login page if authentication fails.', function (assert) 
         this.$location,
         this.$rootScope,
         this.auth,
-        this.routes,
-        this.config
+        this.routes
     );
 });
