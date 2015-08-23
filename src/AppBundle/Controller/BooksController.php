@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Resource\Book as BookResource;
 use AppBundle\Controller\Resource\Book\Author as AuthorResource;
-use AppBundle\Controller\View\Page;
 use AppBundle\Controller\View\ViewBuilder;
 use AppBundle\Domain\Aggregate\BookUnavailableException;
 use AppBundle\Domain\Message\Command\AddAuthor;
